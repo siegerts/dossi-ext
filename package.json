@@ -10,25 +10,41 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.3.0",
+    "@plasmohq/storage": "^1.6.0",
+    "@radix-ui/react-avatar": "^1.0.2",
+    "@radix-ui/react-dialog": "^1.0.3",
+    "@radix-ui/react-label": "^2.0.1",
+    "@radix-ui/react-slot": "^1.0.1",
+    "autoprefixer": "^10.4.14",
+    "class-variance-authority": "^0.6.0",
+    "clsx": "^1.2.1",
+    "cmdk": "^0.2.0",
+    "lucide-react": "^0.216.0",
     "plasmo": "0.70.1",
+    "postcss": "^8.4.23",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "tailwind-merge": "^1.12.0",
+    "tailwindcss-animate": "^1.0.5"
   },
   "devDependencies": {
+    "@plasmohq/prettier-plugin-sort-imports": "3.6.4",
     "@types/chrome": "0.0.235",
     "@types/node": "18.16.3",
     "@types/react": "18.2.2",
     "@types/react-dom": "18.2.3",
-    "prettier": "2.8.8",
-    "typescript": "5.0.4",
-    "@plasmohq/prettier-plugin-sort-imports": "3.6.4"
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.3.0",
+    "tailwindcss": "^3.3.2",
+    "typescript": "5.0.4"
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://maintainer.cc/*"
     ],
     "permissions": [
-      "tabs"
+      "cookies"
     ]
   }
 }

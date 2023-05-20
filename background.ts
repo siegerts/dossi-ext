@@ -1,3 +1,3 @@
 export {}
 
-console.log("Thanks for checking out Maintainer!")
+console.group("👋 Initializing Maintainer.")

@@ -1,6 +1,15 @@
 export {}
 
 import { Storage } from "@plasmohq/storage"
+import type { PlasmoCSConfig } from "plasmo"
+
+export const config: PlasmoCSConfig = {
+  matches: [
+    "https://github.com/*",
+    "https://maintainer.cc/*"
+    // "http://localhost:3000/*"
+  ]
+}
 
 async function checkUser() {
   const storage = new Storage()

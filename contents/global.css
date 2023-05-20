@@ -8,3 +8,7 @@
   display: flex;
   justify-content: end;
  }
+
+ #plasmo-shadow-container {
+  z-index: 45 !important;
+ }

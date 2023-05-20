@@ -60,6 +60,7 @@ const IndexPopup = () => {
         const json = await res.json()
         if (json.user) {
           const { user } = json
+          console.log("setting user", user)
           setUser(user)
         }
       })

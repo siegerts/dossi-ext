@@ -14,19 +14,34 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         "Content-Type": "application/json"
       }
     })
-    const json = await resp.json()
 
-    res.send({
-      notes: json.content
-    })
+    const ok = resp.ok
+
+    if (resp.ok) {
+      const notes = await resp.json()
+      return await res.send({ notes, status: { ok } })
+    } else {
+      if (resp.status === 403) {
+        return await res.send({ status: { ok, error: "user not logged in" } })
+      } else {
+        console.log("error ")
+        return await res.send({ status: { ok, error: "notes not available" } })
+      }
+    }
+
+    //
   } else if (req?.body?.type === "post") {
+    console.log("URL sender", req.sender)
     const resp = await fetch(`${baseUrl}/notes`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ content: req.body.content })
+      body: JSON.stringify({
+        url: req.sender.url,
+        content: req.body.content
+      })
     })
 
     const note = await resp.json()

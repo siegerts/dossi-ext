@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type {
   PlasmoCSConfig,
   PlasmoGetInlineAnchor,
@@ -12,6 +12,12 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
 import { Badge } from "@/components/ui/badge"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { useQuery } from "@tanstack/react-query"
+
+const queryClient = new QueryClient()
 
 import {
   Sheet,
@@ -42,7 +48,6 @@ export const getStyle = () => {
 
 export const getShadowHostId = () => "maintainer-cc-sidebar"
 
-console.log(process.env.NODE_ENV)
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({
     mode: process.env.NODE_ENV == "production" ? "closed" : "open"
@@ -51,75 +56,123 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector("#partial-discussion-header > div.gh-header-show")
 
+type Note = {
+  id: string
+  content: string
+}
+
+const Search = () => {
+  const { status, error, data } = useQuery<boolean, Error, Array<Note>>(
+    ["notes"],
+    async ({ queryKey }) => {
+      try {
+        let { notes, status } = await sendToBackground({
+          name: "notes",
+          body: {
+            type: "get"
+          }
+        })
+
+        if (status.ok) {
+          console.log(notes)
+          return notes
+        } else {
+          throw Error(status.error)
+        }
+      } catch (err) {
+        throw Error(err)
+      }
+    }
+  )
+
+  return (
+    <div>
+      {status === "loading" && <p>Loading...</p>}
+      {status === "error" && <p>Error: {error.message}</p>}
+      {status === "success" && (
+        <div>
+          {}
+          {data.length > 0 ? (
+            data.length
+          ) : (
+            <div>
+              <p>No notes yet</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 const MaintainerSidebar = () => {
   const [message, setMessage] = useState("")
   const [csrfToken, setCsrfToken] = useState("")
   const [session, setSession] = useState("")
-
+  const [noteContent, setNoteContent] = useState("")
   const [notes, setNotes] = useState(null)
 
   const getNotes = async () => {
-    console.log("getting triage message")
     const resp = await sendToBackground({
       name: "notes",
       body: {
         type: "get"
       }
     })
-    console.log("received triage message")
     console.log(resp)
     setNotes(resp.notes)
   }
 
-  const saveNote = async () => {
+  const saveNote = async (note) => {
     const resp = await sendToBackground({
       name: "notes",
       body: {
         type: "post",
-        content: "this is a test message."
+        content: noteContent
       }
     })
     console.log(resp)
   }
 
-  // useEffect(() => {
-  //   document.body.classList.toggle("plasmo-google-sidebar-show", isOpen)
-  // }, [isOpen])
-
   return (
-    <div>
-      <Sheet modal={false}>
-        <SheetTrigger asChild className="justify-end">
-          <Button>
-            <Icons.logo className="mr-2 h-4 w-4" />
-            Maintainer
-          </Button>
-        </SheetTrigger>
-        <SheetContent position="bottom" size="lg">
-          <SheetHeader className="text-left">
-            <SheetTitle>Add Note</SheetTitle>
-            <SheetDescription>
-              Make changes to your profile here. Click save when you're done.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="grid gap-4 py-4">
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="email">Email</Label>
-                  <Input type="email" id="email" placeholder="Email" />
-                </div> */}
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="note">Note</Label>
-              <Textarea id="note" placeholder="Add your note here." />
-            </div>
-          </div>
-          <SheetFooter>
-            <Button type="submit" onClick={saveNote}>
-              Save note
+    <QueryClientProvider client={queryClient}>
+      <div>
+        <Sheet modal={false}>
+          <SheetTrigger asChild className="justify-end">
+            <Button>
+              <Icons.logo className="mr-2 h-4 w-4" />
+              Maintainer
             </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-    </div>
+          </SheetTrigger>
+          <SheetContent position="bottom" size="lg">
+            <SheetHeader className="text-left">
+              <SheetTitle>Add Note</SheetTitle>
+              <SheetDescription>
+                Make changes to your profile here. Click save when you're done.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <Search />
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="note">Note</Label>
+                <Textarea
+                  id="note"
+                  placeholder="Add your note here."
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                />
+              </div>
+            </div>
+            <SheetFooter>
+              <Button type="submit" onClick={saveNote}>
+                Save note
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 

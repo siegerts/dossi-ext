@@ -44,11 +44,21 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       })
     })
 
-    const note = await resp.json()
+    const ok = resp.ok
 
-    res.send({
-      note
-    })
+    if (resp.ok) {
+      const note = await resp.json()
+      return await res.send({
+        note
+      })
+    } else {
+      if (resp.status === 403) {
+        return await res.send({ status: { ok, error: "user not logged in" } })
+      } else {
+        console.log("error ")
+        return await res.send({ status: { ok, error: "note not created" } })
+      }
+    }
   } else if (req?.body?.type === "patch") {
     const resp = await fetch(`${baseUrl}/notes/${req?.body?.noteId}`, {
       method: "PATCH",
@@ -59,11 +69,21 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       body: JSON.stringify({ content: req?.body?.note })
     })
 
-    const json = await resp.json()
+    const ok = resp.ok
 
-    res.send({
-      note: json.content
-    })
+    if (resp.ok) {
+      const note = await resp.json()
+      return await res.send({
+        note
+      })
+    } else {
+      if (resp.status === 403) {
+        return await res.send({ status: { ok, error: "user not logged in" } })
+      } else {
+        console.log("error ")
+        return await res.send({ status: { ok, error: "note not updated" } })
+      }
+    }
   } else if (req?.body?.type === "delete") {
     const resp = await fetch(`${baseUrl}/notes/${req?.body?.noteId}`, {
       method: "DELETE",
@@ -73,11 +93,18 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       }
     })
 
-    const json = await resp.json()
+    const ok = resp.ok
 
-    res.send({
-      note: json.content
-    })
+    if (resp.ok) {
+      return await res.send({ status: { ok } })
+    } else {
+      if (resp.status === 403) {
+        return await res.send({ status: { ok, error: "user not logged in" } })
+      } else {
+        console.log("error ")
+        return await res.send({ status: { ok, error: "note not deleted" } })
+      }
+    }
   }
 }
 

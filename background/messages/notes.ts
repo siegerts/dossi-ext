@@ -39,7 +39,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        url: req.sender.url,
+        url: req.sender.tab.url,
         content: req.body.content
       })
     })

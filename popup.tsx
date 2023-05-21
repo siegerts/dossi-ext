@@ -2,8 +2,18 @@ import { useEffect, useState } from "react"
 import type { PlasmoCSConfig } from "plasmo"
 import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
+
 import { sendToBackground, sendToContentScript } from "@plasmohq/messaging"
 import { Button } from "~components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Icons } from "@/components/icons"
 
@@ -12,6 +22,7 @@ const baseUrl =
     ? "https://maintainer.cc/api"
     : "http://locahost:3000/api"
 
+import "~/contents/global.css"
 import "~/contents/base.css"
 
 export const config: PlasmoCSConfig = {
@@ -70,52 +81,46 @@ const IndexPopup = () => {
   }, [])
 
   return (
-    <>
+    <div className="w-[380px] rounded-lg">
       {user && user?.name && (
-        <>
-          <h2>Welcome 👋</h2>
-          <Avatar>
-            <AvatarImage src={user?.image} />
-            <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>
-          </Avatar>
-          <h2>{user?.id}</h2>
-          <h2>{user?.name}</h2>
-          <form
-            action={`${baseUrl}/auth/signout`}
-            target="_blank"
-            method="POST">
-            <input
-              id="csrfToken-github"
-              type="hidden"
-              name="csrfToken"
-              value={csrfToken}
-            />
-            <Button type="submit">
-              <Icons.gitHub className="m-r h-4 w-4" />
-              Sign out
-            </Button>
-          </form>
-        </>
-      )}
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Welcome 👋</CardTitle>
+            <CardDescription>
+              You have 3 unread messages.
+              {/* <Avatar>
+                  <AvatarImage src={user?.image} />
+                  <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>
+                </Avatar> */}
+            </CardDescription>
+          </CardHeader>
 
-      {!user && (
-        <form
-          action={`${baseUrl}/auth/signin/github`}
-          target="_blank"
-          method="POST">
-          <input
-            id="csrfToken-github"
-            type="hidden"
-            name="csrfToken"
-            value={csrfToken}
-          />
-          <Button type="submit">
-            <Icons.gitHub className="m-r h-4 w-4" />
-            Log in with GitHub
-          </Button>
-        </form>
+          <CardContent className="grid gap-4">
+            <div>
+              <p>{user?.name}</p>
+            </div>
+
+            <form
+              action={`${baseUrl}/auth/signout`}
+              target="_blank"
+              method="POST">
+              <input
+                id="csrfToken-github"
+                type="hidden"
+                name="csrfToken"
+                value={csrfToken}
+              />
+              <Button type="submit" className="w-full">
+                <Icons.gitHub className="m-r h-4 w-4" />
+                Sign out
+              </Button>
+            </form>
+          </CardContent>
+
+          <CardFooter></CardFooter>
+        </Card>
       )}
-    </>
+    </div>
   )
 }
 

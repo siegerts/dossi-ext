@@ -69,7 +69,7 @@ const Search = () => {
         let { notes, status } = await sendToBackground({
           name: "notes",
           body: {
-            type: "get"
+            type: "GET"
           }
         })
 
@@ -116,7 +116,7 @@ const MaintainerSidebar = () => {
     const resp = await sendToBackground({
       name: "notes",
       body: {
-        type: "get"
+        type: "GET"
       }
     })
     console.log(resp)
@@ -127,7 +127,7 @@ const MaintainerSidebar = () => {
     const resp = await sendToBackground({
       name: "notes",
       body: {
-        type: "post",
+        type: "POST",
         content: noteContent
       }
     })

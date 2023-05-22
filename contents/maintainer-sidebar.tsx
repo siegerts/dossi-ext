@@ -15,7 +15,9 @@ import { Badge } from "@/components/ui/badge"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-import { useQuery } from "@tanstack/react-query"
+
+import Pins from "@/components/Pins"
+import Notes from "@/components/Notes"
 
 const queryClient = new QueryClient()
 
@@ -56,72 +58,12 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector("#partial-discussion-header > div.gh-header-show")
 
-type Note = {
-  id: string
-  content: string
-}
-
-const Search = () => {
-  const { status, error, data } = useQuery<boolean, Error, Array<Note>>(
-    ["notes"],
-    async ({ queryKey }) => {
-      try {
-        let { notes, status } = await sendToBackground({
-          name: "notes",
-          body: {
-            type: "GET"
-          }
-        })
-
-        if (status.ok) {
-          console.log(notes)
-          return notes
-        } else {
-          throw Error(status.error)
-        }
-      } catch (err) {
-        throw Error(err)
-      }
-    }
-  )
-
-  return (
-    <div>
-      {status === "loading" && <p>Loading...</p>}
-      {status === "error" && <p>Error: {error.message}</p>}
-      {status === "success" && (
-        <div>
-          {}
-          {data.length > 0 ? (
-            data.length
-          ) : (
-            <div>
-              <p>No notes yet</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
 const MaintainerSidebar = () => {
   const [message, setMessage] = useState("")
   const [csrfToken, setCsrfToken] = useState("")
   const [session, setSession] = useState("")
   const [noteContent, setNoteContent] = useState("")
   const [notes, setNotes] = useState(null)
-
-  const getNotes = async () => {
-    const resp = await sendToBackground({
-      name: "notes",
-      body: {
-        type: "GET"
-      }
-    })
-    console.log(resp)
-    setNotes(resp.notes)
-  }
 
   const saveNote = async (note) => {
     const resp = await sendToBackground({
@@ -132,6 +74,7 @@ const MaintainerSidebar = () => {
       }
     })
     console.log(resp)
+    queryClient.invalidateQueries({ queryKey: ["notes"] })
   }
 
   return (
@@ -151,8 +94,13 @@ const MaintainerSidebar = () => {
                 Make changes to your profile here. Click save when you're done.
               </SheetDescription>
             </SheetHeader>
+
             <div className="grid gap-4 py-4">
-              <Search />
+              <Button type="submit" onClick={saveNote}>
+                Save note
+              </Button>
+              <Notes />
+              {/* <Pins /> */}
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="note">Note</Label>
                 <Textarea
@@ -164,9 +112,9 @@ const MaintainerSidebar = () => {
               </div>
             </div>
             <SheetFooter>
-              <Button type="submit" onClick={saveNote}>
+              {/* <Button type="submit" onClick={saveNote}>
                 Save note
-              </Button>
+              </Button> */}
             </SheetFooter>
           </SheetContent>
         </Sheet>

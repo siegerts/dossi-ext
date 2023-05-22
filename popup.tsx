@@ -4,6 +4,9 @@ import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 
 import { sendToBackground, sendToContentScript } from "@plasmohq/messaging"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+
 import { Button } from "~components/ui/button"
 import {
   Card,
@@ -16,6 +19,8 @@ import {
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Icons } from "@/components/icons"
+import Pins from "@/components/Pins"
+import User from "@/components/User"
 
 const baseUrl =
   process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
@@ -39,6 +44,8 @@ interface TSession {
   image: string
   name: string
 }
+
+const queryClient = new QueryClient()
 
 const IndexPopup = () => {
   const [csrfToken, setCsrfToken] = useState("")
@@ -81,46 +88,50 @@ const IndexPopup = () => {
   }, [])
 
   return (
-    <div className="w-[380px] rounded-lg">
-      {user && user?.name && (
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Welcome 👋</CardTitle>
-            <CardDescription>
-              You have 3 unread messages.
-              {/* <Avatar>
+    <QueryClientProvider client={queryClient}>
+      <div className="w-[380px] rounded-lg">
+        {user && user?.name && (
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Welcome 👋</CardTitle>
+              <CardDescription>
+                You have 3 unread messages.
+                <Pins />
+                <User />
+                {/* <Avatar>
                   <AvatarImage src={user?.image} />
                   <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>
                 </Avatar> */}
-            </CardDescription>
-          </CardHeader>
+              </CardDescription>
+            </CardHeader>
 
-          <CardContent className="grid gap-4">
-            <div>
-              <p>{user?.name}</p>
-            </div>
+            <CardContent className="grid gap-4">
+              <div>
+                <p>{user?.name}</p>
+              </div>
 
-            <form
-              action={`${baseUrl}/auth/signout`}
-              target="_blank"
-              method="POST">
-              <input
-                id="csrfToken-github"
-                type="hidden"
-                name="csrfToken"
-                value={csrfToken}
-              />
-              <Button type="submit" className="w-full">
-                <Icons.gitHub className="m-r h-4 w-4" />
-                Sign out
-              </Button>
-            </form>
-          </CardContent>
+              <form
+                action={`${baseUrl}/auth/signout`}
+                target="_blank"
+                method="POST">
+                <input
+                  id="csrfToken-github"
+                  type="hidden"
+                  name="csrfToken"
+                  value={csrfToken}
+                />
+                <Button type="submit" className="w-full">
+                  <Icons.gitHub className="m-r h-4 w-4" />
+                  Sign out
+                </Button>
+              </form>
+            </CardContent>
 
-          <CardFooter></CardFooter>
-        </Card>
-      )}
-    </div>
+            <CardFooter></CardFooter>
+          </Card>
+        )}
+      </div>
+    </QueryClientProvider>
   )
 }
 

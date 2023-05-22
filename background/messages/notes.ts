@@ -7,7 +7,7 @@ const baseUrl =
     : "http://locahost:3000/api"
 
 const noteCreateSchema = z.object({
-  content: z.string().optional(),
+  content: z.string(),
   url: z.string().url({ message: "Invalid url" })
 })
 

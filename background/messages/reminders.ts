@@ -18,91 +18,95 @@ const reminderCreateSchema = z
   })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  if (req?.body?.type === "GET") {
-    const resp = await fetch(`${baseUrl}/reminders`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-
-    const ok = resp.ok
-
-    if (resp.ok) {
-      const reminders = await resp.json()
-      return res.send({ reminders, status: { ok } })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
-      } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "reminders not available" } })
-      }
-    }
-
-    //
-  } else if (req?.body?.type === "POST") {
-    console.log("URL sender", req.sender)
-
-    let resp: Response
-    try {
-      resp = await fetch(`${baseUrl}/reminders`, {
-        method: "POST",
+  switch (req?.body?.type) {
+    case "GET": {
+      const resp = await fetch(`${baseUrl}/reminders`, {
+        method: "GET",
         credentials: "include",
         headers: {
           "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          url: req.sender.tab.url,
-          at: req.body.content,
-          note: req.body.noteId,
-          pin: req.body.pinId
-        })
+        }
       })
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.log("parsing error")
+
+      const ok = resp.ok
+
+      if (resp.ok) {
+        const reminders = await resp.json()
+        return res.send({ reminders, status: { ok } })
+      } else {
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "reminders not available" } })
+        }
+      }
+    }
+
+    case "POST": {
+      console.log("URL sender", req.sender)
+
+      let resp: Response
+      try {
+        resp = await fetch(`${baseUrl}/reminders`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            url: req.sender.tab.url,
+            at: req.body.content,
+            note: req.body.noteId,
+            pin: req.body.pinId
+          })
+        })
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.log("parsing error")
+          return res.send({
+            status: { ok: false, error: "schema not valid" }
+          })
+        }
+      }
+
+      const ok = resp.ok
+
+      if (resp.ok) {
+        const pin = await resp.json()
         return res.send({
-          status: { ok: false, error: "schema not valid" }
+          pin
         })
+      } else {
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "pin not created" } })
+        }
       }
     }
 
-    const ok = resp.ok
-
-    if (resp.ok) {
-      const pin = await resp.json()
-      return res.send({
-        pin
+    case "DELETE": {
+      const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
-      } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "pin not created" } })
-      }
-    }
-  } else if (req?.body?.type === "DELETE") {
-    const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
 
-    const ok = resp.ok
+      const ok = resp.ok
 
-    if (resp.ok) {
-      return res.send({ status: { ok } })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
+      if (resp.ok) {
+        return res.send({ status: { ok } })
       } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "pin not deleted" } })
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "pin not deleted" } })
+        }
       }
     }
   }

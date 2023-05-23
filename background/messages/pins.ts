@@ -6,77 +6,81 @@ const baseUrl =
     : "http://locahost:3000/api"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  if (req?.body?.type === "GET") {
-    const resp = await fetch(`${baseUrl}/pins`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
+  switch (req?.body?.type) {
+    case "GET": {
+      const resp = await fetch(`${baseUrl}/pins`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
 
-    const ok = resp.ok
+      const ok = resp.ok
 
-    if (resp.ok) {
-      const pins = await resp.json()
-      return res.send({ pins, status: { ok } })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
+      if (resp.ok) {
+        const pins = await resp.json()
+        return res.send({ pins, status: { ok } })
       } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "pins not available" } })
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "pins not available" } })
+        }
       }
     }
 
-    //
-  } else if (req?.body?.type === "POST") {
-    console.log("URL sender", req.sender)
-    const resp = await fetch(`${baseUrl}/pins`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        url: req.sender.tab.url
+    case "POST": {
+      console.log("URL sender", req.sender)
+      const resp = await fetch(`${baseUrl}/pins`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          url: req.sender.tab.url
+        })
       })
-    })
 
-    const ok = resp.ok
+      const ok = resp.ok
 
-    if (resp.ok) {
-      const pin = await resp.json()
-      return res.send({
-        pin
-      })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
+      if (resp.ok) {
+        const pin = await resp.json()
+        return res.send({
+          pin
+        })
       } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "pin not created" } })
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "pin not created" } })
+        }
       }
     }
-  } else if (req?.body?.type === "DELETE") {
-    const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
 
-    const ok = resp.ok
+    case "DELETE": {
+      const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
 
-    if (resp.ok) {
-      return res.send({ status: { ok } })
-    } else {
-      if (resp.status === 403) {
-        return res.send({ status: { ok, error: "user not logged in" } })
+      const ok = resp.ok
+
+      if (resp.ok) {
+        return res.send({ status: { ok } })
       } else {
-        console.log("error ")
-        return res.send({ status: { ok, error: "pin not deleted" } })
+        if (resp.status === 403) {
+          return res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return res.send({ status: { ok, error: "pin not deleted" } })
+        }
       }
     }
   }

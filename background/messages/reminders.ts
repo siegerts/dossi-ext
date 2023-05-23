@@ -48,6 +48,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       let resp: Response
       try {
+        // validate
+        const { at, note, pin } = reminderCreateSchema.parse({
+          at: req.body.at,
+          note: req.body.noteId,
+          pin: req.body.pinId
+        })
+
         resp = await fetch(`${baseUrl}/reminders`, {
           method: "POST",
           credentials: "include",
@@ -55,10 +62,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            url: req.sender.tab.url,
-            at: req.body.content,
-            note: req.body.noteId,
-            pin: req.body.pinId
+            at,
+            note,
+            pin
           })
         })
       } catch (error) {
@@ -73,22 +79,22 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const ok = resp.ok
 
       if (resp.ok) {
-        const pin = await resp.json()
+        const reminder = await resp.json()
         return res.send({
-          pin
+          reminder
         })
       } else {
         if (resp.status === 403) {
           return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return res.send({ status: { ok, error: "pin not created" } })
+          return res.send({ status: { ok, error: "reminder not created" } })
         }
       }
     }
 
     case "DELETE": {
-      const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
+      const resp = await fetch(`${baseUrl}/reminder/${req?.body?.reminderId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -105,7 +111,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return res.send({ status: { ok, error: "pin not deleted" } })
+          return res.send({ status: { ok, error: "reminder not deleted" } })
         }
       }
     }

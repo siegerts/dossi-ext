@@ -11,8 +11,50 @@ const noteCreateSchema = z.object({
   url: z.string().url({ message: "Invalid url" })
 })
 
+const noteFilterSchema = z.string().url({ message: "Invalid url" })
+
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
+    case "GET_NOTES_BY_URL": {
+      // use the body url if passed in,
+      // else use the url from the tab that sent the req
+      const filterURL = noteFilterSchema.parse(
+        req.body.url ? req.body.url : req.sender.tab.url
+      )
+
+      console.log(
+        "url to send",
+        `${baseUrl}/notes?url=${encodeURIComponent(filterURL)}`
+      )
+
+      const resp = await fetch(
+        `${baseUrl}/notes?url=${encodeURIComponent(filterURL)}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      )
+
+      const ok = resp.ok
+
+      if (resp.ok) {
+        const notes = await resp.json()
+        return await res.send({ notes, status: { ok } })
+      } else {
+        if (resp.status === 403) {
+          return await res.send({ status: { ok, error: "user not logged in" } })
+        } else {
+          console.log("error ")
+          return await res.send({
+            status: { ok, error: "notes not available" }
+          })
+        }
+      }
+    }
+
     case "GET": {
       const resp = await fetch(`${baseUrl}/notes`, {
         method: "GET",

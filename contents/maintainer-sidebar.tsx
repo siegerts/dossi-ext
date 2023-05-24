@@ -59,11 +59,7 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector("#partial-discussion-header > div.gh-header-show")
 
 const MaintainerSidebar = () => {
-  const [message, setMessage] = useState("")
-  const [csrfToken, setCsrfToken] = useState("")
-  const [session, setSession] = useState("")
   const [noteContent, setNoteContent] = useState("")
-  const [notes, setNotes] = useState(null)
 
   const saveNote = async (note) => {
     const resp = await sendToBackground({
@@ -73,6 +69,7 @@ const MaintainerSidebar = () => {
         content: noteContent
       }
     })
+    setNoteContent("")
     console.log(resp)
     queryClient.invalidateQueries({ queryKey: ["notes"] })
   }

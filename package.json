@@ -44,10 +44,10 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://maintainer.cc/*"
+      "$PLASMO_PUBLIC_MANIFEST_HOST_PERMISSIONS"
     ],
     "permissions": [
-      "cookies"
+      "tabs"
     ]
   }
 }

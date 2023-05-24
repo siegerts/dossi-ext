@@ -1,27 +1,12 @@
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQuery } from "@tanstack/react-query"
-import { useState, useEffect } from "react"
 
 type Note = {
   id: string
   content: string
 }
 
-export const Notes = () => {
-  // convert this to provider
-  const [tabUrl, setTabUrl] = useState("")
-
-  useEffect(() => {
-    const init = async () => {
-      const { url } = await sendToBackground({
-        name: "tab" as never
-      })
-      setTabUrl(url)
-    }
-
-    init()
-  }, [])
-
+export const Notes = ({ tabUrl }: { tabUrl: string }) => {
   const { status, error, data } = useQuery<boolean, Error, Array<Note>>(
     ["notes", tabUrl],
     async ({ queryKey }) => {

@@ -24,18 +24,16 @@ import User from "@/components/User"
 
 const baseUrl =
   process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? "https://maintainer.cc/api"
+    ? process.env.PLASMO_PUBLIC_HOST_API
     : "http://locahost:3000/api"
 
 import "~/contents/global.css"
 import "~/contents/base.css"
 
+const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
+
 export const config: PlasmoCSConfig = {
-  matches: [
-    "https://github.com/*",
-    "https://maintainer.cc/*"
-    // "http://localhost:3000/*"
-  ]
+  matches
 }
 
 interface TSession {

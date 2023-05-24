@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type {
   PlasmoCSConfig,
   PlasmoGetInlineAnchor,
@@ -33,12 +33,10 @@ import {
 
 import "~/contents/base.css"
 
+const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
+
 export const config: PlasmoCSConfig = {
-  matches: [
-    "https://github.com/*",
-    "https://maintainer.cc/*"
-    // "http://localhost:3000/*"
-  ]
+  matches
 }
 
 // Inject into the ShadowDOM
@@ -60,6 +58,27 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
 
 const MaintainerSidebar = () => {
   const [noteContent, setNoteContent] = useState("")
+  const [tabUrl, setTabUrl] = useState("")
+
+  useEffect(() => {
+    const handleRequest = async (req) => {
+      if (req.type === "URL_CHANGE") {
+        const { url } = await sendToBackground({
+          name: "tab" as never
+        })
+        setTabUrl(url)
+      }
+    }
+
+    chrome.runtime.onMessage.addListener(function (
+      request,
+      sender,
+      sendResponse
+    ) {
+      handleRequest(request).then((response) => sendResponse(response))
+      return true
+    })
+  }, [])
 
   const saveNote = async (note) => {
     const resp = await sendToBackground({
@@ -93,10 +112,11 @@ const MaintainerSidebar = () => {
             </SheetHeader>
 
             <div className="grid gap-4 py-4">
+              {tabUrl && <span>Current URL: {tabUrl}</span>}
               <Button type="submit" onClick={saveNote}>
                 Save note
               </Button>
-              <Notes />
+              <Notes tabUrl={tabUrl} />
               {/* <Pins /> */}
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="note">Note</Label>

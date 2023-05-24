@@ -3,7 +3,7 @@ import * as z from "zod"
 
 const baseUrl =
   process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? "https://maintainer.cc/api"
+    ? process.env.PLASMO_PUBLIC_HOST_API
     : "http://locahost:3000/api"
 
 const reminderCreateSchema = z

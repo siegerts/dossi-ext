@@ -54,7 +54,7 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   })
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
-  document.querySelector("#partial-discussion-header > div.gh-header-show")
+  document.querySelector(process.env.PLASMO_PUBLIC_INLINE_ANCHOR_SELECTOR)
 
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")

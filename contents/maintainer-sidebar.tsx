@@ -8,16 +8,15 @@ import { sendToBackground } from "@plasmohq/messaging"
 import cssText from "data-text:~/contents/global.css"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
-import { Badge } from "@/components/ui/badge"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import Pins from "@/components/Pins"
 import Notes from "@/components/Notes"
+import { DatePickerReminderForm } from "@/components/ReminderForm"
 
 const queryClient = new QueryClient()
 
@@ -61,7 +60,7 @@ const MaintainerSidebar = () => {
   const [tabUrl, setTabUrl] = useState("")
 
   useEffect(() => {
-    const handleRequest = async (req) => {
+    const handleRequest = async (req: any) => {
       if (req.type === "URL_CHANGE") {
         const { url } = await sendToBackground({
           name: "tab" as never
@@ -80,8 +79,8 @@ const MaintainerSidebar = () => {
     })
   }, [])
 
-  const saveNote = async (note) => {
-    const resp = await sendToBackground({
+  const saveNote = async () => {
+    await sendToBackground({
       name: "notes",
       body: {
         type: "POST",
@@ -89,8 +88,7 @@ const MaintainerSidebar = () => {
       }
     })
     setNoteContent("")
-    console.log(resp)
-    queryClient.invalidateQueries({ queryKey: ["notes"] })
+    queryClient.invalidateQueries({ queryKey: ["notes", tabUrl] })
   }
 
   return (
@@ -113,6 +111,11 @@ const MaintainerSidebar = () => {
 
             <div className="grid gap-4 py-4">
               {tabUrl && <span>Current URL: {tabUrl}</span>}
+
+              {/* <DatePickerReminderForm
+                queryClient={queryClient}
+                tabUrl={tabUrl}
+              /> */}
               <Button type="submit" onClick={saveNote}>
                 Save note
               </Button>

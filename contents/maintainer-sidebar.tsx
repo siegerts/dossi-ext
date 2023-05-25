@@ -45,7 +45,8 @@ export const getStyle = () => {
   return style
 }
 
-export const getShadowHostId = () => "maintainer-cc-sidebar"
+export const getShadowHostId = () =>
+  `${process.env.PLASMO_PUBLIC_SHIP_NAME}-cc-sidebar`
 
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({
@@ -55,7 +56,7 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector("#partial-discussion-header > div.gh-header-show")
 
-const MaintainerSidebar = () => {
+const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
   const [tabUrl, setTabUrl] = useState("")
 
@@ -98,7 +99,7 @@ const MaintainerSidebar = () => {
           <SheetTrigger asChild className="justify-end">
             <Button>
               <Icons.logo className="mr-2 h-4 w-4" />
-              Maintainer
+              {process.env.PLASMO_PUBLIC_SHIP_NAME}
             </Button>
           </SheetTrigger>
           <SheetContent position="bottom" size="lg">
@@ -144,4 +145,4 @@ const MaintainerSidebar = () => {
   )
 }
 
-export default MaintainerSidebar
+export default ActionSheet

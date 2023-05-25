@@ -6,16 +6,10 @@ const baseUrl =
     ? process.env.PLASMO_PUBLIC_HOST_API
     : "http://locahost:3000/api"
 
-const reminderCreateSchema = z
-  .object({
-    at: z.string().datetime(),
-    note: z.string().optional(),
-    pin: z.string().optional()
-  })
-  .refine((data) => Boolean(data.note) || Boolean(data.pin), {
-    message: "At least one of `note` or `pin` must be provided",
-    path: ["note", "pin"]
-  })
+const reminderCreateSchema = z.object({
+  at: z.string().datetime(),
+  url: z.string().url({ message: "Invalid url" })
+})
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
@@ -49,10 +43,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       let resp: Response
       try {
         // validate
-        const { at, note, pin } = reminderCreateSchema.parse({
+        const { at, url } = reminderCreateSchema.parse({
           at: req.body.at,
-          note: req.body.noteId,
-          pin: req.body.pinId
+          url: req.body.url
         })
 
         resp = await fetch(`${baseUrl}/reminders`, {
@@ -63,8 +56,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           },
           body: JSON.stringify({
             at,
-            note,
-            pin
+            url
           })
         })
       } catch (error) {

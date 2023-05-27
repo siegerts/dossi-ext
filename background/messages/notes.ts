@@ -42,13 +42,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       if (resp.ok) {
         const notes = await resp.json()
-        return await res.send({ notes, status: { ok } })
+        return res.send({ notes, status: { ok } })
       } else {
         if (resp.status === 403) {
-          return await res.send({ status: { ok, error: "user not logged in" } })
+          return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return await res.send({
+          return res.send({
             status: { ok, error: "notes not available" }
           })
         }
@@ -68,13 +68,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       if (resp.ok) {
         const notes = await resp.json()
-        return await res.send({ notes, status: { ok } })
+        return res.send({ notes, status: { ok } })
       } else {
         if (resp.status === 403) {
-          return await res.send({ status: { ok, error: "user not logged in" } })
+          return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return await res.send({
+          return res.send({
             status: { ok, error: "notes not available" }
           })
         }
@@ -116,15 +116,15 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       if (resp.ok) {
         const note = await resp.json()
-        return await res.send({
+        return res.send({
           note
         })
       } else {
         if (resp.status === 403) {
-          return await res.send({ status: { ok, error: "user not logged in" } })
+          return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return await res.send({ status: { ok, error: "note not created" } })
+          return res.send({ status: { ok, error: "note not created" } })
         }
       }
     }
@@ -143,15 +143,15 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       if (resp.ok) {
         const note = await resp.json()
-        return await res.send({
+        return res.send({
           note
         })
       } else {
         if (resp.status === 403) {
-          return await res.send({ status: { ok, error: "user not logged in" } })
+          return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return await res.send({ status: { ok, error: "note not updated" } })
+          return res.send({ status: { ok, error: "note not updated" } })
         }
       }
     }
@@ -168,13 +168,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const ok = resp.ok
 
       if (resp.ok) {
-        return await res.send({ status: { ok } })
+        return res.send({ status: { ok } })
       } else {
         if (resp.status === 403) {
-          return await res.send({ status: { ok, error: "user not logged in" } })
+          return res.send({ status: { ok, error: "user not logged in" } })
         } else {
           console.log("error ")
-          return await res.send({ status: { ok, error: "note not deleted" } })
+          return res.send({ status: { ok, error: "note not deleted" } })
         }
       }
     }

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import type { PlasmoCSConfig } from "plasmo"
-import { Storage } from "@plasmohq/storage"
+
 import { useStorage } from "@plasmohq/storage/hook"
 
-import { sendToBackground, sendToContentScript } from "@plasmohq/messaging"
+import { sendToBackground } from "@plasmohq/messaging"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { Button } from "~components/ui/button"
+
 import {
   Card,
   CardContent,
@@ -17,10 +17,9 @@ import {
   CardTitle
 } from "@/components/ui/card"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Icons } from "@/components/icons"
 import Pins from "@/components/Pins"
-import User from "@/components/User"
+// import User from "@/components/User"
 
 const baseUrl =
   process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
@@ -36,50 +35,20 @@ export const config: PlasmoCSConfig = {
   matches
 }
 
-interface TSession {
-  email: string
-  id: string
-  image: string
-  name: string
-}
-
 const queryClient = new QueryClient()
 
 const IndexPopup = () => {
-  const [csrfToken, setCsrfToken] = useState("")
-  const [session, setSession] = useState<TSession | null>(null)
-  const [user, setUser] = useStorage("user")
+  const [authedUser, setAuthedUser] = useStorage("user")
 
   useEffect(() => {
     const init = async () => {
-      if (user) {
-        console.log("user present", user)
-        return
+      const { user, status } = await sendToBackground({
+        name: "user" as never
+      })
+
+      if (status.ok) {
+        setAuthedUser(user.user)
       }
-
-      console.log("user not present", user)
-
-      fetch(`${baseUrl}/auth/csrf`).then(async (res) => {
-        const json = await res.json()
-        const csrf = json.csrfToken
-
-        setCsrfToken(csrf)
-      })
-
-      fetch(`${baseUrl}/auth/session`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then(async (res) => {
-        const json = await res.json()
-        if (json.user) {
-          const { user } = json
-          console.log("setting user", user)
-          setUser(user)
-        }
-      })
     }
 
     init()
@@ -88,46 +57,46 @@ const IndexPopup = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="w-[380px] rounded-lg">
-        {user && user?.name && (
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Welcome 👋</CardTitle>
-              <CardDescription>
-                You have 3 unread messages.
-                <Pins />
-                <User />
-                {/* <Avatar>
-                  <AvatarImage src={user?.image} />
-                  <AvatarFallback>{user?.name.slice(0, 2)}</AvatarFallback>
-                </Avatar> */}
-              </CardDescription>
-            </CardHeader>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Welcome 👋</CardTitle>
+            <CardDescription>{/* <User /> */}</CardDescription>
+          </CardHeader>
 
+          {authedUser && authedUser?.isAuthed ? (
+            <CardContent className="grid gap-4">
+              <>
+                <div>
+                  <p>{authedUser?.name}</p>
+                </div>
+                <Pins />
+
+                <form
+                  action={`${baseUrl}/auth/signout`}
+                  target="_blank"
+                  method="POST">
+                  <Button type="submit" className="w-full">
+                    Sign out
+                  </Button>
+                </form>
+              </>
+            </CardContent>
+          ) : (
             <CardContent className="grid gap-4">
               <div>
-                <p>{user?.name}</p>
+                <h1>Sign in to dossi</h1>
               </div>
 
-              <form
-                action={`${baseUrl}/auth/signout`}
-                target="_blank"
-                method="POST">
-                <input
-                  id="csrfToken-github"
-                  type="hidden"
-                  name="csrfToken"
-                  value={csrfToken}
-                />
-                <Button type="submit" className="w-full">
-                  <Icons.gitHub className="m-r h-4 w-4" />
-                  Sign out
-                </Button>
-              </form>
+              <Button asChild className="w-full">
+                <a href={`${baseUrl}/auth/signin`} target="_blank">
+                  <Icons.gitHub className="mr-4 h-4 w-4" />
+                  GitHub
+                </a>
+              </Button>
             </CardContent>
-
-            <CardFooter></CardFooter>
-          </Card>
-        )}
+          )}
+          <CardFooter></CardFooter>
+        </Card>
       </div>
     </QueryClientProvider>
   )

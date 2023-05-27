@@ -1,4 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+import { Storage } from "@plasmohq/storage"
+
+const storage = new Storage()
 
 const baseUrl =
   process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
@@ -6,6 +9,7 @@ const baseUrl =
     : "http://locahost:3000/api"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  console.log("get user request received")
   const resp = await fetch(`${baseUrl}/auth/session`, {
     method: "GET",
     credentials: "include",
@@ -19,11 +23,18 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   if (resp.ok) {
     const json = await resp.json()
     if (json.user) {
-      return res.send({ status: { ok }, user: json.user })
+      // save and return user
+      await storage.set("user", { user: { isAuthed: true, attrs: json.user } })
+      const user = await storage.get("user")
+
+      return res.send({ status: { ok }, user })
     } else {
+      // clear user
+      await storage.remove("user")
       return res.send({ status: { ok, error: "user not logged in" } })
     }
   } else {
+    await storage.remove("user")
     return res.send({ status: { ok, error: "user info not available" } })
   }
 }

@@ -46,9 +46,7 @@ const IndexPopup = () => {
         name: "user" as never
       })
 
-      if (status.ok) {
-        setAuthedUser(user.user)
-      }
+      setAuthedUser(user?.user)
     }
 
     init()

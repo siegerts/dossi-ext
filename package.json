@@ -1,8 +1,8 @@
 {
-  "name": "quick-triage",
-  "displayName": "Quick triage",
+  "name": "usenotes",
+  "displayName": "usenotes",
   "version": "0.0.1",
-  "description": "This example demonstrates how to render a React component using content scripts",
+  "description": "Supercharge your GitHub workflow with our Chrome extension, providing smart issue triage, advanced maintenance tools, and leveling up your project management efficiency.",
   "author": "Stephen",
   "scripts": {
     "dev": "plasmo dev",
@@ -53,7 +53,8 @@
       "$PLASMO_PUBLIC_MANIFEST_HOST_PERMISSIONS"
     ],
     "permissions": [
-      "tabs"
+      "tabs",
+      "cookies"
     ]
   }
 }

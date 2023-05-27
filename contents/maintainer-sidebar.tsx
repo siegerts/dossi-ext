@@ -5,11 +5,13 @@ import type {
   PlasmoCreateShadowRoot
 } from "plasmo"
 import { sendToBackground } from "@plasmohq/messaging"
+import { useStorage } from "@plasmohq/storage/hook"
 import cssText from "data-text:~/contents/global.css"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
+import { Toaster } from "@/components/ui/toaster"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
@@ -17,6 +19,11 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import Pins from "@/components/Pins"
 import Notes from "@/components/Notes"
 import { DatePickerReminderForm } from "@/components/ReminderForm"
+
+const baseUrl =
+  process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
+    ? process.env.PLASMO_PUBLIC_HOST_API
+    : "http://locahost:3000/api"
 
 const queryClient = new QueryClient()
 
@@ -59,6 +66,7 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
   const [tabUrl, setTabUrl] = useState("")
+  const [authedUser, setAuthedUser] = useStorage("user")
 
   useEffect(() => {
     const handleRequest = async (req: any) => {
@@ -70,6 +78,14 @@ const ActionSheet = () => {
       }
     }
 
+    const init = async () => {
+      const { user, status } = await sendToBackground({
+        name: "user" as never
+      })
+
+      setAuthedUser(user.user)
+    }
+
     chrome.runtime.onMessage.addListener(function (
       request,
       sender,
@@ -78,6 +94,14 @@ const ActionSheet = () => {
       handleRequest(request).then((response) => sendResponse(response))
       return true
     })
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        init()
+      }
+    })
+
+    init()
   }, [])
 
   const saveNote = async () => {
@@ -95,50 +119,61 @@ const ActionSheet = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <div>
-        <Sheet modal={false}>
-          <SheetTrigger asChild className="justify-end">
-            <Button>
-              <Icons.logo className="mr-2 h-4 w-4" />
-              {process.env.PLASMO_PUBLIC_SHIP_NAME}
-            </Button>
-          </SheetTrigger>
-          <SheetContent position="bottom" size="lg">
-            <SheetHeader className="text-left">
-              <SheetTitle>Add Note</SheetTitle>
-              <SheetDescription>
-                Make changes to your profile here. Click save when you're done.
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="grid gap-4 py-4">
-              {tabUrl && <span>Current URL: {tabUrl}</span>}
-
-              {/* <DatePickerReminderForm
-                queryClient={queryClient}
-                tabUrl={tabUrl}
-              /> */}
-              <Button type="submit" onClick={saveNote}>
-                Save note
+        {authedUser ? (
+          <Sheet modal={false}>
+            <SheetTrigger asChild className="justify-end">
+              <Button>
+                <Icons.logo className="mr-2 h-4 w-4" />
+                {process.env.PLASMO_PUBLIC_SHIP_NAME}-{authedUser?.attrs?.name}
               </Button>
-              <Notes tabUrl={tabUrl} />
-              {/* <Pins /> */}
-              <div className="grid w-full max-w-sm items-center gap-1.5">
-                <Label htmlFor="note">Note</Label>
-                <Textarea
-                  id="note"
-                  placeholder="Add your note here."
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
+            </SheetTrigger>
+            <SheetContent size="lg">
+              <SheetHeader className="text-left">
+                <SheetTitle>Add Note</SheetTitle>
+                <SheetDescription>
+                  Make changes to your profile here. Click save when you're
+                  done.
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="grid gap-4 py-4">
+                {/* {tabUrl && <span>Current URL: {tabUrl}</span>} */}
+
+                <DatePickerReminderForm
+                  queryClient={queryClient}
+                  tabUrl={tabUrl}
                 />
+                <Button type="submit" onClick={saveNote}>
+                  Save note
+                </Button>
+                <Notes tabUrl={tabUrl} />
+                {/* <Pins /> */}
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="note">Note</Label>
+                  <Textarea
+                    id="note"
+                    placeholder="Add your note here."
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-            <SheetFooter>
-              {/* <Button type="submit" onClick={saveNote}>
+              <SheetFooter>
+                {/* <Button type="submit" onClick={saveNote}>
                 Save note
               </Button> */}
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <Button asChild>
+            <a href={`${baseUrl}/auth/signin`} target="_blank">
+              <Icons.logo className="mr-2 h-4 w-4" />
+              {process.env.PLASMO_PUBLIC_SHIP_NAME}
+            </a>
+          </Button>
+        )}
+        <Toaster />
       </div>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

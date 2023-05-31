@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Library,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -27,7 +28,7 @@ import {
 export type Icon = LucideIcon
 
 export const Icons = {
-  logo: Activity,
+  logo: Library,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

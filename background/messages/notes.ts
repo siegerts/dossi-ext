@@ -1,10 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
-
-const baseUrl =
-  process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? process.env.PLASMO_PUBLIC_HOST_API
-    : "http://locahost:3000/api"
+import { baseUrl } from "~lib/constants"
 
 const noteCreateSchema = z.object({
   content: z.string(),
@@ -20,11 +16,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       // else use the url from the tab that sent the req
       const filterURL = noteFilterSchema.parse(
         req.body.url ? req.body.url : req.sender.tab.url
-      )
-
-      console.log(
-        "url to send",
-        `${baseUrl}/notes?url=${encodeURIComponent(filterURL)}`
       )
 
       const resp = await fetch(

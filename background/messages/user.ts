@@ -1,12 +1,8 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
+import { baseUrl } from "~lib/constants"
 
 const storage = new Storage()
-
-const baseUrl =
-  process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? process.env.PLASMO_PUBLIC_HOST_API
-    : "http://locahost:3000/api"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   console.log("get user request received")

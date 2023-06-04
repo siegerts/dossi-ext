@@ -1,9 +1,5 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-
-const baseUrl =
-  process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? process.env.PLASMO_PUBLIC_HOST_API
-    : "http://locahost:3000/api"
+import { baseUrl } from "~lib/constants"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {

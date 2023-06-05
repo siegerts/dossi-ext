@@ -13,17 +13,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
 import { Toaster } from "@/components/ui/toaster"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  QueryClient,
+  useQuery,
+  QueryClientProvider
+} from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
-import Pins from "@/components/Pins"
+import PinButton from "~components/PinButton"
 import Notes from "@/components/Notes"
+// import Entity from "@/components/Entity"
 import { DatePickerReminderForm } from "@/components/ReminderForm"
-
-const baseUrl =
-  process.env.NODE_ENV == "production" || process.env.NODE_ENV == "development"
-    ? process.env.PLASMO_PUBLIC_HOST_API
-    : "http://locahost:3000/api"
+import { baseUrl } from "~lib/constants"
 
 const queryClient = new QueryClient()
 
@@ -38,6 +39,12 @@ import {
 } from "@/components/ui/sheet-maintainer"
 
 import "~/contents/base.css"
+import { Pin } from "lucide-react"
+
+type EntityItem = {
+  id: string
+  url: string
+}
 
 const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
 
@@ -62,6 +69,15 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector(process.env.PLASMO_PUBLIC_INLINE_ANCHOR_SELECTOR)
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ActionSheet />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  )
+}
 
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
@@ -104,6 +120,27 @@ const ActionSheet = () => {
     init()
   }, [])
 
+  const entity = useQuery(["entity", tabUrl], async ({ queryKey }) => {
+    try {
+      let { data, status } = await sendToBackground({
+        name: "entities" as never,
+        body: {
+          type: "GET_ENTITY_BY_URL",
+          url: tabUrl
+        }
+      })
+
+      if (status.ok) {
+        console.log(data)
+        return data
+      } else {
+        throw Error(status.error)
+      }
+    } catch (err) {
+      throw Error(err)
+    }
+  })
+
   const saveNote = async () => {
     await sendToBackground({
       name: "notes",
@@ -114,70 +151,92 @@ const ActionSheet = () => {
     })
     setNoteContent("")
     queryClient.invalidateQueries({ queryKey: ["notes", tabUrl] })
+    queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div>
-        {authedUser ? (
-          <Sheet modal={false}>
-            <SheetTrigger asChild className="justify-end">
-              <Button>
-                <Icons.logo className="mr-2 h-4 w-4" />
-                {process.env.PLASMO_PUBLIC_SHIP_NAME}-{authedUser?.attrs?.name}
-              </Button>
-            </SheetTrigger>
-            <SheetContent size="lg">
-              <SheetHeader className="text-left">
-                <SheetTitle>Add Note</SheetTitle>
-                <SheetDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
-                </SheetDescription>
-              </SheetHeader>
+    <div>
+      {authedUser ? (
+        <Sheet modal={false}>
+          <SheetTrigger asChild className="justify-end">
+            <Button>
+              <Icons.logo className="mr-2 h-4 w-4" />
+              {process.env.PLASMO_PUBLIC_SHIP_NAME}-{authedUser?.attrs?.name}
+              {entity?.data?.notes?.length > 0 && (
+                <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
+                  {entity?.data?.notes?.length}
+                </span>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent size="lg">
+            <SheetHeader className="text-left">
+              <SheetTitle>Add Note</SheetTitle>
+              <SheetDescription>
+                Make changes to your notes here.
+              </SheetDescription>
+            </SheetHeader>
 
-              <div className="grid gap-4 py-4">
-                {/* {tabUrl && <span>Current URL: {tabUrl}</span>} */}
+            <div className="grid gap-4 py-4">
+              {tabUrl && <span>{new URL(tabUrl).pathname.substring(1)}</span>}
 
-                <DatePickerReminderForm
+              {/* <DatePickerReminderForm
                   queryClient={queryClient}
                   tabUrl={tabUrl}
-                />
-                <Button type="submit" onClick={saveNote}>
-                  Save note
-                </Button>
-                <Notes tabUrl={tabUrl} />
-                {/* <Pins /> */}
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="note">Note</Label>
-                  <Textarea
-                    id="note"
-                    placeholder="Add your note here."
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                  />
-                </div>
+                /> */}
+
+              <PinButton
+                queryClient={queryClient}
+                pinId={entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null}
+              />
+
+              <div>
+                {entity?.status === "loading" && <p>Loading...</p>}
+                {entity?.status === "error" && (
+                  <p>Error: {entity?.error?.message}</p>
+                )}
+                {entity?.status === "success" && (
+                  <>
+                    {entity?.data ? (
+                      <code>{JSON.stringify(entity?.data)}</code>
+                    ) : (
+                      <p>No entity yet</p>
+                    )}
+                  </>
+                )}
               </div>
-              <SheetFooter>
-                {/* <Button type="submit" onClick={saveNote}>
+
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="note">Note</Label>
+                <Textarea
+                  id="note"
+                  placeholder="Add your note here."
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                />
+              </div>
+              <Button type="submit" onClick={saveNote}>
+                Save note
+              </Button>
+            </div>
+            <SheetFooter>
+              {/* <Button type="submit" onClick={saveNote}>
                 Save note
               </Button> */}
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
-        ) : (
-          <Button asChild>
-            <a href={`${baseUrl}/auth/signin`} target="_blank">
-              <Icons.logo className="mr-2 h-4 w-4" />
-              {process.env.PLASMO_PUBLIC_SHIP_NAME}
-            </a>
-          </Button>
-        )}
-        <Toaster />
-      </div>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Button asChild>
+          <a href={`${baseUrl}/auth/signin`} target="_blank">
+            <Icons.logo className="mr-2 h-4 w-4" />
+            {process.env.PLASMO_PUBLIC_SHIP_NAME}
+          </a>
+        </Button>
+      )}
+      <Toaster />
+    </div>
   )
 }
 
-export default ActionSheet
+export default App

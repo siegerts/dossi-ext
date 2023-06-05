@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card"
 
 import { Icons } from "@/components/icons"
-import Pins from "@/components/Pins"
+import Pins from "~components/PinButton"
 // import User from "@/components/User"
 
 const baseUrl =
@@ -57,7 +57,11 @@ const IndexPopup = () => {
       <div className="w-[380px] rounded-lg">
         <Card className="w-full">
           <CardHeader>
-            <CardTitle>Welcome 👋</CardTitle>
+            <CardTitle>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Welcome back
+              </h1>
+            </CardTitle>
             <CardDescription>{/* <User /> */}</CardDescription>
           </CardHeader>
 
@@ -67,7 +71,7 @@ const IndexPopup = () => {
                 <div>
                   <p>{authedUser?.name}</p>
                 </div>
-                <Pins />
+                {/* <Pins /> */}
 
                 <form
                   action={`${baseUrl}/auth/signout`}
@@ -81,14 +85,14 @@ const IndexPopup = () => {
             </CardContent>
           ) : (
             <CardContent className="grid gap-4">
-              <div>
-                <h1>Sign in to dossi</h1>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Sign in to your account
+              </p>
 
-              <Button asChild className="w-full">
+              <Button asChild>
                 <a href={`${baseUrl}/auth/signin`} target="_blank">
-                  <Icons.gitHub className="mr-4 h-4 w-4" />
-                  GitHub
+                  <Icons.logo className="mr-4 h-4 w-4" />
+                  Sign in to dossi
                 </a>
               </Button>
             </CardContent>

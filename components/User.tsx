@@ -8,7 +8,7 @@ interface TSession {
   name: string
 }
 
-const Pins = () => {
+const User = () => {
   const { status, error, data } = useQuery<boolean, Error, TSession>(
     ["user"],
     async ({ queryKey }) => {
@@ -18,7 +18,6 @@ const Pins = () => {
         })
 
         if (status.ok) {
-          console.log(user)
           return user
         } else {
           throw Error(status.error)
@@ -38,4 +37,4 @@ const Pins = () => {
   )
 }
 
-export default Pins
+export default User

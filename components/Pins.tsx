@@ -29,24 +29,6 @@ const Pins = () => {
       }
     }
   )
-
-  return (
-    <div>
-      {status === "loading" && <p>Loading...</p>}
-      {status === "error" && <p>Error: {error.message}</p>}
-      {status === "success" && (
-        <div>
-          {data.length > 0 ? (
-            data.length
-          ) : (
-            <div>
-              <p>No pins yet</p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
 }
 
 export default Pins

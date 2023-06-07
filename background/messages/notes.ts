@@ -73,8 +73,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "POST": {
-      console.log("URL sender", req.sender)
-
       let resp: Response
       try {
         // validate
@@ -127,16 +125,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ content: req?.body?.note })
+        body: JSON.stringify({ content: req?.body?.content })
       })
 
       const ok = resp.ok
 
       if (resp.ok) {
-        const note = await resp.json()
-        return res.send({
-          note
-        })
+        return res.send({ status: { ok } })
       } else {
         if (resp.status === 403) {
           return res.send({ status: { ok, error: "user not logged in" } })

@@ -18,11 +18,13 @@ import {
   useQuery,
   QueryClientProvider
 } from "@tanstack/react-query"
+
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import PinButton from "~components/PinButton"
 import Notes from "@/components/Notes"
-// import Entity from "@/components/Entity"
+import Note from "@/components/Note"
+
 import { DatePickerReminderForm } from "@/components/ReminderForm"
 import { baseUrl } from "~lib/constants"
 
@@ -39,7 +41,7 @@ import {
 } from "@/components/ui/sheet-maintainer"
 
 import "~/contents/base.css"
-import { Pin } from "lucide-react"
+import { set } from "date-fns"
 
 type EntityItem = {
   id: string
@@ -82,15 +84,17 @@ const App = () => {
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
   const [tabUrl, setTabUrl] = useState("")
+  const [tabTitle, setTabTitle] = useState("")
   const [authedUser, setAuthedUser] = useStorage("user")
 
   useEffect(() => {
     const handleRequest = async (req: any) => {
       if (req.type === "URL_CHANGE") {
-        const { url } = await sendToBackground({
+        const { url, title } = await sendToBackground({
           name: "tab" as never
         })
         setTabUrl(url)
+        setTabTitle(title)
       }
     }
 
@@ -178,12 +182,13 @@ const ActionSheet = () => {
             </SheetHeader>
 
             <div className="grid gap-4 py-4">
+              {tabTitle && <span>{tabTitle}</span>}
               {tabUrl && <span>{new URL(tabUrl).pathname.substring(1)}</span>}
 
-              {/* <DatePickerReminderForm
-                  queryClient={queryClient}
-                  tabUrl={tabUrl}
-                /> */}
+              <DatePickerReminderForm
+                queryClient={queryClient}
+                tabUrl={tabUrl}
+              />
 
               <PinButton
                 queryClient={queryClient}
@@ -198,7 +203,18 @@ const ActionSheet = () => {
                 {entity?.status === "success" && (
                   <>
                     {entity?.data ? (
-                      <code>{JSON.stringify(entity?.data)}</code>
+                      <>
+                        {entity?.data?.notes.map((note: any) => (
+                          <div key={note?.id} className="border-b py-2">
+                            <Note
+                              note={note}
+                              queryClient={queryClient}
+                              tabUrl={tabUrl}
+                            />
+                          </div>
+                        ))}
+                        <code>{JSON.stringify(entity?.data)}</code>
+                      </>
                     ) : (
                       <p>No entity yet</p>
                     )}

@@ -24,6 +24,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import PinButton from "~components/PinButton"
 import Notes from "@/components/Notes"
 import Note from "@/components/Note"
+import LabelList from "~components/LabelList"
+
+import LabelAdd from "~components/LabelAdd"
 
 import { DatePickerReminderForm } from "@/components/ReminderForm"
 import { baseUrl } from "~lib/constants"
@@ -124,13 +127,33 @@ const ActionSheet = () => {
     init()
   }, [])
 
-  const entity = useQuery(["entity", tabUrl], async ({ queryKey }) => {
+  const entity = useQuery(["entity", tabUrl], async () => {
     try {
       let { data, status } = await sendToBackground({
         name: "entities" as never,
         body: {
           type: "GET_ENTITY_BY_URL",
           url: tabUrl
+        }
+      })
+
+      if (status.ok) {
+        console.log(data)
+        return data
+      } else {
+        throw Error(status.error)
+      }
+    } catch (err) {
+      throw Error(err)
+    }
+  })
+
+  const labels = useQuery(["labels"], async () => {
+    try {
+      let { data, status } = await sendToBackground({
+        name: "labels" as never,
+        body: {
+          type: "GET"
         }
       })
 
@@ -195,25 +218,27 @@ const ActionSheet = () => {
                 pinId={entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null}
               />
 
-              <div>
+              <div className="flex items-center space-x-2 pt-4">
+                <LabelList labels={labels} queryClient={queryClient} />
+                <LabelAdd labels={labels} queryClient={queryClient} />
+               
+              </div>
+
+              <div className="mb-2 grid gap-2">
                 {entity?.status === "loading" && <p>Loading...</p>}
-                {entity?.status === "error" && (
-                  <p>Error: {entity?.error?.message}</p>
-                )}
+                {entity?.status === "error" && <p>Error loading</p>}
                 {entity?.status === "success" && (
                   <>
                     {entity?.data ? (
                       <>
                         {entity?.data?.notes.map((note: any) => (
-                          <div key={note?.id} className="border-b py-2">
-                            <Note
-                              note={note}
-                              queryClient={queryClient}
-                              tabUrl={tabUrl}
-                            />
-                          </div>
+                          <Note
+                            key={note?.id}
+                            note={note}
+                            queryClient={queryClient}
+                            tabUrl={tabUrl}
+                          />
                         ))}
-                        <code>{JSON.stringify(entity?.data)}</code>
                       </>
                     ) : (
                       <p>No entity yet</p>
@@ -222,7 +247,7 @@ const ActionSheet = () => {
                 )}
               </div>
 
-              <div className="grid w-full max-w-sm items-center gap-1.5">
+              <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="note">Note</Label>
                 <Textarea
                   id="note"
@@ -235,6 +260,7 @@ const ActionSheet = () => {
                 Save note
               </Button>
             </div>
+
             <SheetFooter>
               {/* <Button type="submit" onClick={saveNote}>
                 Save note

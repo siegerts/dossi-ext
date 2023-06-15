@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/sheet-maintainer"
 
 import "~/contents/base.css"
-import { set } from "date-fns"
 
 type EntityItem = {
   id: string
@@ -218,17 +217,25 @@ const ActionSheet = () => {
                 pinId={entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null}
               />
 
-              <div className="flex items-center space-x-2 pt-4">
-                <LabelList labels={labels} queryClient={queryClient} />
-                <LabelAdd labels={labels} queryClient={queryClient} />
-               
-              </div>
-
               <div className="mb-2 grid gap-2">
                 {entity?.status === "loading" && <p>Loading...</p>}
                 {entity?.status === "error" && <p>Error loading</p>}
                 {entity?.status === "success" && (
                   <>
+                    <div className="flex flex-wrap items-center gap-2 pt-4">
+                      <LabelList
+                        labels={entity?.data?.labels}
+                        entityId={entity?.data?.id}
+                        tabUrl={tabUrl}
+                        queryClient={queryClient}
+                      />
+                      <LabelAdd
+                        labels={labels?.data}
+                        entityId={entity?.data?.id}
+                        tabUrl={tabUrl}
+                        queryClient={queryClient}
+                      />
+                    </div>
                     {entity?.data ? (
                       <>
                         {entity?.data?.notes.map((note: any) => (

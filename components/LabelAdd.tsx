@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useDebounce } from "@uidotdev/usehooks"
+// import { useDebounce } from "@uidotdev/usehooks"
 import { Icons } from "@/components/icons"
 import { PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -45,39 +45,45 @@ type Label = {
   value: string
 }
 
-const LabelAddPopover = ({ labels, queryClient }) => {
+const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
   // create
   const [newLabelName, setNewLabelName] = useState("")
   const [newLabelDescription, setNewLabelDescription] = useState("")
   const [open, setOpen] = useState(false)
   const [showCreateLabelDialog, setShowCreateLabelDialog] = useState(false)
-  const [selectedLabel, setSelectedLabel] = useState(null)
 
   // add
 
   // filter
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [results, setResults] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
+  // const [searchTerm, setSearchTerm] = useState("")
+  // const [results, setResults] = useState([])
+  // const [isSearching, setIsSearching] = useState(false)
+  // const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
-  const handleChange = (e) => {
-    setSearchTerm(e.target.value)
-  }
+  // const handleChange = (e) => {
+  //   setSearchTerm(e.target.value)
+  // }
 
-  const addLabel = async (label) => {
-    await sendToBackground({
-      name: "labels",
-      body: {
-        type: "POST",
-        name: label.name,
-        description: label.description
+  const addLabeltoEntity = async (labelId) => {
+    try {
+      let { status } = await sendToBackground({
+        name: "labelOnEntity",
+        body: {
+          type: "ADD_LABEL_TO_ENTITY",
+          entityId,
+          labelId
+        }
+      })
+      if (status.ok) {
+        console.log("invalidating...", tabUrl)
+        queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+      } else {
+        throw Error(status.error)
       }
-    })
-
-    // queryClient.invalidateQueries({ queryKey: ["notes", tabUrl] })
-    // queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    } catch (err) {
+      throw Error(err)
+    }
   }
 
   const createLabel = async () => {
@@ -102,6 +108,13 @@ const LabelAddPopover = ({ labels, queryClient }) => {
     }
   }
 
+  const selectLabel = (value) => {
+    const label = labels.find((label) => label.name === value)
+
+    addLabeltoEntity(label.id)
+    setOpen(false)
+  }
+
   return (
     <div className="flex items-center space-x-4">
       <Dialog
@@ -124,15 +137,16 @@ const LabelAddPopover = ({ labels, queryClient }) => {
               <CommandList>
                 <CommandEmpty>No labels found.</CommandEmpty>
                 <CommandGroup>
-                  {labels.length > 0 &&
+                  {labels &&
+                    Array.isArray(labels) &&
+                    labels.length > 0 &&
                     labels.map((label) => (
                       <CommandItem
-                        key={label}
+                        key={label.id}
                         onSelect={(value) => {
-                          setSelectedLabel(value)
-                          setOpen(false)
+                          selectLabel(value)
                         }}>
-                        {label}
+                        {label?.name}
                       </CommandItem>
                     ))}
                 </CommandGroup>
@@ -180,7 +194,7 @@ const LabelAddPopover = ({ labels, queryClient }) => {
                   placeholder="Give the people what they want!"
                 />
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="plan">Subscription plan</Label>
                 <Select>
                   <SelectTrigger>
@@ -200,10 +214,10 @@ const LabelAddPopover = ({ labels, queryClient }) => {
                       </span>
                     </SelectItem>
                   </SelectContent>
-                </Select>
-              </div>
+                </Select> */}
             </div>
           </div>
+
           <DialogFooter>
             <Button
               variant="outline"
@@ -220,4 +234,4 @@ const LabelAddPopover = ({ labels, queryClient }) => {
   )
 }
 
-export default LabelAddPopover
+export default LabelAdd

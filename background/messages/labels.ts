@@ -67,6 +67,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       return handleResponse(resp, res, "DELETE")
     }
 
+    // TODO: remove this
     case "SEARCH": {
       // validate the keyword is a string and not empty
       const keyword = z.string().min(1).parse(req?.body?.keyword)

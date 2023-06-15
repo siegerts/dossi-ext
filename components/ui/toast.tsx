@@ -1,9 +1,9 @@
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
-import { VariantProps, cva } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
 
-import { cn } from "~lib/utils"
+import { cn } from "@/lib/utils"
 
 const ToastProvider = ToastPrimitives.Provider
 
@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      "fixed top-0 z-[1000] flex max-h-screen w-full p-4 sm:bottom-auto sm:right-0 sm:top-0 sm:flex-col md:max-w-[420px]",
       className
     )}
     {...props}
@@ -29,12 +29,12 @@ const toastVariants = cva(
       variant: {
         default: "bg-background border",
         destructive:
-          "group destructive border-destructive bg-destructive text-destructive-foreground",
-      },
+          "group destructive border-destructive bg-destructive text-destructive-foreground"
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
+      variant: "default"
+    }
   }
 )
 
@@ -79,8 +79,7 @@ const ToastClose = React.forwardRef<
       className
     )}
     toast-close=""
-    {...props}
-  >
+    {...props}>
     <X className="h-4 w-4" />
   </ToastPrimitives.Close>
 ))
@@ -123,5 +122,5 @@ export {
   ToastTitle,
   ToastDescription,
   ToastClose,
-  ToastAction,
+  ToastAction
 }

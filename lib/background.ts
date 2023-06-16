@@ -15,8 +15,13 @@ const handleResponse = async (
   const ok = resp.ok
 
   if (resp.ok) {
-    const data = await resp.json()
-    return res.send({ data, status: { ok } })
+    try {
+      const data = await resp.json()
+      return res.send({ data, status: { ok } })
+    } catch (error) {
+      // no data returned
+      return res.send({ status: { ok } })
+    }
   } else {
     const error =
       resp.status === 403 ? "user not logged in" : `${action} action failed`

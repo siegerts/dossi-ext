@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
         name: "user" as never
       })
 
-      setUser(user.user)
+      setUser(user?.user)
     }
 
     document.addEventListener("visibilitychange", () => {

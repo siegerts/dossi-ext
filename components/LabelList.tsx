@@ -1,6 +1,6 @@
 import { LabelBadge } from "./LabelBadge"
 
-const LabelList = ({ labels, queryClient, entityId, tabUrl }) => {
+const LabelList = ({ labels, entityId, tabUrl }) => {
   // add the delete label function here
 
   return (
@@ -13,7 +13,6 @@ const LabelList = ({ labels, queryClient, entityId, tabUrl }) => {
             label={label}
             entityId={entityId}
             tabUrl={tabUrl}
-            queryClient={queryClient}
           />
         ))}
     </>

@@ -74,12 +74,12 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
         <ActionSheet />
         <ReactQueryDevtools initialIsOpen={false} />
-      </AuthProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   )
 }
 
@@ -87,6 +87,7 @@ const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
   const [tabUrl, setTabUrl] = useState("")
   const [tabTitle, setTabTitle] = useState("")
+
   const { user } = useAuth()
 
   useEffect(() => {
@@ -198,7 +199,6 @@ const ActionSheet = () => {
 
               <div className="flex flex-col">
                 <PinButton
-                  queryClient={queryClient}
                   pinId={
                     entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null
                   }
@@ -215,13 +215,11 @@ const ActionSheet = () => {
                         labels={entity?.data?.labels}
                         entityId={entity?.data?.id}
                         tabUrl={tabUrl}
-                        queryClient={queryClient}
                       />
                       <LabelAdd
                         labels={labels?.data}
                         entityId={entity?.data?.id}
                         tabUrl={tabUrl}
-                        queryClient={queryClient}
                       />
                     </div>
                     {entity?.data ? (

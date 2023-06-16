@@ -5,6 +5,7 @@ import { PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { badgeVariants } from "@/components/ui/badge"
 import { sendToBackground } from "@plasmohq/messaging"
+import { useQueryClient } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -45,12 +46,13 @@ type Label = {
   value: string
 }
 
-const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
+const LabelAdd = ({ labels, entityId, tabUrl }) => {
   // create
   const [newLabelName, setNewLabelName] = useState("")
   const [newLabelDescription, setNewLabelDescription] = useState("")
   const [open, setOpen] = useState(false)
   const [showCreateLabelDialog, setShowCreateLabelDialog] = useState(false)
+  const client = useQueryClient()
 
   // add
 
@@ -76,7 +78,7 @@ const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
         }
       })
       if (status.ok) {
-        queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+        client.invalidateQueries({ queryKey: ["entity", tabUrl] })
       } else {
         throw Error(status.error)
       }
@@ -97,7 +99,7 @@ const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
         }
       })
       if (status.ok) {
-        queryClient.invalidateQueries({ queryKey: ["labels"] })
+        client.invalidateQueries({ queryKey: ["labels"] })
         setShowCreateLabelDialog(false)
       } else {
         throw Error(status.error)

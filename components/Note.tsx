@@ -15,11 +15,14 @@ import { Textarea } from "@/components/ui/textarea"
 
 import { formatDistanceToNow } from "date-fns"
 
+import { useQueryClient } from "@tanstack/react-query"
+
 const Note = ({ note, queryClient, tabUrl }) => {
   const [noteContent, setNoteContent] = useState(note.content)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isNoteSaving, setIsNoteSaving] = useState<boolean>(false)
+  const client = useQueryClient()
 
   const saveNote = async () => {
     await sendToBackground({
@@ -31,14 +34,14 @@ const Note = ({ note, queryClient, tabUrl }) => {
       }
     })
 
-    await queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    await client.invalidateQueries({ queryKey: ["entity", tabUrl] })
     setIsEditing(false)
     setIsNoteSaving(false)
   }
   return (
     <>
       {!isEditing ? (
-        <div className="rounded-md border px-2 pb-1 pt-2">
+        <div className="my-2">
           <Remark>{note.content}</Remark>
           <div className="flex items-center justify-between gap-1.5">
             <TooltipProvider>

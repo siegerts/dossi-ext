@@ -2,6 +2,7 @@ import { Badge, badgeVariants } from "@/components/ui/badge"
 import { sendToBackground } from "@plasmohq/messaging"
 import { Icons } from "@/components/icons"
 import { cn } from "@/lib/utils"
+import { useQueryClient } from "@tanstack/react-query"
 
 import {
   Tooltip,
@@ -10,7 +11,9 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip"
 
-export const LabelBadge = ({ label, entityId, tabUrl, queryClient }) => {
+export const LabelBadge = ({ label, entityId, tabUrl }) => {
+  const client = useQueryClient()
+
   const deleteLabelFromEntity = async (labelId) => {
     await sendToBackground({
       name: "labelOnEntity",
@@ -21,7 +24,7 @@ export const LabelBadge = ({ label, entityId, tabUrl, queryClient }) => {
       }
     })
 
-    queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    client.invalidateQueries({ queryKey: ["entity", tabUrl] })
   }
 
   return (

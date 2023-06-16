@@ -1,21 +1,24 @@
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQuery } from "@tanstack/react-query"
+import { useEntity } from "@/contexts/entity"
 
 type Note = {
   id: string
   content: string
 }
 
-export const Notes = ({ tabUrl }: { tabUrl: string }) => {
+export const Notes = () => {
+  const entity = useEntity()
+
   const { status, error, data } = useQuery<boolean, Error, Array<Note>>(
-    ["notes", tabUrl],
+    ["notes", entity?.url],
     async ({ queryKey }) => {
       try {
         let { notes, status } = await sendToBackground({
           name: "notes" as never,
           body: {
             type: "GET_NOTES_BY_URL",
-            url: tabUrl
+            url: entity?.url
           }
         })
 

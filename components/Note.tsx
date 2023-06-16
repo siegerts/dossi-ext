@@ -1,5 +1,6 @@
 import { Remark } from "react-remark"
 import { useState } from "react"
+import { useEntity } from "@/contexts/entity"
 
 import {
   Tooltip,
@@ -17,12 +18,13 @@ import { formatDistanceToNow } from "date-fns"
 
 import { useQueryClient } from "@tanstack/react-query"
 
-const Note = ({ note, queryClient, tabUrl }) => {
+const Note = ({ note }) => {
   const [noteContent, setNoteContent] = useState(note.content)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isNoteSaving, setIsNoteSaving] = useState<boolean>(false)
   const client = useQueryClient()
+  const entity = useEntity()
 
   const saveNote = async () => {
     await sendToBackground({
@@ -34,7 +36,7 @@ const Note = ({ note, queryClient, tabUrl }) => {
       }
     })
 
-    await client.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    await client.invalidateQueries({ queryKey: ["entity", entity.url] })
     setIsEditing(false)
     setIsNoteSaving(false)
   }

@@ -1,10 +1,12 @@
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQueryClient } from "@tanstack/react-query"
+import { useEntity } from "@/contexts/entity"
 
 import { Button } from "@/components/ui/button"
 
 const PinButton = ({ pinId }: { pinId: string | null }) => {
   const client = useQueryClient()
+  const entity = useEntity()
   const pin = async () => {
     await sendToBackground({
       name: "pins",
@@ -13,7 +15,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
       }
     })
 
-    client.invalidateQueries({ queryKey: ["pins"] })
+    client.invalidateQueries({ queryKey: ["entities", entity?.url] })
   }
 
   const unpin = async (pinId: string) => {
@@ -25,7 +27,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
       }
     })
 
-    queryClient.invalidateQueries({ queryKey: ["pins"] })
+    client.invalidateQueries({ queryKey: ["entities", entity?.url] })
   }
 
   return (

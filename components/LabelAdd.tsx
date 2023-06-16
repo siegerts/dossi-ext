@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { badgeVariants } from "@/components/ui/badge"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQueryClient } from "@tanstack/react-query"
+import { useEntity } from "@/contexts/entity"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,26 +34,20 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
 
 type Label = {
   id: string
   value: string
 }
 
-const LabelAdd = ({ labels, entityId, tabUrl }) => {
+const LabelAdd = ({ labels }) => {
   // create
   const [newLabelName, setNewLabelName] = useState("")
   const [newLabelDescription, setNewLabelDescription] = useState("")
   const [open, setOpen] = useState(false)
   const [showCreateLabelDialog, setShowCreateLabelDialog] = useState(false)
   const client = useQueryClient()
+  const entity = useEntity()
 
   // add
 
@@ -73,12 +68,12 @@ const LabelAdd = ({ labels, entityId, tabUrl }) => {
         name: "labelOnEntity",
         body: {
           type: "ADD_LABEL_TO_ENTITY",
-          entityId,
+          entityId: entity.id,
           labelId
         }
       })
       if (status.ok) {
-        client.invalidateQueries({ queryKey: ["entity", tabUrl] })
+        client.invalidateQueries({ queryKey: ["entity", entity.url] })
       } else {
         throw Error(status.error)
       }
@@ -195,27 +190,6 @@ const LabelAdd = ({ labels, entityId, tabUrl }) => {
                 placeholder="Give the people what they want!"
               />
             </div>
-            {/* <div className="space-y-2">
-                <Label htmlFor="plan">Subscription plan</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a plan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="free">
-                      <span className="font-medium">Free</span> -{" "}
-                      <span className="text-muted-foreground">
-                        Trial for two weeks
-                      </span>
-                    </SelectItem>
-                    <SelectItem value="pro">
-                      <span className="font-medium">Pro</span> -{" "}
-                      <span className="text-muted-foreground">
-                        $9/month per user
-                      </span>
-                    </SelectItem>
-                  </SelectContent>
-                </Select> */}
           </div>
         </div>
 

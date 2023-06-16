@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { AuthProvider, useAuth } from "@/contexts/user"
+import { EntityProvider, useEntity } from "@/contexts/entity"
+
 import type {
   PlasmoCSConfig,
   PlasmoGetInlineAnchor,
@@ -76,8 +78,10 @@ const App = () => {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <ActionSheet />
-        <ReactQueryDevtools initialIsOpen={false} />
+        <EntityProvider>
+          <ActionSheet />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </EntityProvider>
       </QueryClientProvider>
     </AuthProvider>
   )
@@ -85,52 +89,11 @@ const App = () => {
 
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
-  const [tabUrl, setTabUrl] = useState("")
-  const [tabTitle, setTabTitle] = useState("")
+  // const [tabUrl, setTabUrl] = useState("")
+  // const [tabTitle, setTabTitle] = useState("")
 
   const { user } = useAuth()
-
-  useEffect(() => {
-    const handleRequest = async (req: any) => {
-      if (req.type === "URL_CHANGE") {
-        const { url, title } = await sendToBackground({
-          name: "tab" as never
-        })
-        setTabUrl(url)
-        setTabTitle(title)
-      }
-    }
-
-    chrome.runtime.onMessage.addListener(function (
-      request,
-      sender,
-      sendResponse
-    ) {
-      handleRequest(request).then((response) => sendResponse(response))
-      return true
-    })
-  }, [])
-
-  const entity = useQuery(["entity", tabUrl], async () => {
-    try {
-      let { data, status } = await sendToBackground({
-        name: "entities" as never,
-        body: {
-          type: "GET_ENTITY_BY_URL",
-          url: tabUrl
-        }
-      })
-
-      if (status.ok) {
-        console.log(data)
-        return data
-      } else {
-        throw Error(status.error)
-      }
-    } catch (err) {
-      throw Error(err)
-    }
-  })
+  const entity = useEntity()
 
   const labels = useQuery(["labels"], async () => {
     try {
@@ -161,8 +124,8 @@ const ActionSheet = () => {
       }
     })
     setNoteContent("")
-    queryClient.invalidateQueries({ queryKey: ["notes", tabUrl] })
-    queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    queryClient.invalidateQueries({ queryKey: ["notes", entity?.url] })
+    queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
   }
 
   return (
@@ -173,9 +136,9 @@ const ActionSheet = () => {
             <Button>
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
-              {entity?.data?.notes?.length > 0 && (
+              {entity?.notes?.length > 0 && (
                 <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
-                  {entity?.data?.notes?.length}
+                  {entity?.notes?.length}
                 </span>
               )}
             </Button>
@@ -189,8 +152,10 @@ const ActionSheet = () => {
             </SheetHeader>
 
             <div className="gap-4 py-4">
-              {tabTitle && <span>{tabTitle}</span>}
-              {tabUrl && <span>{new URL(tabUrl).pathname.substring(1)}</span>}
+              {entity?.title && <span>{entity?.title}</span>}
+              {entity?.url && (
+                <span>{new URL(entity?.url).pathname.substring(1)}</span>
+              )}
 
               {/* <DatePickerReminderForm
                 queryClient={queryClient}
@@ -200,7 +165,9 @@ const ActionSheet = () => {
               <div className="flex flex-col">
                 <PinButton
                   pinId={
-                    entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null
+                    entity?.pins && entity?.pins.length == 1
+                      ? entity?.pins[0]?.id
+                      : null
                   }
                 />
               </div>
@@ -211,26 +178,13 @@ const ActionSheet = () => {
                 {entity?.status === "success" && (
                   <>
                     <div className="flex flex-wrap items-center gap-2 py-4">
-                      <LabelList
-                        labels={entity?.data?.labels}
-                        entityId={entity?.data?.id}
-                        tabUrl={tabUrl}
-                      />
-                      <LabelAdd
-                        labels={labels?.data}
-                        entityId={entity?.data?.id}
-                        tabUrl={tabUrl}
-                      />
+                      <LabelList labels={entity?.labels} />
+                      <LabelAdd labels={labels?.data} />
                     </div>
-                    {entity?.data ? (
+                    {entity?.notes.length > 0 ? (
                       <>
-                        {entity?.data?.notes.map((note: any) => (
-                          <Note
-                            key={note?.id}
-                            note={note}
-                            queryClient={queryClient}
-                            tabUrl={tabUrl}
-                          />
+                        {entity?.notes.map((note: any) => (
+                          <Note key={note?.id} note={note} />
                         ))}
                       </>
                     ) : (
@@ -256,11 +210,7 @@ const ActionSheet = () => {
               </div>
             </div>
 
-            <SheetFooter>
-              {/* <Button type="submit" onClick={saveNote}>
-                Save note
-              </Button> */}
-            </SheetFooter>
+            <SheetFooter></SheetFooter>
           </SheetContent>
         </Sheet>
       ) : (

@@ -3,6 +3,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import { Icons } from "@/components/icons"
 import { cn } from "@/lib/utils"
 import { useQueryClient } from "@tanstack/react-query"
+import { useEntity } from "@/contexts/entity"
 
 import {
   Tooltip,
@@ -11,20 +12,21 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip"
 
-export const LabelBadge = ({ label, entityId, tabUrl }) => {
+export const LabelBadge = ({ label }) => {
   const client = useQueryClient()
+  const entity = useEntity()
 
   const deleteLabelFromEntity = async (labelId) => {
     await sendToBackground({
       name: "labelOnEntity",
       body: {
         type: "DELETE_LABEL_FROM_ENTITY",
-        entityId,
+        entityId: entity.id,
         labelId
       }
     })
 
-    client.invalidateQueries({ queryKey: ["entity", tabUrl] })
+    client.invalidateQueries({ queryKey: ["entity", entity.url] })
   }
 
   return (

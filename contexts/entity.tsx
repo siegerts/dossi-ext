@@ -61,7 +61,7 @@ export function EntityProvider({ children }) {
       const { url, title } = await sendToBackground({
         name: "tab" as never
       })
-      console.log(url, title)
+
       setTab({ url, title })
     }
 

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react"
+import { AuthProvider, useAuth } from "@/contexts/user"
 import type {
   PlasmoCSConfig,
   PlasmoGetInlineAnchor,
   PlasmoCreateShadowRoot
 } from "plasmo"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useStorage } from "@plasmohq/storage/hook"
 import cssText from "data-text:~/contents/global.css"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -22,13 +22,11 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import PinButton from "~components/PinButton"
-import Notes from "@/components/Notes"
 import Note from "@/components/Note"
 import LabelList from "~components/LabelList"
-
 import LabelAdd from "~components/LabelAdd"
 
-import { DatePickerReminderForm } from "@/components/ReminderForm"
+// import { DatePickerReminderForm } from "@/components/ReminderForm"
 import { baseUrl } from "~lib/constants"
 
 const queryClient = new QueryClient()
@@ -77,8 +75,10 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ActionSheet />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <AuthProvider>
+        <ActionSheet />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </AuthProvider>
     </QueryClientProvider>
   )
 }
@@ -87,7 +87,7 @@ const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
   const [tabUrl, setTabUrl] = useState("")
   const [tabTitle, setTabTitle] = useState("")
-  const [authedUser, setAuthedUser] = useStorage("user")
+  const { user } = useAuth()
 
   useEffect(() => {
     const handleRequest = async (req: any) => {
@@ -100,14 +100,6 @@ const ActionSheet = () => {
       }
     }
 
-    const init = async () => {
-      const { user, status } = await sendToBackground({
-        name: "user" as never
-      })
-
-      setAuthedUser(user.user)
-    }
-
     chrome.runtime.onMessage.addListener(function (
       request,
       sender,
@@ -116,14 +108,6 @@ const ActionSheet = () => {
       handleRequest(request).then((response) => sendResponse(response))
       return true
     })
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        init()
-      }
-    })
-
-    init()
   }, [])
 
   const entity = useQuery(["entity", tabUrl], async () => {
@@ -182,12 +166,12 @@ const ActionSheet = () => {
 
   return (
     <div>
-      {authedUser ? (
+      {user?.isAuthed ? (
         <Sheet modal={false}>
           <SheetTrigger asChild className="justify-end">
             <Button>
               <Icons.logo className="mr-2 h-4 w-4" />
-              {process.env.PLASMO_PUBLIC_SHIP_NAME}-{authedUser?.attrs?.name}
+              {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
               {entity?.data?.notes?.length > 0 && (
                 <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
                   {entity?.data?.notes?.length}
@@ -203,26 +187,30 @@ const ActionSheet = () => {
               </SheetDescription>
             </SheetHeader>
 
-            <div className="grid gap-4 py-4">
+            <div className="gap-4 py-4">
               {tabTitle && <span>{tabTitle}</span>}
               {tabUrl && <span>{new URL(tabUrl).pathname.substring(1)}</span>}
 
-              <DatePickerReminderForm
+              {/* <DatePickerReminderForm
                 queryClient={queryClient}
                 tabUrl={tabUrl}
-              />
+              /> */}
 
-              <PinButton
-                queryClient={queryClient}
-                pinId={entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null}
-              />
+              <div className="flex flex-col">
+                <PinButton
+                  queryClient={queryClient}
+                  pinId={
+                    entity?.data?.pins[0] ? entity?.data?.pins[0]?.id : null
+                  }
+                />
+              </div>
 
               <div className="mb-2 grid gap-2">
                 {entity?.status === "loading" && <p>Loading...</p>}
                 {entity?.status === "error" && <p>Error loading</p>}
                 {entity?.status === "success" && (
                   <>
-                    <div className="flex flex-wrap items-center gap-2 pt-4">
+                    <div className="flex flex-wrap items-center gap-2 py-4">
                       <LabelList
                         labels={entity?.data?.labels}
                         entityId={entity?.data?.id}
@@ -248,7 +236,7 @@ const ActionSheet = () => {
                         ))}
                       </>
                     ) : (
-                      <p>No entity yet</p>
+                      <p>No notes yet..</p>
                     )}
                   </>
                 )}
@@ -263,9 +251,11 @@ const ActionSheet = () => {
                   onChange={(e) => setNoteContent(e.target.value)}
                 />
               </div>
-              <Button type="submit" onClick={saveNote}>
-                Save note
-              </Button>
+              <div className="mt-4 flex justify-end">
+                <Button type="submit" onClick={saveNote}>
+                  Save note
+                </Button>
+              </div>
             </div>
 
             <SheetFooter>

@@ -76,7 +76,6 @@ const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
         }
       })
       if (status.ok) {
-        console.log("invalidating...", tabUrl)
         queryClient.invalidateQueries({ queryKey: ["entity", tabUrl] })
       } else {
         throw Error(status.error)
@@ -116,85 +115,85 @@ const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
   }
 
   return (
-    <div className="flex items-center space-x-4">
-      <Dialog
-        open={showCreateLabelDialog}
-        onOpenChange={setShowCreateLabelDialog}>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <button
-              className={cn(
-                "border-dashed",
-                badgeVariants({ variant: "outline" })
-              )}>
-              <Icons.add className="mr-1 h-3 w-3" />
-              Add label
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="p-0" side="right" align="start">
-            <Command>
-              <CommandInput placeholder="Add label..." autoFocus={true} />
-              <CommandList>
-                <CommandEmpty>No labels found.</CommandEmpty>
-                <CommandGroup>
-                  {labels &&
-                    Array.isArray(labels) &&
-                    labels.length > 0 &&
-                    labels.map((label) => (
-                      <CommandItem
-                        key={label.id}
-                        onSelect={(value) => {
-                          selectLabel(value)
-                        }}>
-                        {label?.name}
-                      </CommandItem>
-                    ))}
-                </CommandGroup>
-              </CommandList>
-              <CommandSeparator />
-              <CommandList>
-                <CommandGroup>
-                  <DialogTrigger asChild>
+    // <div className="flex space-x-4">
+    <Dialog
+      open={showCreateLabelDialog}
+      onOpenChange={setShowCreateLabelDialog}>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            className={cn(
+              "border-dashed",
+              badgeVariants({ variant: "outline" })
+            )}>
+            <Icons.add className="mr-1 h-3 w-3" />
+            Add label
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="p-0" side="right" align="start">
+          <Command>
+            <CommandInput placeholder="Add label..." autoFocus={true} />
+            <CommandList>
+              <CommandEmpty>No labels found.</CommandEmpty>
+              <CommandGroup>
+                {labels &&
+                  Array.isArray(labels) &&
+                  labels.length > 0 &&
+                  labels.map((label) => (
                     <CommandItem
-                      onSelect={() => {
-                        setOpen(false)
-                        setShowCreateLabelDialog(true)
+                      key={label.id}
+                      onSelect={(value) => {
+                        selectLabel(value)
                       }}>
-                      <PlusCircle className="mr-2 h-5 w-5" />
-                      Create Label
+                      {label?.name}
                     </CommandItem>
-                  </DialogTrigger>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create label</DialogTitle>
-            <DialogDescription>
-              Add a new label to classify pages.
-            </DialogDescription>
-          </DialogHeader>
-          <div>
-            <div className="space-y-4 py-2 pb-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Label name</Label>
-                <Input
-                  id="name"
-                  onChange={(e) => setNewLabelName(e.target.value)}
-                  placeholder="feature-request"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Label description</Label>
-                <Input
-                  id="description"
-                  onChange={(e) => setNewLabelDescription(e.target.value)}
-                  placeholder="Give the people what they want!"
-                />
-              </div>
-              {/* <div className="space-y-2">
+                  ))}
+              </CommandGroup>
+            </CommandList>
+            <CommandSeparator />
+            <CommandList>
+              <CommandGroup>
+                <DialogTrigger asChild>
+                  <CommandItem
+                    onSelect={() => {
+                      setOpen(false)
+                      setShowCreateLabelDialog(true)
+                    }}>
+                    <PlusCircle className="mr-2 h-5 w-5" />
+                    Create Label
+                  </CommandItem>
+                </DialogTrigger>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      <DialogContent className="rounded-lg sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create label</DialogTitle>
+          <DialogDescription>
+            Add a new label to classify pages.
+          </DialogDescription>
+        </DialogHeader>
+        <div>
+          <div className="space-y-4 py-2 pb-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Label name</Label>
+              <Input
+                id="name"
+                onChange={(e) => setNewLabelName(e.target.value)}
+                placeholder="feature-request"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Label description</Label>
+              <Input
+                id="description"
+                onChange={(e) => setNewLabelDescription(e.target.value)}
+                placeholder="Give the people what they want!"
+              />
+            </div>
+            {/* <div className="space-y-2">
                 <Label htmlFor="plan">Subscription plan</Label>
                 <Select>
                   <SelectTrigger>
@@ -215,22 +214,22 @@ const LabelAdd = ({ labels, entityId, tabUrl, queryClient }) => {
                     </SelectItem>
                   </SelectContent>
                 </Select> */}
-            </div>
           </div>
+        </div>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowCreateLabelDialog(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" onClick={() => createLabel()}>
-              Create
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => setShowCreateLabelDialog(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => createLabel()}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    // </div>
   )
 }
 

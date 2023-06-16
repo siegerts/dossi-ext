@@ -5,15 +5,17 @@ const LabelList = ({ labels, queryClient, entityId, tabUrl }) => {
 
   return (
     <>
-      {labels.map((label) => (
-        <LabelBadge
-          key={label?.label?.id}
-          label={label}
-          entityId={entityId}
-          tabUrl={tabUrl}
-          queryClient={queryClient}
-        />
-      ))}
+      {labels &&
+        labels.length > 0 &&
+        labels.map((label) => (
+          <LabelBadge
+            key={label?.label?.id}
+            label={label}
+            entityId={entityId}
+            tabUrl={tabUrl}
+            queryClient={queryClient}
+          />
+        ))}
     </>
   )
 }

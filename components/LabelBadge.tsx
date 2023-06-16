@@ -29,13 +29,13 @@ export const LabelBadge = ({ label, entityId, tabUrl, queryClient }) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className={cn(badgeVariants({ variant: "secondary" }))}>
+            <button className={cn(badgeVariants({ variant: "secondary" }))}>
               {label?.label?.name}
               <Icons.close
-                className="mr-1 h-3 w-3"
+                className="ml-1 h-3 w-3"
                 onClick={() => deleteLabelFromEntity(label.label?.id)}
               />
-            </span>
+            </button>
           </TooltipTrigger>
 
           {label?.label?.description && (

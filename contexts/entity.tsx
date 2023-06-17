@@ -29,6 +29,7 @@ type Pin = {
 
 type Entity = {
   id: string
+  exists: boolean
   createdAt: string
   updatedAt: string
   notes: Note[]
@@ -96,7 +97,11 @@ export function EntityProvider({ children }) {
         })
 
         if (status.ok) {
-          return data
+          if (!data) {
+            return { exists: false }
+          }
+
+          return { ...data, exists: true }
         }
 
         throw Error(status.error)

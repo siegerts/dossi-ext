@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 
 const storage = new Storage()
 
@@ -16,12 +16,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
   if (!cookie) {
     console.log("no cookie found")
-    await storage.remove("user")
+    // await storage.remove("user")
+    await storage.removeAll()
     return res.send({ status: { ok: false, error: "user not logged in" } })
   }
 
   if (cookie && !user) {
-    const resp = await fetch(`${baseUrl}/auth/session`, {
+    const resp = await fetch(`${baseApiUrl}/auth/session`, {
       method: "GET",
       credentials: "include",
       headers: {

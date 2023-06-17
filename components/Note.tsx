@@ -1,7 +1,6 @@
 import { Remark } from "react-remark"
 import { useState } from "react"
 import { useEntity } from "@/contexts/entity"
-
 import {
   Tooltip,
   TooltipContent,
@@ -11,11 +10,8 @@ import {
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { sendToBackground } from "@plasmohq/messaging"
-
 import { Textarea } from "@/components/ui/textarea"
-
 import { formatDistanceToNow } from "date-fns"
-
 import { useQueryClient } from "@tanstack/react-query"
 
 const Note = ({ note }) => {

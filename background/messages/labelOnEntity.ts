@@ -4,7 +4,7 @@ import {
   handleResponse,
   createErrorResponse
 } from "~lib/background"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 import * as z from "zod"
 
 const labelsOnEntitiesSchema = z.object({
@@ -12,6 +12,7 @@ const labelsOnEntitiesSchema = z.object({
   labelId: z.string().trim()
 })
 
+// TODO: what if there isnt an entity yet
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "ADD_LABEL_TO_ENTITY": {
@@ -22,7 +23,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         })
 
         const resp = await fetchWithCredentials(
-          `${baseUrl}/entities/${entityId}/labels/${labelId}`,
+          `${baseApiUrl}/entities/${entityId}/labels/${labelId}`,
           {
             method: "PUT"
           }
@@ -44,7 +45,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         })
 
         const resp = await fetchWithCredentials(
-          `${baseUrl}/entities/${entityId}/labels/${labelId}`,
+          `${baseApiUrl}/entities/${entityId}/labels/${labelId}`,
           {
             method: "DELETE"
           }

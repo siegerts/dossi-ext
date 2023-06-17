@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 
 const noteCreateSchema = z.object({
   content: z.string(),
@@ -19,7 +19,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       )
 
       const resp = await fetch(
-        `${baseUrl}/notes?url=${encodeURIComponent(filterURL)}`,
+        `${baseApiUrl}/notes?url=${encodeURIComponent(filterURL)}`,
         {
           method: "GET",
           credentials: "include",
@@ -47,7 +47,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "GET": {
-      const resp = await fetch(`${baseUrl}/notes`, {
+      const resp = await fetch(`${baseApiUrl}/notes`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -81,7 +81,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           content: req.body.content
         })
 
-        resp = await fetch(`${baseUrl}/notes`, {
+        resp = await fetch(`${baseApiUrl}/notes`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -119,7 +119,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "PATCH": {
-      const resp = await fetch(`${baseUrl}/notes/${req?.body?.noteId}`, {
+      const resp = await fetch(`${baseApiUrl}/notes/${req?.body?.noteId}`, {
         method: "PATCH",
         credentials: "include",
         headers: {
@@ -143,7 +143,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "DELETE": {
-      const resp = await fetch(`${baseUrl}/notes/${req?.body?.noteId}`, {
+      const resp = await fetch(`${baseApiUrl}/notes/${req?.body?.noteId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {

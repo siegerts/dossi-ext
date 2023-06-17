@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { EntityProvider, useEntity } from "@/contexts/entity"
 import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
@@ -15,12 +15,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
 import { Toaster } from "@/components/ui/toaster"
+import UserPlan from "~components/UserPlan"
 
-import {
-  QueryClient,
-  useQuery,
-  QueryClientProvider
-} from "@tanstack/react-query"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
@@ -29,10 +26,7 @@ import Note from "@/components/Note"
 import LabelList from "~components/LabelList"
 import LabelAdd from "~components/LabelAdd"
 
-// import { DatePickerReminderForm } from "@/components/ReminderForm"
-import { baseUrl } from "~lib/constants"
-
-const queryClient = new QueryClient()
+import { baseApiUrl } from "~lib/constants"
 
 import {
   Sheet,
@@ -43,8 +37,9 @@ import {
   SheetTitle,
   SheetTrigger
 } from "@/components/ui/sheet-maintainer"
-
 import "~/contents/base.css"
+
+const queryClient = new QueryClient()
 
 type EntityItem = {
   id: string
@@ -117,7 +112,7 @@ const ActionSheet = () => {
             <Button>
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
-              {entity?.notes?.length > 0 && (
+              {entity && entity?.notes && (
                 <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
                   {entity?.notes?.length}
                 </span>
@@ -126,7 +121,10 @@ const ActionSheet = () => {
           </SheetTrigger>
           <SheetContent size="lg">
             <SheetHeader className="text-left">
-              <SheetTitle>Add Note</SheetTitle>
+              <SheetTitle>
+                Add Note
+                <UserPlan />
+              </SheetTitle>
               <SheetDescription>
                 Make changes to your notes here.
               </SheetDescription>
@@ -196,7 +194,7 @@ const ActionSheet = () => {
         </Sheet>
       ) : (
         <Button asChild>
-          <a href={`${baseUrl}/auth/signin`} target="_blank">
+          <a href={`${baseApiUrl}/auth/signin`} target="_blank">
             <Icons.logo className="mr-2 h-4 w-4" />
             {process.env.PLASMO_PUBLIC_SHIP_NAME}
           </a>

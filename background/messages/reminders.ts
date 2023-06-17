@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 
 const reminderCreateSchema = z.object({
   at: z.string().datetime(),
@@ -10,7 +10,7 @@ const reminderCreateSchema = z.object({
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET": {
-      const resp = await fetch(`${baseUrl}/reminders`, {
+      const resp = await fetch(`${baseApiUrl}/reminders`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -44,7 +44,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           url: req.body.url
         })
 
-        resp = await fetch(`${baseUrl}/reminders`, {
+        resp = await fetch(`${baseApiUrl}/reminders`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -82,13 +82,16 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "DELETE": {
-      const resp = await fetch(`${baseUrl}/reminder/${req?.body?.reminderId}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
+      const resp = await fetch(
+        `${baseApiUrl}/reminder/${req?.body?.reminderId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
-      })
+      )
 
       const ok = resp.ok
 

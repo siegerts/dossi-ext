@@ -4,7 +4,7 @@ import {
   handleResponse,
   createErrorResponse
 } from "~lib/background"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 import * as z from "zod"
 
 const pinCreateSchema = z.object({
@@ -14,7 +14,7 @@ const pinCreateSchema = z.object({
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET": {
-      const url = `${baseUrl}/pins`
+      const url = `${baseApiUrl}/pins`
       const resp = await fetchWithCredentials(url, { method: "GET" })
       return handleResponse(resp, res, "GET")
     }
@@ -25,7 +25,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           url: req.sender.tab.url
         })
 
-        const resp = await fetchWithCredentials(`${baseUrl}/pins`, {
+        const resp = await fetchWithCredentials(`${baseApiUrl}/pins`, {
           method: "POST",
           body: JSON.stringify({ url })
         })
@@ -40,7 +40,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     case "DELETE": {
       const resp = await fetchWithCredentials(
-        `${baseUrl}/pins/${req?.body?.pinId}`,
+        `${baseApiUrl}/pins/${req?.body?.pinId}`,
         {
           method: "DELETE"
         }

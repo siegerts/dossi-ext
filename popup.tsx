@@ -13,7 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Icons } from "@/components/icons"
 
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 import "~/contents/global.css"
 import "~/contents/base.css"
 
@@ -57,7 +57,7 @@ const PopupPage = () => {
                 </div>
 
                 <form
-                  action={`${baseUrl}/auth/signout`}
+                  action={`${baseApiUrl}/auth/signout`}
                   target="_blank"
                   method="POST">
                   <Button type="submit" className="w-full">
@@ -86,7 +86,7 @@ const PopupPage = () => {
             </p>
 
             <Button asChild>
-              <a href={`${baseUrl}/auth/signin`} target="_blank">
+              <a href={`${baseApiUrl}/auth/signin`} target="_blank">
                 <Icons.logo className="mr-4 h-4 w-4" />
                 Sign in to dossi
               </a>

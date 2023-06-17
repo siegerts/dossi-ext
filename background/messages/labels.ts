@@ -1,11 +1,15 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+import { Storage } from "@plasmohq/storage"
+
 import {
   fetchWithCredentials,
   handleResponse,
   createErrorResponse
 } from "~lib/background"
-import { baseUrl } from "~lib/constants"
+import { baseApiUrl } from "~lib/constants"
 import * as z from "zod"
+
+const storage = new Storage()
 
 const labelCreateSchema = z.object({
   name: z.string().trim().min(1).max(50),
@@ -16,8 +20,14 @@ const labelCreateSchema = z.object({
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET": {
-      const url = `${baseUrl}/labels`
+      const url = `${baseApiUrl}/labels`
       const resp = await fetchWithCredentials(url, { method: "GET" })
+
+      // if not labels in storage, then fetch from server and store in storage
+      // if (!storage.get("labels")) {
+      //   storage.set("labels", resp.data)
+      // }
+
       return handleResponse(resp, res, "GET")
     }
     case "POST": {
@@ -28,7 +38,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           color: req?.body?.color
         })
 
-        const resp = await fetchWithCredentials(`${baseUrl}/labels`, {
+        const resp = await fetchWithCredentials(`${baseApiUrl}/labels`, {
           method: "POST",
           body: JSON.stringify({ name, description, color })
         })
@@ -42,7 +52,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
     case "PATCH": {
       const resp = await fetchWithCredentials(
-        `${baseUrl}/labels/${req?.body?.labelId}`,
+        `${baseApiUrl}/labels/${req?.body?.labelId}`,
         {
           method: "PATCH",
           body: JSON.stringify({
@@ -58,7 +68,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     case "DELETE": {
       const resp = await fetchWithCredentials(
-        `${baseUrl}/labels/${req?.body?.labelId}`,
+        `${baseApiUrl}/labels/${req?.body?.labelId}`,
         {
           method: "DELETE"
         }
@@ -73,7 +83,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const keyword = z.string().min(1).parse(req?.body?.keyword)
 
       const resp = await fetchWithCredentials(
-        `${baseUrl}/labels/search?q=${encodeURIComponent(keyword)}`,
+        `${baseApiUrl}/labels/search?q=${encodeURIComponent(keyword)}`,
         {
           method: "GET"
         }

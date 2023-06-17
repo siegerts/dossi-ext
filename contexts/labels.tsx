@@ -2,6 +2,7 @@ import { createContext, useContext } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQuery } from "@tanstack/react-query"
 
+// TODO: remove userid from this
 type Label = {
   id: string
   name: string

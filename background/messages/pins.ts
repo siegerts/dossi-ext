@@ -1,83 +1,52 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+import {
+  fetchWithCredentials,
+  handleResponse,
+  createErrorResponse
+} from "~lib/background"
 import { baseUrl } from "~lib/constants"
+import * as z from "zod"
+
+const pinCreateSchema = z.object({
+  url: z.string().url({ message: "Invalid url" })
+})
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET": {
-      const resp = await fetch(`${baseUrl}/pins`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-
-      const ok = resp.ok
-
-      if (resp.ok) {
-        const pins = await resp.json()
-        return res.send({ pins, status: { ok } })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
-        } else {
-          console.log("error ")
-          return res.send({ status: { ok, error: "pins not available" } })
-        }
-      }
+      const url = `${baseUrl}/pins`
+      const resp = await fetchWithCredentials(url, { method: "GET" })
+      return handleResponse(resp, res, "GET")
     }
 
     case "POST": {
-      console.log("URL sender", req.sender)
-      const resp = await fetch(`${baseUrl}/pins`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+      try {
+        const { url } = pinCreateSchema.parse({
           url: req.sender.tab.url
         })
-      })
 
-      const ok = resp.ok
-
-      if (resp.ok) {
-        const pin = await resp.json()
-        return res.send({
-          pin
+        const resp = await fetchWithCredentials(`${baseUrl}/pins`, {
+          method: "POST",
+          body: JSON.stringify({ url })
         })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
-        } else {
-          console.log("error ")
-          return res.send({ status: { ok, error: "pin not created" } })
+
+        return handleResponse(resp, res, "POST")
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return createErrorResponse(res, false, "schema not valid")
         }
       }
     }
 
     case "DELETE": {
-      const resp = await fetch(`${baseUrl}/pins/${req?.body?.pinId}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
+      const resp = await fetchWithCredentials(
+        `${baseUrl}/pins/${req?.body?.pinId}`,
+        {
+          method: "DELETE"
         }
-      })
+      )
 
-      const ok = resp.ok
-
-      if (resp.ok) {
-        return res.send({ status: { ok } })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
-        } else {
-          console.log("error ")
-          return res.send({ status: { ok, error: "pin not deleted" } })
-        }
-      }
+      return handleResponse(resp, res, "DELETE")
     }
   }
 }

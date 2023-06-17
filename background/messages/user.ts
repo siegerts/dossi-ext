@@ -5,7 +5,7 @@ import { baseUrl } from "~lib/constants"
 const storage = new Storage()
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  console.log("get user request received")
+  // console.log("get user request received")
 
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
@@ -51,15 +51,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       return res.send({ status: { ok, error: "user info not available" } })
     }
   } else {
-    console.log("skipping...user already logged in")
+    // console.log("skipping...user already logged in")
   }
 }
 
 export default handler
-
-// fetch(`${baseUrl}/auth/csrf`).then(async (res) => {
-//     const json = await res.json()
-//     const csrf = json.csrfToken
-
-//     setCsrfToken(csrf)
-//   })

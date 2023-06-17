@@ -15,8 +15,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const user = await storage.get("user")
 
   if (!cookie) {
-    console.log("no cookie found")
-    // await storage.remove("user")
+    // console.log("no cookie found, clearing all cached data")
     await storage.removeAll()
     return res.send({ status: { ok: false, error: "user not logged in" } })
   }
@@ -43,12 +42,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
         return res.send({ status: { ok }, user })
       } else {
-        // clear user
-        await storage.remove("user")
+        // clear user & cache
+
+        await storage.removeAll()
         return res.send({ status: { ok, error: "user not logged in" } })
       }
     } else {
-      await storage.remove("user")
+      // clear user & cache
+      await storage.removeAll()
       return res.send({ status: { ok, error: "user info not available" } })
     }
   } else {

@@ -69,3 +69,27 @@ graph TB
     style Y fill:#f9a8d4,stroke:#333,stroke-width:2px
     style X fill:#f9a8d4,stroke:#333,stroke-width:2px
 ```
+
+## Data flow
+
+```mermaid
+graph TD
+    subgraph "Global Providers"
+        A[AuthProvider - Checks the user data and confirms isAuthed]
+        B[QueryClientProvider]
+        C[UserLabelsProvider - Data fetching]
+    end
+    subgraph "Page Specific Providers"
+        D[EntityProvider - Data fetching]
+    end
+    subgraph "LocalStorage"
+        F[UserLabels Cache]
+    end
+    E[ActionSheet]
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    C --> F[Updates Cache]
+    F --> C
+```

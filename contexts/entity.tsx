@@ -82,6 +82,7 @@ export function EntityProvider({ children }) {
   }, [])
 
   const { data, status } = useQuery({
+    staleTime: 3 * 1000,
     enabled: !!tab?.url,
     queryKey: ["entity", tab?.url],
     queryFn: async () => {

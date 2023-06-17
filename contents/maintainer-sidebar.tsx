@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { EntityProvider, useEntity } from "@/contexts/entity"
+import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
 
 import type {
   PlasmoCSConfig,
@@ -78,10 +79,12 @@ const App = () => {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <EntityProvider>
-          <ActionSheet />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </EntityProvider>
+        <UserLabelsProvider>
+          <EntityProvider>
+            <ActionSheet />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </EntityProvider>
+        </UserLabelsProvider>
       </QueryClientProvider>
     </AuthProvider>
   )
@@ -89,31 +92,9 @@ const App = () => {
 
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
-  // const [tabUrl, setTabUrl] = useState("")
-  // const [tabTitle, setTabTitle] = useState("")
-
   const { user } = useAuth()
   const entity = useEntity()
-
-  const labels = useQuery(["labels"], async () => {
-    try {
-      let { data, status } = await sendToBackground({
-        name: "labels" as never,
-        body: {
-          type: "GET"
-        }
-      })
-
-      if (status.ok) {
-        console.log(data)
-        return data
-      } else {
-        throw Error(status.error)
-      }
-    } catch (err) {
-      throw Error(err)
-    }
-  })
+  const { labels } = useUserLabels()
 
   const saveNote = async () => {
     await sendToBackground({
@@ -179,7 +160,7 @@ const ActionSheet = () => {
                   <>
                     <div className="flex flex-wrap items-center gap-2 py-4">
                       <LabelList labels={entity?.labels} />
-                      <LabelAdd labels={labels?.data} />
+                      <LabelAdd labels={labels} />
                     </div>
                     {entity?.notes.length > 0 ? (
                       <>

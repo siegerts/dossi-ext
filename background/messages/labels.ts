@@ -20,15 +20,29 @@ const labelCreateSchema = z.object({
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET": {
+      const cachedLabels = await storage.get("labels")
+      if (cachedLabels) {
+        console.log("using labels from cache")
+        const data = await storage.get("labels")
+        return res.send({ data, status: { ok: true } })
+      }
+
       const url = `${baseApiUrl}/labels`
       const resp = await fetchWithCredentials(url, { method: "GET" })
 
-      // if not labels in storage, then fetch from server and store in storage
-      // if (!storage.get("labels")) {
-      //   storage.set("labels", resp.data)
-      // }
+      const ok = resp.ok
 
-      return handleResponse(resp, res, "GET")
+      if (resp.ok) {
+        const data = await resp.json()
+        console.log("rehydrating labels cache")
+        await storage.set("labels", data)
+
+        return res.send({ data, status: { ok } })
+      } else {
+        const error =
+          resp.status === 403 ? "user not logged in" : `GET action failed`
+        return createErrorResponse(res, ok, error)
+      }
     }
     case "POST": {
       try {
@@ -43,7 +57,23 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           body: JSON.stringify({ name, description, color })
         })
 
-        return handleResponse(resp, res, "POST")
+        const ok = resp.ok
+
+        if (resp.ok) {
+          try {
+            await storage.remove("labels")
+
+            const data = await resp.json()
+            return res.send({ data, status: { ok } })
+          } catch (error) {
+            // no data returned
+            return res.send({ status: { ok } })
+          }
+        } else {
+          const error =
+            resp.status === 403 ? "user not logged in" : `POST action failed`
+          return createErrorResponse(res, ok, error)
+        }
       } catch (error) {
         if (error instanceof z.ZodError) {
           return createErrorResponse(res, false, "schema not valid")
@@ -51,19 +81,48 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       }
     }
     case "PATCH": {
-      const resp = await fetchWithCredentials(
-        `${baseApiUrl}/labels/${req?.body?.labelId}`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({
-            name: req?.body?.name,
-            description: req?.body?.description,
-            color: req?.body?.color
-          })
-        }
-      )
+      const { name, description, color } = labelCreateSchema.parse({
+        name: req?.body?.name,
+        description: req?.body?.description,
+        color: req?.body?.color
+      })
 
-      return handleResponse(resp, res, "PATCH")
+      try {
+        const resp = await fetchWithCredentials(
+          `${baseApiUrl}/labels/${req?.body?.labelId}`,
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              name,
+              description,
+              color
+            })
+          }
+        )
+
+        const ok = resp.ok
+
+        if (resp.ok) {
+          try {
+            await storage.remove("labels")
+
+            const data = await resp.json()
+
+            return res.send({ data, status: { ok } })
+          } catch (error) {
+            // no data returned
+            return res.send({ status: { ok } })
+          }
+        } else {
+          const error =
+            resp.status === 403 ? "user not logged in" : `PATCH action failed`
+          return createErrorResponse(res, ok, error)
+        }
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return createErrorResponse(res, false, "schema not valid")
+        }
+      }
     }
 
     case "DELETE": {
@@ -74,22 +133,24 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         }
       )
 
-      return handleResponse(resp, res, "DELETE")
-    }
+      const ok = resp.ok
 
-    // TODO: remove this
-    case "SEARCH": {
-      // validate the keyword is a string and not empty
-      const keyword = z.string().min(1).parse(req?.body?.keyword)
+      if (resp.ok) {
+        try {
+          await storage.remove("labels")
 
-      const resp = await fetchWithCredentials(
-        `${baseApiUrl}/labels/search?q=${encodeURIComponent(keyword)}`,
-        {
-          method: "GET"
+          const data = await resp.json()
+
+          return res.send({ data, status: { ok } })
+        } catch (error) {
+          // no data returned
+          return res.send({ status: { ok } })
         }
-      )
-
-      return handleResponse(resp, res, "SEARCH")
+      } else {
+        const error =
+          resp.status === 403 ? "user not logged in" : `DELETE action failed`
+        return createErrorResponse(res, ok, error)
+      }
     }
   }
 }

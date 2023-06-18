@@ -1,14 +1,13 @@
-import { useState } from "react"
-// import { useDebounce } from "@uidotdev/usehooks"
+import { useState, useEffect } from "react"
 import { Icons } from "@/components/icons"
 import { PlusCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { badgeVariants } from "@/components/ui/badge"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useEntity } from "@/contexts/entity"
 
 import { Button } from "@/components/ui/button"
+import { badgeVariants } from "@/components/ui/badge"
 import {
   Command,
   CommandEmpty,
@@ -35,32 +34,56 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover"
 
-type Label = {
-  id: string
-  value: string
-}
-
 const LabelAdd = ({ labels }) => {
   // create
   const [newLabelName, setNewLabelName] = useState("")
   const [newLabelDescription, setNewLabelDescription] = useState("")
+  const [availableLabels, setAvailableLabels] = useState([])
   const [open, setOpen] = useState(false)
   const [showCreateLabelDialog, setShowCreateLabelDialog] = useState(false)
   const client = useQueryClient()
   const entity = useEntity()
 
-  // add
+  useEffect(() => {
+    const labelsInclude = () => {
+      return labels.filter((label) => {
+        return !entity.labels.find(
+          (entityLabel) => entityLabel.label.id === label.id
+        )
+      })
+    }
+    if (!entity.labels) {
+      setAvailableLabels(labels)
+      return
+    }
+    setAvailableLabels(labelsInclude())
+  }, [labels, entity.labels])
 
-  // filter
+  const labelExists = (name) => {
+    return labels.find((label) => label.name === name)
+  }
 
-  // const [searchTerm, setSearchTerm] = useState("")
-  // const [results, setResults] = useState([])
-  // const [isSearching, setIsSearching] = useState(false)
-  // const debouncedSearchTerm = useDebounce(searchTerm, 300)
-
-  // const handleChange = (e) => {
-  //   setSearchTerm(e.target.value)
-  // }
+  const mutation = useMutation({
+    mutationFn: async (labelId) => {
+      try {
+        let { status } = await sendToBackground({
+          name: "labelOnEntity",
+          body: {
+            type: "ADD_LABEL_TO_ENTITY",
+            entityId: entity.id,
+            labelId
+          }
+        })
+        if (status.ok) {
+          client.invalidateQueries({ queryKey: ["entity", entity.url] })
+        } else {
+          throw Error(status.error)
+        }
+      } catch (err) {
+        throw Error(err)
+      }
+    }
+  })
 
   const addLabeltoEntity = async (labelId) => {
     try {
@@ -106,13 +129,11 @@ const LabelAdd = ({ labels }) => {
 
   const selectLabel = (value) => {
     const label = labels.find((label) => label.name === value)
-
     addLabeltoEntity(label.id)
     setOpen(false)
   }
 
   return (
-    // <div className="flex space-x-4">
     <Dialog
       open={showCreateLabelDialog}
       onOpenChange={setShowCreateLabelDialog}>
@@ -134,9 +155,9 @@ const LabelAdd = ({ labels }) => {
               <CommandEmpty>No labels found.</CommandEmpty>
               <CommandGroup>
                 {labels &&
-                  Array.isArray(labels) &&
-                  labels.length > 0 &&
-                  labels.map((label) => (
+                  Array.isArray(availableLabels) &&
+                  availableLabels.length > 0 &&
+                  availableLabels.map((label) => (
                     <CommandItem
                       key={label.id}
                       onSelect={(value) => {
@@ -205,7 +226,6 @@ const LabelAdd = ({ labels }) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-    // </div>
   )
 }
 

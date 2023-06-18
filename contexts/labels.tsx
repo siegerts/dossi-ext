@@ -46,12 +46,13 @@ const getUserLabels = async () => {
 }
 
 export function UserLabelsProvider({ children }) {
-  const { user } = useAuth()
+  const user = useAuth()
 
   // this will only run if user is authed
   // this is here to prevent the query from firing
   // before the user is logged in or
   // if the user logs out
+  // if caches the labels
   const { data, status } = useQuery({
     enabled: !!user?.isAuthed,
     queryKey: ["labels"],

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
+import { useAuth } from "./user"
 
 // When you call useQuery, we call useQueryClient under the hood.
 // This will look up the nearest client in React Context.
@@ -56,6 +57,7 @@ export const useEntity = () => {
 
 export function EntityProvider({ children }) {
   const [tab, setTab] = useState<Tab | null>(null)
+  const user = useAuth()
 
   useEffect(() => {
     const checkTab = async () => {
@@ -82,33 +84,40 @@ export function EntityProvider({ children }) {
     })
   }, [])
 
-  const { data, status } = useQuery({
-    staleTime: 3 * 1000,
-    enabled: !!tab?.url,
-    queryKey: ["entity", tab?.url],
-    queryFn: async () => {
-      try {
-        let { data, status } = await sendToBackground({
-          name: "entities" as never,
-          body: {
-            type: "GET_ENTITY_BY_URL",
-            url: tab.url
-          }
-        })
+  const fetchEntity = async ({ queryKey }) => {
+    const [, url] = queryKey
+    try {
+      let { data, status } = await sendToBackground({
+        name: "entities" as never,
+        body: {
+          type: "GET_ENTITY_BY_URL",
+          url
+        }
+      })
 
-        if (status.ok) {
-          if (!data) {
-            return { exists: false }
-          }
-
-          return { ...data, exists: true }
+      if (status.ok) {
+        if (!data) {
+          return { exists: false }
         }
 
-        throw Error(status.error)
-      } catch (err) {
-        console.error(err)
+        return { ...data, exists: true }
       }
+
+      throw Error(status.error)
+    } catch (err) {
+      console.error(err)
     }
+  }
+
+  // this will only run if user is authed && tab.url is not null
+  // this is here to prevent the query from firing
+  // before the user is logged in or
+  // if the user logs out
+  const { data, status } = useQuery({
+    staleTime: 3 * 1000,
+    enabled: user?.status === "success" && !!user.isAuthed && !!tab?.url,
+    queryKey: ["entity", tab?.url],
+    queryFn: fetchEntity
   })
 
   return (

@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useStorage } from "@plasmohq/storage/hook"
+
+type CurrentUserStatus = "loading" | "error" | "success"
 
 type User = {
   isAuthed: boolean
+  status: CurrentUserStatus
   attrs: {
     name: string
     email: string
@@ -13,9 +15,7 @@ type User = {
   }
 }
 
-type UserContextType = {
-  user: User | null
-}
+type UserContextType = User | null
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
@@ -24,15 +24,20 @@ export const useAuth = () => {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useStorage<User>("user")
+  const [currentUser, setCurrentUser] = useState<User>(null)
+  const [currentUserStatus, setCurrentUserStatus] =
+    useState<CurrentUserStatus>(null)
 
   useEffect(() => {
     const checkUser = async () => {
+      setCurrentUserStatus("loading")
+
       const { user, status } = await sendToBackground({
         name: "user" as never
       })
 
-      setUser(user?.user)
+      setCurrentUser(user)
+      setCurrentUserStatus(status.ok ? "success" : "error")
     }
 
     document.addEventListener("visibilitychange", () => {
@@ -45,6 +50,8 @@ export function AuthProvider({ children }) {
   }, [])
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ status: currentUserStatus, ...currentUser }}>
+      {children}
+    </UserContext.Provider>
   )
 }

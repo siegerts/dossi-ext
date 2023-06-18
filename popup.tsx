@@ -36,7 +36,7 @@ const Popup = () => {
 }
 
 const PopupPage = () => {
-  const { user } = useAuth()
+  const user = useAuth()
 
   return (
     <div className="w-[380px] rounded-lg">

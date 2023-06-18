@@ -8,10 +8,10 @@ const entityFilterSchema = z.string().url({ message: "Invalid url" })
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "GET_ENTITY_BY_URL": {
-      const filterURL = entityFilterSchema.parse(
+      const filter = entityFilterSchema.parse(
         req?.body?.url || req?.sender?.tab?.url
       )
-      const url = `${baseApiUrl}/entities?url=${encodeURIComponent(filterURL)}`
+      const url = `${baseApiUrl}/entities?url=${encodeURIComponent(filter)}`
       const resp = await fetchWithCredentials(url, { method: "GET" })
 
       return handleResponse(resp, res, "GET_ENTITY_BY_URL")

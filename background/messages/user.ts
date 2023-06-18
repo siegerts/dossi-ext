@@ -4,23 +4,39 @@ import { baseApiUrl } from "~lib/constants"
 
 const storage = new Storage()
 
+type User = {
+  isAuthed: boolean
+  attrs: {
+    name: string
+    email: string
+    image: string
+    id: string
+    plan?: string
+  }
+}
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  // console.log("get user request received")
+  console.log("get user request received")
 
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
     name: "__Secure-next-auth.session-token"
   })
 
-  const user = await storage.get("user")
+  const user = await storage.get<User>("user")
 
   if (!cookie) {
     // console.log("no cookie found, clearing all cached data")
-    await storage.removeAll()
-    return res.send({ status: { ok: false, error: "user not logged in" } })
+
+    await storage.remove("user")
+    await storage.remove("labels")
+
+    return res.send({
+      user: { isAuthed: false },
+      status: { ok: false, error: "user not logged in" }
+    })
   }
 
-  if (cookie && !user) {
+  if (cookie && !user?.isAuthed) {
     const resp = await fetch(`${baseApiUrl}/auth/session`, {
       method: "GET",
       credentials: "include",
@@ -35,25 +51,41 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const json = await resp.json()
       if (json.user) {
         // save and return user
-        await storage.set("user", {
-          user: { isAuthed: true, attrs: json.user }
-        })
-        const user = await storage.get("user")
+        const user = { isAuthed: true, attrs: json.user }
 
-        return res.send({ status: { ok }, user })
+        await storage.set("user", user)
+
+        return res.send({
+          status: { ok },
+          user
+        })
       } else {
         // clear user & cache
+        await storage.remove("user")
+        await storage.remove("labels")
 
-        await storage.removeAll()
-        return res.send({ status: { ok, error: "user not logged in" } })
+        return res.send({
+          user: { isAuthed: false },
+          status: { ok, error: "user not logged in" }
+        })
       }
     } else {
       // clear user & cache
-      await storage.removeAll()
-      return res.send({ status: { ok, error: "user info not available" } })
+      await storage.remove("user")
+      await storage.remove("labels")
+
+      return res.send({
+        user: { isAuthed: false },
+        status: { ok, error: "user info not available" }
+      })
     }
   } else {
-    // console.log("skipping...user already logged in")
+    // console.log("user already logged in: returning cached user")
+
+    return res.send({
+      status: { ok: true },
+      user
+    })
   }
 }
 

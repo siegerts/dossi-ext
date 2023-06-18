@@ -41,11 +41,6 @@ import "~/contents/base.css"
 
 const queryClient = new QueryClient()
 
-type EntityItem = {
-  id: string
-  url: string
-}
-
 const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
 
 export const config: PlasmoCSConfig = {
@@ -87,7 +82,8 @@ const App = () => {
 
 const ActionSheet = () => {
   const [noteContent, setNoteContent] = useState("")
-  const { user } = useAuth()
+
+  const user = useAuth()
   const entity = useEntity()
   const { labels } = useUserLabels()
 
@@ -106,13 +102,14 @@ const ActionSheet = () => {
 
   return (
     <div>
+      {JSON.stringify(user)}
       {user?.isAuthed ? (
         <Sheet modal={false}>
           <SheetTrigger asChild className="justify-end">
             <Button>
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
-              {entity && entity?.notes && (
+              {entity?.id && entity?.notes && (
                 <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
                   {entity?.notes?.length}
                 </span>
@@ -154,13 +151,13 @@ const ActionSheet = () => {
               <div className="mb-2 grid gap-2">
                 {entity?.status === "loading" && <p>Loading...</p>}
                 {entity?.status === "error" && <p>Error loading</p>}
-                {entity?.status === "success" && (
+                {entity?.status === "success" && entity?.exists && (
                   <>
                     <div className="flex flex-wrap items-center gap-2 py-4">
                       <LabelList labels={entity?.labels} />
                       <LabelAdd labels={labels} />
                     </div>
-                    {entity?.notes.length > 0 ? (
+                    {entity?.id ? (
                       <>
                         {entity?.notes.map((note: any) => (
                           <Note key={note?.id} note={note} />
@@ -200,6 +197,7 @@ const ActionSheet = () => {
           </a>
         </Button>
       )}
+
       <Toaster />
     </div>
   )

@@ -102,7 +102,6 @@ const ActionSheet = () => {
 
   return (
     <div>
-      {JSON.stringify(user)}
       {user?.isAuthed ? (
         <Sheet modal={false}>
           <SheetTrigger asChild className="justify-end">

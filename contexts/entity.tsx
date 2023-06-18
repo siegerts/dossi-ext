@@ -57,6 +57,7 @@ export const useEntity = () => {
 
 export function EntityProvider({ children }) {
   const [tab, setTab] = useState<Tab | null>(null)
+
   const user = useAuth()
 
   useEffect(() => {
@@ -82,6 +83,8 @@ export function EntityProvider({ children }) {
       handleRequest(request).then((response) => sendResponse(response))
       return true
     })
+
+    checkTab()
   }, [])
 
   const fetchEntity = async ({ queryKey }) => {

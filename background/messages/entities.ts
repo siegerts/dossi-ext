@@ -6,6 +6,18 @@ import * as z from "zod"
 const entityFilterSchema = z.string().url({ message: "Invalid url" })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
+  // this is a bit of a hack, but it works
+  // if there is no cookie, then no user
+  // this will stop the window focus events
+  // from triggering unauthed requests after logout
+  const cookie = await chrome.cookies.get({
+    url: process.env.PLASMO_PUBLIC_HOST,
+    name: "__Secure-next-auth.session-token"
+  })
+  if (!cookie) {
+    return
+  }
+
   switch (req?.body?.type) {
     case "GET_ENTITY_BY_URL": {
       const filter = entityFilterSchema.parse(

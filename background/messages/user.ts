@@ -15,7 +15,7 @@ type User = {
   }
 }
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  console.log("get user request received")
+  // console.log("get user request received")
 
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,

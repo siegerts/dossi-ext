@@ -36,25 +36,46 @@ const Note = ({ note }) => {
     setIsEditing(false)
     setIsNoteSaving(false)
   }
+
+  const deleteNote = async () => {
+    await sendToBackground({
+      name: "notes",
+      body: {
+        type: "DELETE",
+        noteId: note.id
+      }
+    })
+
+    await client.invalidateQueries({ queryKey: ["entity", entity.url] })
+  }
   return (
     <>
       {!isEditing ? (
         <div className="my-2">
-          <Remark>{note.content}</Remark>
-          <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center justify-between gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <span>
+                  <span className="text-gray-500">
                     {formatDistanceToNow(new Date(note?.createdAt), {
                       addSuffix: true
                     })}
                   </span>
                 </TooltipTrigger>
-                {/* TODO: format this */}
-                <TooltipContent>{note?.createdAt}</TooltipContent>
+
+                <TooltipContent side="right">
+                  <span className="text-xs">
+                    {new Intl.DateTimeFormat(navigator.language, {
+                      dateStyle: "long",
+                      timeStyle: "short"
+                    }).format(new Date(note?.createdAt))}
+                  </span>
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <Button variant="ghost" type="submit" onClick={() => deleteNote()}>
+              delete
+            </Button>
             <Button
               variant="ghost"
               type="submit"
@@ -62,6 +83,7 @@ const Note = ({ note }) => {
               edit
             </Button>
           </div>
+          <Remark>{note.content}</Remark>
         </div>
       ) : (
         <>

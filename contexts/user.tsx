@@ -40,13 +40,19 @@ export function AuthProvider({ children }) {
       setCurrentUserStatus(status.ok ? "success" : "error")
     }
 
-    document.addEventListener("visibilitychange", () => {
+    const visibilityChangeHandler = () => {
       if (document.visibilityState === "visible") {
         checkUser()
       }
-    })
+    }
+
+    document.addEventListener("visibilitychange", visibilityChangeHandler)
 
     checkUser()
+
+    return () => {
+      document.removeEventListener("visibilitychange", visibilityChangeHandler)
+    }
   }, [])
 
   return (

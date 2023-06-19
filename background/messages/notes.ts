@@ -1,51 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
 import { baseApiUrl } from "~lib/constants"
-
-const noteCreateSchema = z.object({
-  content: z.string(),
-  url: z.string().url({ message: "Invalid url" })
-})
-
-const noteFilterSchema = z.string().url({ message: "Invalid url" })
+import { noteCreateSchema, notePatchSchema } from "~lib/validations/note"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
-    case "GET_NOTES_BY_URL": {
-      // use the body url if passed in,
-      // else use the url from the tab that sent the req
-      const filterURL = noteFilterSchema.parse(
-        req.body.url ? req.body.url : req.sender.tab.url
-      )
-
-      const resp = await fetch(
-        `${baseApiUrl}/notes?url=${encodeURIComponent(filterURL)}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      )
-
-      const ok = resp.ok
-
-      if (resp.ok) {
-        const notes = await resp.json()
-        return res.send({ notes, status: { ok } })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
-        } else {
-          console.log("error ")
-          return res.send({
-            status: { ok, error: "notes not available" }
-          })
-        }
-      }
-    }
-
     case "GET": {
       const resp = await fetch(`${baseApiUrl}/notes`, {
         method: "GET",
@@ -73,7 +32,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "POST": {
-      let resp: Response
       try {
         // validate
         const { content, url } = noteCreateSchema.parse({
@@ -81,7 +39,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           content: req.body.content
         })
 
-        resp = await fetch(`${baseApiUrl}/notes`, {
+        let resp = await fetch(`${baseApiUrl}/notes`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -92,52 +50,61 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             content
           })
         })
+
+        const ok = resp.ok
+
+        if (resp.ok) {
+          const note = await resp.json()
+          return res.send({ note, status: { ok } })
+        } else {
+          if (resp.status === 403) {
+            return res.send({ status: { ok, error: "user not logged in" } })
+          } else {
+            console.log("error ")
+            return res.send({ status: { ok, error: "note not created" } })
+          }
+        }
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log("parsing error")
           return res.send({
             status: { ok: false, error: "schema not valid" }
           })
         }
       }
-
-      const ok = resp.ok
-
-      if (resp.ok) {
-        const note = await resp.json()
-        return res.send({
-          note
-        })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
-        } else {
-          console.log("error ")
-          return res.send({ status: { ok, error: "note not created" } })
-        }
-      }
     }
 
     case "PATCH": {
-      const resp = await fetch(`${baseApiUrl}/notes/${req?.body?.noteId}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ content: req?.body?.content })
-      })
+      try {
+        const { content } = notePatchSchema.parse({
+          content: req?.body?.content
+        })
 
-      const ok = resp.ok
+        const resp = await fetch(`${baseApiUrl}/notes/${req?.body?.noteId}`, {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ content })
+        })
 
-      if (resp.ok) {
-        return res.send({ status: { ok } })
-      } else {
-        if (resp.status === 403) {
-          return res.send({ status: { ok, error: "user not logged in" } })
+        const ok = resp.ok
+
+        if (resp.ok) {
+          return res.send({ status: { ok } })
         } else {
-          console.log("error ")
-          return res.send({ status: { ok, error: "note not updated" } })
+          if (resp.status === 403) {
+            return res.send({ status: { ok, error: "user not logged in" } })
+          } else {
+            console.log("error ")
+            return res.send({ status: { ok, error: "note not updated" } })
+          }
+        }
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return res.send({
+            status: { ok: false, error: "schema not valid" }
+          })
         }
       }
     }

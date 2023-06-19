@@ -103,6 +103,12 @@ export function EntityProvider({ children }) {
           return { exists: false }
         }
 
+        // if there is no title,
+        // don't send it, let the page fill it in
+        if (!data?.title) {
+          delete data?.title
+        }
+
         return { ...data, exists: true }
       }
 

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
+import { Input } from "@/components/ui/input"
 import { Toaster } from "@/components/ui/toaster"
 import UserPlan from "~components/UserPlan"
 
@@ -81,11 +82,49 @@ const App = () => {
 }
 
 const ActionSheet = () => {
-  const [noteContent, setNoteContent] = useState("")
-
   const user = useAuth()
   const entity = useEntity()
   const { labels } = useUserLabels()
+
+  const [noteContent, setNoteContent] = useState("")
+
+  const [entityTitle, setEntityTitle] = useState("")
+  const [isEditingEntityTitle, setIsEditingEntityTitle] = useState(false)
+  const [isEntityTitleSaving, setIsEntityTitleSaving] = useState<boolean>(false)
+
+  // const [entityUrl, setEntityUrl] = useState(entity?.url)
+  // const [isEditingEntityUrl, setIsEditingEntityUrl] = useState(false)
+  // const [isEntityUrlSaving, setIsEntityUrlSaving] = useState<boolean>(false)
+
+  const updateEntityTitle = async () => {
+    setIsEntityTitleSaving(true)
+    await sendToBackground({
+      name: "entities",
+      body: {
+        type: "PATCH",
+        entityId: entity?.id,
+        title: entityTitle
+      }
+    })
+    queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
+    setIsEntityTitleSaving(false)
+  }
+
+  // const updateEntityUrl = async () => {
+  //   setIsEntityUrlSaving(true)
+  //   await sendToBackground({
+  //     name: "entities",
+  //     body: {
+  //       type: "PATCH",
+  //       content: {
+  //         url: entityUrl
+  //       }
+  //     }
+  //   })
+  //   // should this be allowed?
+  //   queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
+  //   setIsEntityUrlSaving(false)
+  // }
 
   const saveNote = async () => {
     await sendToBackground({
@@ -127,17 +166,7 @@ const ActionSheet = () => {
             </SheetHeader>
 
             <div className="gap-4 py-4">
-              {entity?.title && <span>{entity?.title}</span>}
-              {entity?.url && (
-                <span>{new URL(entity?.url).pathname.substring(1)}</span>
-              )}
-
-              {/* <DatePickerReminderForm
-                queryClient={queryClient}
-                tabUrl={tabUrl}
-              /> */}
-
-              <div className="flex flex-col">
+              <div className="my-2 flex flex-col">
                 <PinButton
                   pinId={
                     entity?.pins && entity?.pins.length == 1
@@ -146,6 +175,74 @@ const ActionSheet = () => {
                   }
                 />
               </div>
+              <div className="flex flex-col gap-y-2">
+                {entity?.title && (
+                  <>
+                    {entity?.title}
+                    {entityTitle}
+                    <Input
+                      disabled={!isEditingEntityTitle}
+                      type="text"
+                      placeholder={entity?.title.split("·")[0].trim()}
+                      onChange={(e) => {
+                        setEntityTitle(e.target.value)
+                      }}
+                      value={entityTitle}
+                    />
+                    {!isEditingEntityTitle ? (
+                      <Button
+                        variant="ghost"
+                        className="flex h-8 w-8 p-0"
+                        onClick={() => setIsEditingEntityTitle(true)}>
+                        <Icons.pen className="h-4 w-4" />
+                        <span className="sr-only">edit title</span>
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          className="flex h-8 w-8 p-0"
+                          onClick={() => {
+                            setIsEditingEntityTitle(false)
+                            setEntityTitle(entity?.title)
+                          }}>
+                          <Icons.close className="h-4 w-4" />
+                          <span className="sr-only">cancel</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex h-8 w-8 p-0"
+                          onClick={() => {
+                            updateEntityTitle()
+                            setIsEditingEntityTitle(false)
+                          }}>
+                          <Icons.check className="h-4 w-4" />
+                          <span className="sr-only">save</span>
+                        </Button>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {entity?.url && (
+                  <>
+                    <Input
+                      disabled
+                      type="text"
+                      placeholder={new URL(entity?.url).pathname.substring(1)}
+                    />
+                    <Button variant="ghost" className="flex h-8 w-8 p-0">
+                      <Icons.pen className="h-4 w-4" />
+                      <span className="sr-only">edit url</span>
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              {/* <DatePickerReminderForm
+                queryClient={queryClient}
+                tabUrl={tabUrl}
+              /> */}
 
               <div className="mb-2 grid gap-2">
                 {entity?.status === "loading" && <p>Loading...</p>}
@@ -157,6 +254,7 @@ const ActionSheet = () => {
                       <LabelAdd labels={labels} />
                     </div>
                     {entity?.id ? (
+                      // TODO: add in collapsible
                       <>
                         {entity?.notes.map((note: any) => (
                           <Note key={note?.id} note={note} />

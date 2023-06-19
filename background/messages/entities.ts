@@ -38,7 +38,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       try {
         const entityPatch = entityPatchSchema.parse({
           title: req?.body?.title,
-          url: req?.body?.content
+          url: req?.body?.url
         })
 
         const resp = await fetch(

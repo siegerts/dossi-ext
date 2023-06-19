@@ -7,6 +7,14 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
+
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { sendToBackground } from "@plasmohq/messaging"
@@ -73,15 +81,33 @@ const Note = ({ note }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Button variant="ghost" type="submit" onClick={() => deleteNote()}>
-              delete
-            </Button>
-            <Button
-              variant="ghost"
-              type="submit"
-              onClick={() => setIsEditing(true)}>
-              edit
-            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+                  <Icons.ellipsis className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[160px]">
+                <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                  <Icons.pen className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  Edit
+                </DropdownMenuItem>
+
+                {/* <DropdownMenuItem>
+                  <Star className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  Favorite
+                </DropdownMenuItem> */}
+
+                <DropdownMenuItem onClick={() => deleteNote()}>
+                  <Icons.trash className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <Remark>{note.content}</Remark>
         </div>

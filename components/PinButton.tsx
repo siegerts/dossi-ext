@@ -2,6 +2,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEntity } from "@/contexts/entity"
 import { Button } from "@/components/ui/button"
+import { Icons } from "@/components/icons"
 
 const PinButton = ({ pinId }: { pinId: string | null }) => {
   const client = useQueryClient()
@@ -32,6 +33,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
 
   return (
     <Button variant="ghost" onClick={() => (pinId ? unpin(pinId) : pin())}>
+      <Icons.star className="mr-2 h-4 w-4" />
       {pinId ? "Unpin" : "Pin"}
     </Button>
   )

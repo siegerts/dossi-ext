@@ -11,7 +11,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   // from triggering unauthed requests after logout
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
-    name: "__Secure-next-auth.session-token"
+    name: "__Secure-next-auth.session-token",
   })
   if (!cookie) {
     return
@@ -38,7 +38,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       try {
         const entityPatch = entityPatchSchema.parse({
           title: req?.body?.title,
-          url: req?.body?.url
+          url: req?.body?.url,
         })
 
         const resp = await fetch(
@@ -47,11 +47,11 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             method: "PATCH",
             credentials: "include",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              ...entityPatch
-            })
+              ...entityPatch,
+            }),
           }
         )
 
@@ -70,7 +70,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       } catch (error) {
         if (error instanceof z.ZodError) {
           return res.send({
-            status: { ok: false, error: "schema not valid" }
+            status: { ok: false, error: "schema not valid" },
           })
         }
       }

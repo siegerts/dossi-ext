@@ -12,8 +12,8 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
     await sendToBackground({
       name: "pins",
       body: {
-        type: "POST"
-      }
+        type: "POST",
+      },
     })
 
     client.invalidateQueries({ queryKey: ["entity", entity?.url] })
@@ -24,8 +24,8 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
       name: "pins",
       body: {
         type: "DELETE",
-        pinId
-      }
+        pinId,
+      },
     })
 
     client.invalidateQueries({ queryKey: ["entity", entity?.url] })
@@ -33,7 +33,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
 
   return (
     <Button variant="ghost" onClick={() => (pinId ? unpin(pinId) : pin())}>
-      <Icons.star className="mr-2 h-4 w-4" />
+      <Icons.pin className="mr-2 h-4 w-4" />
       {pinId ? "Unpin" : "Pin"}
     </Button>
   )

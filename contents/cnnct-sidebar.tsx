@@ -93,7 +93,7 @@ const ActionSheet = () => {
 
   const [noteContent, setNoteContent] = useState("")
 
-  const [entityTitle, setEntityTitle] = useState("")
+  const [entityTitle, setEntityTitle] = useState(entity?.title)
   const [isEditingEntityTitle, setIsEditingEntityTitle] = useState(false)
   const [isEntityTitleSaving, setIsEntityTitleSaving] = useState<boolean>(false)
 
@@ -120,6 +120,9 @@ const ActionSheet = () => {
     // if there are notes on the new url, merge them with the old ones
 
     // also, there wont be an entity id if the entity is new
+
+    // so, if there is data for the old url ...need to show that somehow
+    // the use case of showing on redirect already works
     setIsEntityUrlSaving(true)
 
     await sendToBackground({
@@ -131,10 +134,10 @@ const ActionSheet = () => {
       },
     })
 
-    // queryClient.removeQueries({
-    //   queryKey: ["entity", entity?.url],
-    //   exact: true,
-    // })
+    queryClient.removeQueries({
+      queryKey: ["entity", entity?.url],
+      exact: true,
+    })
     queryClient.invalidateQueries({ queryKey: ["entity", newUrl] })
     setIsEntityUrlSaving(false)
   }
@@ -183,8 +186,10 @@ const ActionSheet = () => {
           <SheetContent size="lg">
             <SheetHeader className="text-left">
               <SheetTitle>
-                Add Note
-                <UserPlan />
+                <div className="flex items-center justify-between">
+                  <div>dossi</div>
+                  <UserPlan />
+                </div>
               </SheetTitle>
               <SheetDescription>
                 Make changes to your notes here.

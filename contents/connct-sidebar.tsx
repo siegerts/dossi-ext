@@ -1,37 +1,20 @@
 import { useState } from "react"
+import { sendToBackground } from "@plasmohq/messaging"
 import { useStorage } from "@plasmohq/storage/hook"
-
-import { AuthProvider, useAuth } from "@/contexts/user"
 import { EntityProvider, useEntity } from "@/contexts/entity"
-import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
-
+import { AuthProvider, useAuth } from "@/contexts/user"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import type {
   PlasmoCSConfig,
-  PlasmoGetInlineAnchor,
   PlasmoCreateShadowRoot,
+  PlasmoGetInlineAnchor,
 } from "plasmo"
-import { sendToBackground } from "@plasmohq/messaging"
-import cssText from "data-text:~/contents/global.css"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Icons } from "@/components/icons"
-import { Input } from "@/components/ui/input"
-import { Toaster } from "@/components/ui/toaster"
-import UserPlan from "~components/UserPlan"
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-
-import PinButton from "~components/PinButton"
-import Note from "~/components/Note"
-import LabelList from "~components/LabelList"
-import LabelAdd from "~components/LabelAdd"
-
-import { baseApiUrl } from "~lib/constants"
-
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Sheet,
   SheetContent,
@@ -41,7 +24,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet-maintainer"
+import { Textarea } from "@/components/ui/textarea"
+import { Toaster } from "@/components/ui/toaster"
+import LabelAdd from "@/components/LabelAdd"
+import LabelList from "@/components/LabelList"
+import Note from "@/components/Note"
+import PinButton from "@/components/PinButton"
+import UserPlan from "@/components/UserPlan"
+import { Icons } from "@/components/icons"
+import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
+import { baseApiUrl } from "~lib/constants"
+
 import "~/contents/base.css"
+import cssText from "data-text:~/contents/global.css"
 
 const queryClient = new QueryClient()
 
@@ -159,7 +154,7 @@ const ActionSheet = () => {
     <div>
       {user?.isAuthed ? (
         <Sheet modal={false}>
-          {entity.exists && redirect?.to && redirect?.from && (
+          {redirect?.to && redirect?.from && (
             <Alert>
               {/* <Terminal className="h-4 w-4" /> */}
               <AlertTitle>Heads up!</AlertTitle>

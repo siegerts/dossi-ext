@@ -1,26 +1,27 @@
 import type { PlasmoCSConfig } from "plasmo"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { AuthProvider, useAuth } from "@/contexts/user"
-import { Button } from "~components/ui/button"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Icons } from "@/components/icons"
-
 import { baseApiUrl } from "~lib/constants"
+
 import "~/contents/global.css"
 import "~/contents/base.css"
 
 const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
 
 export const config: PlasmoCSConfig = {
-  matches
+  matches,
 }
 
 const queryClient = new QueryClient()

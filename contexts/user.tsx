@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
       setCurrentUserStatus("loading")
 
       const { user, status } = await sendToBackground({
-        name: "user" as never
+        name: "user" as never,
       })
 
       setCurrentUser(user)

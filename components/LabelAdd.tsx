@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react"
-import { Icons } from "@/components/icons"
-import { PlusCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useEntity } from "@/contexts/entity"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { PlusCircle } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { badgeVariants } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -15,7 +14,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator
+  CommandSeparator,
 } from "@/components/ui/command"
 import {
   Dialog,
@@ -24,15 +23,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover"
+import { Icons } from "@/components/icons"
 
 const LabelAdd = ({ labels }) => {
   // create
@@ -71,8 +71,8 @@ const LabelAdd = ({ labels }) => {
           body: {
             type: "ADD_LABEL_TO_ENTITY",
             entityId: entity.id,
-            labelId
-          }
+            labelId,
+          },
         })
         if (status.ok) {
           client.invalidateQueries({ queryKey: ["entity", entity.url] })
@@ -82,7 +82,7 @@ const LabelAdd = ({ labels }) => {
       } catch (err) {
         throw Error(err)
       }
-    }
+    },
   })
 
   const addLabeltoEntity = async (labelId) => {
@@ -92,8 +92,8 @@ const LabelAdd = ({ labels }) => {
         body: {
           type: "ADD_LABEL_TO_ENTITY",
           entityId: entity.id,
-          labelId
-        }
+          labelId,
+        },
       })
       if (status.ok) {
         client.invalidateQueries({ queryKey: ["entity", entity.url] })
@@ -113,8 +113,8 @@ const LabelAdd = ({ labels }) => {
           type: "POST",
           name: newLabelName,
           description: newLabelDescription,
-          color: "red-600"
-        }
+          color: "red-600",
+        },
       })
       if (status.ok) {
         client.invalidateQueries({ queryKey: ["labels"] })

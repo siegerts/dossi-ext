@@ -4,7 +4,7 @@ const fetchWithCredentials = (url: string, options: RequestInit) =>
   fetch(url, {
     ...options,
     credentials: "include",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   })
 
 const handleResponse = async (

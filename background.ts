@@ -1,4 +1,5 @@
 import { Storage } from "@plasmohq/storage"
+
 import Logger from "~lib/logger"
 
 const extensionName = "dossi"

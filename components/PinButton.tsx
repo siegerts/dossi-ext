@@ -1,6 +1,7 @@
 import { sendToBackground } from "@plasmohq/messaging"
-import { useQueryClient } from "@tanstack/react-query"
 import { useEntity } from "@/contexts/entity"
+import { useQueryClient } from "@tanstack/react-query"
+
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 

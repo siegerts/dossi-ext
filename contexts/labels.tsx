@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useQuery } from "@tanstack/react-query"
+
 import { useAuth } from "./user"
 
 type Label = {
@@ -31,8 +32,8 @@ const getUserLabels = async () => {
     let { data, status } = await sendToBackground({
       name: "labels" as never,
       body: {
-        type: "GET"
-      }
+        type: "GET",
+      },
     })
 
     if (status.ok) {
@@ -56,7 +57,7 @@ export function UserLabelsProvider({ children }) {
   const { data, status } = useQuery({
     enabled: !!user?.isAuthed,
     queryKey: ["labels"],
-    queryFn: getUserLabels
+    queryFn: getUserLabels,
   })
 
   return (

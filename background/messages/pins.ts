@@ -1,14 +1,15 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-import {
-  fetchWithCredentials,
-  handleResponse,
-  createErrorResponse
-} from "~lib/background"
-import { baseApiUrl } from "~lib/constants"
 import * as z from "zod"
 
+import {
+  createErrorResponse,
+  fetchWithCredentials,
+  handleResponse,
+} from "~lib/background"
+import { baseApiUrl } from "~lib/constants"
+
 const pinCreateSchema = z.object({
-  url: z.string().url({ message: "Invalid url" })
+  url: z.string().url({ message: "Invalid url" }),
 })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
@@ -22,12 +23,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     case "POST": {
       try {
         const { url } = pinCreateSchema.parse({
-          url: req.sender.tab.url
+          url: req.sender.tab.url,
         })
 
         const resp = await fetchWithCredentials(`${baseApiUrl}/pins`, {
           method: "POST",
-          body: JSON.stringify({ url })
+          body: JSON.stringify({ url }),
         })
 
         return handleResponse(resp, res, "POST")
@@ -42,7 +43,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const resp = await fetchWithCredentials(
         `${baseApiUrl}/pins/${req?.body?.pinId}`,
         {
-          method: "DELETE"
+          method: "DELETE",
         }
       )
 

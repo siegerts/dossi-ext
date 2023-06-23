@@ -1,10 +1,11 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
+
 import { baseApiUrl } from "~lib/constants"
 
 const reminderCreateSchema = z.object({
   at: z.string().datetime(),
-  url: z.string().url({ message: "Invalid url" })
+  url: z.string().url({ message: "Invalid url" }),
 })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
@@ -14,8 +15,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         method: "GET",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
 
       const ok = resp.ok
@@ -41,25 +42,24 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         // validate
         const { at, url } = reminderCreateSchema.parse({
           at: req.body.at,
-          url: req.body.url
+          url: req.body.url,
         })
 
         resp = await fetch(`${baseApiUrl}/reminders`, {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             at,
-            url
-          })
+            url,
+          }),
         })
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.log("parsing error")
           return res.send({
-            status: { ok: false, error: "schema not valid" }
+            status: { ok: false, error: "schema not valid" },
           })
         }
       }
@@ -69,7 +69,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       if (resp.ok) {
         const reminder = await resp.json()
         return res.send({
-          reminder
+          reminder,
         })
       } else {
         if (resp.status === 403) {
@@ -88,8 +88,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           method: "DELETE",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       )
 

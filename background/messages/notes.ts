@@ -1,5 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
+
 import { baseApiUrl } from "~lib/constants"
 import { noteCreateSchema, notePatchSchema } from "~lib/validations/note"
 
@@ -10,8 +11,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         method: "GET",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
 
       const ok = resp.ok
@@ -25,7 +26,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else {
           console.log("error ")
           return res.send({
-            status: { ok, error: "notes not available" }
+            status: { ok, error: "notes not available" },
           })
         }
       }
@@ -36,19 +37,19 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         // validate
         const { content, url } = noteCreateSchema.parse({
           url: req.sender.tab.url,
-          content: req.body.content
+          content: req.body.content,
         })
 
         let resp = await fetch(`${baseApiUrl}/notes`, {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             url,
-            content
-          })
+            content,
+          }),
         })
 
         const ok = resp.ok
@@ -67,7 +68,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       } catch (error) {
         if (error instanceof z.ZodError) {
           return res.send({
-            status: { ok: false, error: "schema not valid" }
+            status: { ok: false, error: "schema not valid" },
           })
         }
       }
@@ -76,16 +77,16 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     case "PATCH": {
       try {
         const { content } = notePatchSchema.parse({
-          content: req?.body?.content
+          content: req?.body?.content,
         })
 
         const resp = await fetch(`${baseApiUrl}/notes/${req?.body?.noteId}`, {
           method: "PATCH",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ content })
+          body: JSON.stringify({ content }),
         })
 
         const ok = resp.ok
@@ -103,7 +104,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       } catch (error) {
         if (error instanceof z.ZodError) {
           return res.send({
-            status: { ok: false, error: "schema not valid" }
+            status: { ok: false, error: "schema not valid" },
           })
         }
       }
@@ -114,8 +115,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         method: "DELETE",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
 
       const ok = resp.ok

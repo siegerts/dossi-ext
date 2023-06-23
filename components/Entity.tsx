@@ -15,8 +15,8 @@ export const Entity = ({ tabUrl }: { tabUrl: string }) => {
           name: "entities" as never,
           body: {
             type: "GET_ENTITY_BY_URL",
-            url: tabUrl
-          }
+            url: tabUrl,
+          },
         })
 
         if (status.ok) {

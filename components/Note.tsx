@@ -1,26 +1,25 @@
-import { Remark } from "react-remark"
 import { useState } from "react"
+import { sendToBackground } from "@plasmohq/messaging"
 import { useEntity } from "@/contexts/entity"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip"
+import { useQueryClient } from "@tanstack/react-query"
+import { formatDistanceToNow } from "date-fns"
+import { Remark } from "react-remark"
 
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-import { Icons } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { sendToBackground } from "@plasmohq/messaging"
 import { Textarea } from "@/components/ui/textarea"
-import { formatDistanceToNow } from "date-fns"
-import { useQueryClient } from "@tanstack/react-query"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Icons } from "@/components/icons"
 
 const Note = ({ note }) => {
   const [noteContent, setNoteContent] = useState(note.content)
@@ -36,8 +35,8 @@ const Note = ({ note }) => {
       body: {
         type: "PATCH",
         noteId: note.id,
-        content: noteContent
-      }
+        content: noteContent,
+      },
     })
 
     await client.invalidateQueries({ queryKey: ["entity", entity.url] })
@@ -50,8 +49,8 @@ const Note = ({ note }) => {
       name: "notes",
       body: {
         type: "DELETE",
-        noteId: note.id
-      }
+        noteId: note.id,
+      },
     })
 
     await client.invalidateQueries({ queryKey: ["entity", entity.url] })
@@ -66,7 +65,7 @@ const Note = ({ note }) => {
                 <TooltipTrigger>
                   <span className="text-gray-500">
                     {formatDistanceToNow(new Date(note?.createdAt), {
-                      addSuffix: true
+                      addSuffix: true,
                     })}
                   </span>
                 </TooltipTrigger>
@@ -75,7 +74,7 @@ const Note = ({ note }) => {
                   <span className="text-xs">
                     {new Intl.DateTimeFormat(navigator.language, {
                       dateStyle: "long",
-                      timeStyle: "short"
+                      timeStyle: "short",
                     }).format(new Date(note?.createdAt))}
                   </span>
                 </TooltipContent>

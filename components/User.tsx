@@ -14,7 +14,7 @@ const User = () => {
     async ({ queryKey }) => {
       try {
         let { user, status } = await sendToBackground({
-          name: "user" as never
+          name: "user" as never,
         })
 
         if (status.ok) {

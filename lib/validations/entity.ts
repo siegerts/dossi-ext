@@ -16,17 +16,17 @@ export const entityUrlSchema = z
     },
     {
       message:
-        "URL's hostname must be a subdomain of github.com or github.com itself"
+        "URL's hostname must be a subdomain of github.com or github.com itself",
     }
   )
 
 export const entityPatchSchema = z
   .object({
     title: z.string().max(500).trim().optional(),
-    url: entityUrlSchema.optional()
+    url: entityUrlSchema.optional(),
   })
   .refine((data) => Boolean(data.title) || Boolean(data.url), {
-    message: "Either 'title' or 'url' must be provided"
+    message: "Either 'title' or 'url' must be provided",
   })
 
 export const entityFilterSchema = entityUrlSchema

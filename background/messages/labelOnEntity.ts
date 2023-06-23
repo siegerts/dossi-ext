@@ -1,15 +1,16 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+import * as z from "zod"
+
 import {
+  createErrorResponse,
   fetchWithCredentials,
   handleResponse,
-  createErrorResponse
 } from "~lib/background"
 import { baseApiUrl } from "~lib/constants"
-import * as z from "zod"
 
 const labelsOnEntitiesSchema = z.object({
   entityId: z.string().trim(),
-  labelId: z.string().trim()
+  labelId: z.string().trim(),
 })
 
 // TODO: what if there isnt an entity yet
@@ -19,13 +20,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       try {
         const { entityId, labelId } = labelsOnEntitiesSchema.parse({
           entityId: req?.body?.entityId,
-          labelId: req?.body?.labelId
+          labelId: req?.body?.labelId,
         })
 
         const resp = await fetchWithCredentials(
           `${baseApiUrl}/entities/${entityId}/labels/${labelId}`,
           {
-            method: "PUT"
+            method: "PUT",
           }
         )
 
@@ -41,13 +42,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       try {
         const { entityId, labelId } = labelsOnEntitiesSchema.parse({
           entityId: req?.body?.entityId,
-          labelId: req?.body?.labelId
+          labelId: req?.body?.labelId,
         })
 
         const resp = await fetchWithCredentials(
           `${baseApiUrl}/entities/${entityId}/labels/${labelId}`,
           {
-            method: "DELETE"
+            method: "DELETE",
           }
         )
 

@@ -1,15 +1,15 @@
 import { useState } from "react"
+import type {
+  PlasmoCSConfig,
+  PlasmoCreateShadowRoot,
+  PlasmoGetInlineAnchor,
+} from "plasmo"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useStorage } from "@plasmohq/storage/hook"
 import { EntityProvider, useEntity } from "@/contexts/entity"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-import type {
-  PlasmoCSConfig,
-  PlasmoCreateShadowRoot,
-  PlasmoGetInlineAnchor,
-} from "plasmo"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"

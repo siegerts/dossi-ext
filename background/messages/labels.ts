@@ -1,20 +1,20 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
+import * as z from "zod"
 
 import {
+  createErrorResponse,
   fetchWithCredentials,
   handleResponse,
-  createErrorResponse
 } from "~lib/background"
 import { baseApiUrl } from "~lib/constants"
-import * as z from "zod"
 
 const storage = new Storage()
 
 const labelCreateSchema = z.object({
   name: z.string().trim().min(1).max(50),
   description: z.string().trim().optional(),
-  color: z.string().trim().optional()
+  color: z.string().trim().optional(),
 })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
@@ -49,12 +49,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         const { name, description, color } = labelCreateSchema.parse({
           name: req?.body?.name,
           description: req?.body?.description,
-          color: req?.body?.color
+          color: req?.body?.color,
         })
 
         const resp = await fetchWithCredentials(`${baseApiUrl}/labels`, {
           method: "POST",
-          body: JSON.stringify({ name, description, color })
+          body: JSON.stringify({ name, description, color }),
         })
 
         const ok = resp.ok
@@ -84,7 +84,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const { name, description, color } = labelCreateSchema.parse({
         name: req?.body?.name,
         description: req?.body?.description,
-        color: req?.body?.color
+        color: req?.body?.color,
       })
 
       try {
@@ -95,8 +95,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             body: JSON.stringify({
               name,
               description,
-              color
-            })
+              color,
+            }),
           }
         )
 
@@ -129,7 +129,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       const resp = await fetchWithCredentials(
         `${baseApiUrl}/labels/${req?.body?.labelId}`,
         {
-          method: "DELETE"
+          method: "DELETE",
         }
       )
 

@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
-import { useAuth } from "./user"
-
 // When you call useQuery, we call useQueryClient under the hood.
 // This will look up the nearest client in React Context.
 import { useQuery } from "@tanstack/react-query"
+
+import { useAuth } from "./user"
 
 type Note = {
   id: string
@@ -63,7 +63,7 @@ export function EntityProvider({ children }) {
   useEffect(() => {
     const checkTab = async () => {
       const { url, title } = await sendToBackground({
-        name: "tab" as never
+        name: "tab" as never,
       })
 
       setTab({ url, title })
@@ -94,8 +94,8 @@ export function EntityProvider({ children }) {
         name: "entities" as never,
         body: {
           type: "GET_ENTITY_BY_URL",
-          url
-        }
+          url,
+        },
       })
 
       if (status.ok) {
@@ -126,7 +126,7 @@ export function EntityProvider({ children }) {
     staleTime: 3 * 1000,
     enabled: user?.status === "success" && !!user.isAuthed && !!tab?.url,
     queryKey: ["entity", tab?.url],
-    queryFn: fetchEntity
+    queryFn: fetchEntity,
   })
 
   return (

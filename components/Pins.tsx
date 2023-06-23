@@ -14,8 +14,8 @@ const Pins = () => {
         let { pins, status } = await sendToBackground({
           name: "pins" as never,
           body: {
-            type: "GET"
-          }
+            type: "GET",
+          },
         })
 
         if (status.ok) {

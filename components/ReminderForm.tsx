@@ -1,20 +1,14 @@
 import { useState } from "react"
+import { sendToBackground } from "@plasmohq/messaging"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { sendToBackground } from "@plasmohq/messaging"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover"
-import { toast } from "@/components/ui/use-toast"
 import {
   Form,
   FormControl,
@@ -22,18 +16,24 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { toast } from "@/components/ui/use-toast"
 
 const FormSchema = z.object({
   dob: z.date({
-    required_error: "A date is required."
-  })
+    required_error: "A date is required.",
+  }),
 })
 
 export function DatePickerReminderForm({
   queryClient,
-  tabUrl
+  tabUrl,
 }: {
   queryClient: any
   tabUrl: string
@@ -41,27 +41,27 @@ export function DatePickerReminderForm({
   const [reminder, setReminder] = useState("")
 
   const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema)
+    resolver: zodResolver(FormSchema),
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await sendToBackground({
-      name: "reminders",
-      body: {
-        type: "POST",
-        reminder
-      }
-    })
-    setReminder("")
-    queryClient.invalidateQueries({ queryKey: ["reminders"] })
+    // await sendToBackground({
+    //   name: "reminders",
+    //   body: {
+    //     type: "POST",
+    //     reminder
+    //   }
+    // })
+    // setReminder("")
+    // queryClient.invalidateQueries({ queryKey: ["reminders"] })
 
     toast({
       title: "You submitted the following values:",
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-2">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
-      )
+      ),
     })
   }
 

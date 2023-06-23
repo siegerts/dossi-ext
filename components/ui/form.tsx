@@ -7,7 +7,7 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
-  useFormContext
+  useFormContext,
 } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
@@ -58,7 +58,7 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
-    ...fieldState
+    ...fieldState,
   }
 }
 
@@ -171,5 +171,5 @@ export {
   FormControl,
   FormDescription,
   FormMessage,
-  FormField
+  FormField,
 }

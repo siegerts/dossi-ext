@@ -1,5 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
+
 import { baseApiUrl } from "~lib/constants"
 
 const storage = new Storage()
@@ -19,7 +20,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
-    name: "__Secure-next-auth.session-token"
+    name: "__Secure-next-auth.session-token",
   })
 
   const user = await storage.get<User>("user")
@@ -32,7 +33,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     return res.send({
       user: { isAuthed: false },
-      status: { ok: false, error: "user not logged in" }
+      status: { ok: false, error: "user not logged in" },
     })
   }
 
@@ -41,8 +42,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       method: "GET",
       credentials: "include",
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
 
     const ok = resp.ok
@@ -57,7 +58,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
         return res.send({
           status: { ok },
-          user
+          user,
         })
       } else {
         // clear user & cache
@@ -66,7 +67,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
         return res.send({
           user: { isAuthed: false },
-          status: { ok, error: "user not logged in" }
+          status: { ok, error: "user not logged in" },
         })
       }
     } else {
@@ -76,7 +77,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
       return res.send({
         user: { isAuthed: false },
-        status: { ok, error: "user info not available" }
+        status: { ok, error: "user info not available" },
       })
     }
   } else {
@@ -84,7 +85,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     return res.send({
       status: { ok: true },
-      user
+      user,
     })
   }
 }

@@ -1,16 +1,16 @@
-import { Badge, badgeVariants } from "@/components/ui/badge"
 import { sendToBackground } from "@plasmohq/messaging"
-import { Icons } from "@/components/icons"
-import { cn } from "@/lib/utils"
-import { useQueryClient } from "@tanstack/react-query"
 import { useEntity } from "@/contexts/entity"
+import { useQueryClient } from "@tanstack/react-query"
 
+import { cn } from "@/lib/utils"
+import { Badge, badgeVariants } from "@/components/ui/badge"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
+  TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Icons } from "@/components/icons"
 
 export const LabelBadge = ({ label }) => {
   const client = useQueryClient()
@@ -22,8 +22,8 @@ export const LabelBadge = ({ label }) => {
       body: {
         type: "DELETE_LABEL_FROM_ENTITY",
         entityId: entity.id,
-        labelId
-      }
+        labelId,
+      },
     })
 
     client.invalidateQueries({ queryKey: ["entity", entity.url] })

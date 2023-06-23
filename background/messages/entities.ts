@@ -1,8 +1,9 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+import * as z from "zod"
+
 import { fetchWithCredentials, handleResponse } from "~lib/background"
 import { baseApiUrl } from "~lib/constants"
-import { entityPatchSchema, entityFilterSchema } from "~lib/validations/entity"
-import * as z from "zod"
+import { entityFilterSchema, entityPatchSchema } from "~lib/validations/entity"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   // this is a bit of a hack, but it works

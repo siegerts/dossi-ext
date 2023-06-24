@@ -11,8 +11,8 @@ module.exports = {
   bracketSameLine: true,
   trailingComma: "es5",
   plugins: [
+    // require("@plasmohq/prettier-plugin-sort-imports"),
     require("prettier-plugin-tailwindcss"),
-    require("@plasmohq/prettier-plugin-sort-imports"),
   ],
   importOrder: [
     "^(react/(.*)$)|^(react$)",

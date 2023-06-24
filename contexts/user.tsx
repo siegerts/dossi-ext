@@ -12,6 +12,7 @@ type User = {
     image: string
     id: string
     plan?: string
+    role?: string
   }
 }
 

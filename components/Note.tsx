@@ -21,7 +21,9 @@ import {
 } from "@/components/ui/tooltip"
 import { Icons } from "@/components/icons"
 
-const Note = ({ note }) => {
+import { type INote } from "@/types/noteTypes"
+
+const Note = ({ note }: { note: INote }) => {
   const [noteContent, setNoteContent] = useState(note.content)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -58,8 +60,8 @@ const Note = ({ note }) => {
   return (
     <>
       {!isEditing ? (
-        <div className="my-2">
-          <div className="flex items-center justify-between gap-2">
+        <div className="my-2 rounded-lg border border-muted-foreground/20 px-3 py-2">
+          <div className="mb-2 flex items-center justify-between gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -101,8 +103,10 @@ const Note = ({ note }) => {
                   Favorite
                 </DropdownMenuItem> */}
 
-                <DropdownMenuItem onClick={() => deleteNote()}>
-                  <Icons.trash className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+                <DropdownMenuItem
+                  onClick={() => deleteNote()}
+                  className="text-red-600">
+                  <Icons.trash className="mr-2 h-3.5 w-3.5 text-muted-foreground/70 text-red-600" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -115,7 +119,7 @@ const Note = ({ note }) => {
           <div className="grid w-full items-center gap-1.5">
             <Textarea
               id="note"
-              placeholder="Add your note here."
+              placeholder="Add your note here..."
               value={noteContent}
               onChange={(e) => setNoteContent(e.target.value)}
             />

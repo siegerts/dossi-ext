@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type {
   PlasmoCSConfig,
   PlasmoCreateShadowRoot,
@@ -26,11 +26,11 @@ import {
 } from "@/components/ui/sheet-maintainer"
 import { Textarea } from "@/components/ui/textarea"
 import { Toaster } from "@/components/ui/toaster"
-import LabelAdd from "@/components/LabelAdd"
-import LabelList from "@/components/LabelList"
-import Note from "@/components/Note"
+
+import NoteList from "@/components/NoteList"
 import PinButton from "@/components/PinButton"
 import UserPlan from "@/components/UserPlan"
+import UserRole from "@/components/UserRole"
 import { Icons } from "@/components/icons"
 import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
 import { baseApiUrl } from "~lib/constants"
@@ -83,7 +83,7 @@ const App = () => {
 const ActionSheet = () => {
   const user = useAuth()
   const entity = useEntity()
-  const { labels } = useUserLabels()
+
   const [redirect] = useStorage("redirect", { to: null, from: null })
 
   const [noteContent, setNoteContent] = useState("")
@@ -112,7 +112,6 @@ const ActionSheet = () => {
 
   const updateEntityUrl = async (newUrl) => {
     // TODO: update URL but merge notes
-    // if there are notes on the new url, merge them with the old ones
 
     // also, there wont be an entity id if the entity is new
 
@@ -156,11 +155,14 @@ const ActionSheet = () => {
         <Sheet modal={false}>
           {redirect?.to && redirect?.from && (
             <Alert>
+              {JSON.stringify(redirect)}
               {/* <Terminal className="h-4 w-4" /> */}
               <AlertTitle>Heads up!</AlertTitle>
               <AlertDescription>
                 It looks like this page was renamed or transferred. Would you
                 like to update your notes?
+                {/* did an entity exist for the old url? */}
+                {/* but i dont want to query twice */}
                 <Button onClick={() => updateEntityUrl(redirect?.to)}>
                   Yes, update my notes
                 </Button>
@@ -183,84 +185,83 @@ const ActionSheet = () => {
               <SheetTitle>
                 <div className="flex items-center justify-between">
                   <div>dossi</div>
+                  <UserRole />
                   <UserPlan />
                 </div>
               </SheetTitle>
               <SheetDescription>
-                Make changes to your notes here.
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="gap-4 py-4">
-              <div className="my-2 flex flex-col">
-                <PinButton
-                  pinId={
-                    entity?.pins && entity?.pins.length == 1
-                      ? entity?.pins[0]?.id
-                      : null
-                  }
-                />
-              </div>
-              <div className="flex flex-col gap-y-2">
-                {entity?.title && (
-                  <>
-                    {entity?.title}
-                    {entityTitle}
-                    <Input
-                      disabled={!isEditingEntityTitle}
-                      type="text"
-                      placeholder={entity?.title.split("·")[0].trim()}
-                      onChange={(e) => {
-                        setEntityTitle(e.target.value)
-                      }}
-                      value={entityTitle}
-                    />
-                    {!isEditingEntityTitle ? (
-                      <Button
-                        variant="ghost"
-                        className="flex h-8 w-8 p-0"
-                        onClick={() => setIsEditingEntityTitle(true)}>
-                        <Icons.pen className="h-4 w-4" />
-                        <span className="sr-only">edit title</span>
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          variant="ghost"
-                          className="flex h-8 w-8 p-0"
-                          onClick={() => {
-                            setIsEditingEntityTitle(false)
-                            setEntityTitle(entity?.title)
-                          }}>
-                          <Icons.close className="h-4 w-4" />
-                          <span className="sr-only">cancel</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="flex h-8 w-8 p-0"
-                          onClick={() => {
-                            updateEntityTitle()
-                            setIsEditingEntityTitle(false)
-                          }}>
-                          <Icons.check className="h-4 w-4" />
-                          <span className="sr-only">save</span>
-                        </Button>
-                      </>
-                    )}
-                  </>
-                )}
-
                 {entity?.url && (
-                  <>
+                  <div className="my-2 flex items-center gap-2">
                     <Input
                       disabled
                       type="text"
                       placeholder={new URL(entity?.url).pathname.substring(1)}
                     />
-                    <Button variant="ghost" className="flex h-8 w-8 p-0">
+                    {/* <Button variant="ghost" className="flex h-8 w-8 p-0">
                       <Icons.pen className="h-4 w-4" />
                       <span className="sr-only">edit url</span>
-                    </Button>
+                    </Button> */}
+                    <PinButton
+                      pinId={
+                        entity?.pins && entity?.pins.length == 1
+                          ? entity?.pins[0]?.id
+                          : null
+                      }
+                    />
+                  </div>
+                )}
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="gap-4 py-4">
+              <div className="flex flex-col gap-y-2">
+                {entity?.title && (
+                  <>
+                    <Label htmlFor="title">Title</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="title"
+                        disabled={!isEditingEntityTitle}
+                        type="text"
+                        placeholder={entity?.title}
+                        onChange={(e) => {
+                          setEntityTitle(e.target.value)
+                        }}
+                        value={entityTitle}
+                      />
+                      {!isEditingEntityTitle ? (
+                        <Button
+                          variant="ghost"
+                          className="flex h-8 w-8 p-0"
+                          onClick={() => setIsEditingEntityTitle(true)}>
+                          <Icons.pen className="h-4 w-4" />
+                          <span className="sr-only">edit title</span>
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            className="flex h-8 w-8 p-0"
+                            onClick={() => {
+                              setIsEditingEntityTitle(false)
+                              setEntityTitle(entity?.title)
+                            }}>
+                            <Icons.close className="h-4 w-4" />
+                            <span className="sr-only">cancel</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            className="flex h-8 w-8 p-0"
+                            onClick={() => {
+                              updateEntityTitle()
+                              setIsEditingEntityTitle(false)
+                            }}>
+                            <Icons.check className="h-4 w-4" />
+                            <span className="sr-only">save</span>
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
@@ -270,34 +271,13 @@ const ActionSheet = () => {
                 tabUrl={tabUrl}
               /> */}
 
-              <div className="mb-2 grid gap-2">
-                {entity?.status === "loading" && <p>Loading...</p>}
-                {entity?.status === "error" && <p>Error loading</p>}
-                {entity?.status === "success" && entity?.exists && (
-                  <>
-                    <div className="flex flex-wrap items-center gap-2 py-4">
-                      <LabelList labels={entity?.labels} />
-                      <LabelAdd labels={labels} />
-                    </div>
-                    {entity?.id ? (
-                      // TODO: add in collapsible
-                      <>
-                        {entity?.notes.map((note: any) => (
-                          <Note key={note?.id} note={note} />
-                        ))}
-                      </>
-                    ) : (
-                      <p>No notes yet..</p>
-                    )}
-                  </>
-                )}
-              </div>
+              <NoteList />
 
               <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="note">Note</Label>
+                <Label htmlFor="note">Add note</Label>
                 <Textarea
                   id="note"
-                  placeholder="Add your note here."
+                  placeholder="Add your thoughts here..."
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                 />

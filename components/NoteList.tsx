@@ -65,6 +65,11 @@ const NoteList = () => {
     <div className="mb-5 grid gap-2">
       {entity?.status === "loading" && (
         <>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <Skeleton className="h-5 w-[65px] rounded-full px-2.5" />
+            <Skeleton className="h-5 w-[63px] rounded-full px-2.5" />
+            <Skeleton className="h-5 w-[68px] rounded-full px-2.5" />
+          </div>
           <div className="my-5 flex items-center gap-3 space-x-4">
             <div className="space-y-2">
               <Skeleton className="h-4 w-[350px]" />

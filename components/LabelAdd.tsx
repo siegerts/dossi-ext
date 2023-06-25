@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 import { useEntity } from "@/contexts/entity"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 import { PlusCircle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -62,28 +62,6 @@ const LabelAdd = ({ labels }) => {
   const labelExists = (name) => {
     return labels.find((label) => label.name === name)
   }
-
-  const mutation = useMutation({
-    mutationFn: async (labelId) => {
-      try {
-        let { status } = await sendToBackground({
-          name: "labelOnEntity",
-          body: {
-            type: "ADD_LABEL_TO_ENTITY",
-            entityId: entity.id,
-            labelId,
-          },
-        })
-        if (status.ok) {
-          client.invalidateQueries({ queryKey: ["entity", entity.url] })
-        } else {
-          throw Error(status.error)
-        }
-      } catch (err) {
-        throw Error(err)
-      }
-    },
-  })
 
   const addLabeltoEntity = async (labelId) => {
     try {

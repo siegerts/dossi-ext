@@ -39,7 +39,11 @@ const NoteList = () => {
 
   useEffect(() => {
     if (entity?.notes) {
-      setNotes(sortNotesByDate(entity?.notes))
+      if (sortDirection === "asc") {
+        setNotes(sortNotesByDate(entity?.notes))
+      } else if (sortDirection === "desc") {
+        setNotes(entity?.notes.reverse())
+      }
     }
   }, [entity?.notes])
 

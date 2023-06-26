@@ -219,47 +219,53 @@ const ActionSheet = () => {
                   <>
                     <Label htmlFor="title">Title</Label>
                     <div className="flex items-center gap-2">
-                      <Input
-                        id="title"
-                        disabled={!isEditingEntityTitle}
-                        type="text"
-                        placeholder={entity?.title}
-                        onChange={(e) => {
-                          setEntityTitle(e.target.value)
-                        }}
-                        value={entityTitle}
-                      />
-                      {!isEditingEntityTitle ? (
-                        <Button
-                          variant="ghost"
-                          className="flex h-8 w-8 p-0"
-                          onClick={() => setIsEditingEntityTitle(true)}>
-                          <Icons.pen className="h-4 w-4" />
-                          <span className="sr-only">edit title</span>
-                        </Button>
-                      ) : (
+                      {entity?.exists ? (
                         <>
-                          <Button
-                            variant="ghost"
-                            className="flex h-8 w-8 p-0"
-                            onClick={() => {
-                              setIsEditingEntityTitle(false)
-                              setEntityTitle(entity?.title)
-                            }}>
-                            <Icons.close className="h-4 w-4" />
-                            <span className="sr-only">cancel</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            className="flex h-8 w-8 p-0"
-                            onClick={() => {
-                              updateEntityTitle()
-                              setIsEditingEntityTitle(false)
-                            }}>
-                            <Icons.check className="h-4 w-4" />
-                            <span className="sr-only">save</span>
-                          </Button>
+                          <Input
+                            id="title"
+                            disabled={!isEditingEntityTitle}
+                            type="text"
+                            placeholder={entity?.title}
+                            onChange={(e) => {
+                              setEntityTitle(e.target.value)
+                            }}
+                            value={entityTitle}
+                          />
+                          {!isEditingEntityTitle ? (
+                            <Button
+                              variant="ghost"
+                              className="flex h-8 w-8 p-0"
+                              onClick={() => setIsEditingEntityTitle(true)}>
+                              <Icons.pen className="h-4 w-4" />
+                              <span className="sr-only">edit title</span>
+                            </Button>
+                          ) : (
+                            <>
+                              <Button
+                                variant="ghost"
+                                className="flex h-8 w-8 p-0"
+                                onClick={() => {
+                                  setIsEditingEntityTitle(false)
+                                  setEntityTitle(entity?.title)
+                                }}>
+                                <Icons.close className="h-4 w-4" />
+                                <span className="sr-only">cancel</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                className="flex h-8 w-8 p-0"
+                                onClick={() => {
+                                  updateEntityTitle()
+                                  setIsEditingEntityTitle(false)
+                                }}>
+                                <Icons.check className="h-4 w-4" />
+                                <span className="sr-only">save</span>
+                              </Button>
+                            </>
+                          )}
                         </>
+                      ) : (
+                        <span>{entity?.title}</span>
                       )}
                     </div>
                   </>

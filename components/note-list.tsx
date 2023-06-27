@@ -4,6 +4,7 @@ import { useEntity } from "@/contexts/entity"
 import { useUserLabels } from "@/contexts/labels"
 import LabelAdd from "~components/label-add"
 import LabelList from "~components/label-list"
+import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { type INote, type INotesArray } from "@/types/noteTypes"
 
@@ -100,7 +101,8 @@ const NoteList = () => {
             <LabelAdd labels={labels} />
           </div>
 
-          <div className="mb-2 flex justify-end">
+          <div className="mb-2 flex items-center justify-between">
+            <Label htmlFor="notes">Notes</Label>
             <Select
               value={selectedSort.value}
               onValueChange={(value) => {
@@ -129,13 +131,17 @@ const NoteList = () => {
           </div>
 
           {entity?.exists && notes ? (
-            <div>
-              {notes.map((note: INote) => (
-                <Note key={note?.id} note={note} />
-              ))}
-            </div>
+            <>
+              <div id="notes">
+                {notes.map((note: INote) => (
+                  <Note key={note?.id} note={note} />
+                ))}
+              </div>
+            </>
           ) : (
-            <p>No notes yet...</p>
+            <div id="notes" className="m-4">
+              <p>No notes yet...</p>
+            </div>
           )}
         </>
       )}

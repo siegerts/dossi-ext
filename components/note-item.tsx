@@ -4,7 +4,8 @@ import { useEntity } from "@/contexts/entity"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Remark } from "react-remark"
-import { useAuth } from "@/contexts/user"
+import remarkGfm from "remark-gfm"
+// import rehypeHighlight from "rehype-highlight"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +32,6 @@ const Note = ({ note }: { note: INote }) => {
   const [isNoteSaving, setIsNoteSaving] = useState<boolean>(false)
   const client = useQueryClient()
   const entity = useEntity()
-  const user = useAuth()
 
   const saveNote = async () => {
     await sendToBackground({
@@ -62,7 +62,7 @@ const Note = ({ note }: { note: INote }) => {
   return (
     <>
       {!isEditing ? (
-        <div className="my-2 rounded-lg border border-muted-foreground/20 px-3 py-2">
+        <div className="my-2 w-full rounded-lg border border-muted-foreground/20 px-3 py-2">
           <div className="mb-2 flex items-center justify-between gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -114,8 +114,14 @@ const Note = ({ note }: { note: INote }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
           <div className="overflow-x-auto">
-            <Remark>{note.content}</Remark>
+            <Remark
+              remarkPlugins={[remarkGfm]}
+              // rehypePlugins={[rehypeHighlight]}
+            >
+              {note?.content}
+            </Remark>
           </div>
         </div>
       ) : (

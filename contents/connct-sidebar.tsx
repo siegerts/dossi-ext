@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import type {
   PlasmoCSConfig,
   PlasmoCreateShadowRoot,
@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -174,7 +175,7 @@ const ActionSheet = () => {
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
               {entity?.id && entity?.notes && (
-                <span className="ml-2 rounded-lg bg-gray-200 px-2 text-xs text-gray-500">
+                <span className="ml-2 rounded-full bg-gray-200 px-2 text-xs text-gray-500">
                   {entity?.notes?.length}
                 </span>
               )}
@@ -189,28 +190,24 @@ const ActionSheet = () => {
                   <UserPlan />
                 </div>
               </SheetTitle>
-              <SheetDescription>
-                {entity?.url && (
-                  <div className="my-2 flex items-center gap-2">
-                    <Input
-                      disabled
-                      type="text"
-                      placeholder={new URL(entity?.url).pathname.substring(1)}
-                    />
-                    {/* <Button variant="ghost" className="flex h-8 w-8 p-0">
-                      <Icons.pen className="h-4 w-4" />
-                      <span className="sr-only">edit url</span>
-                    </Button> */}
-                    <PinButton
-                      pinId={
-                        entity?.pins && entity?.pins.length == 1
-                          ? entity?.pins[0]?.id
-                          : null
-                      }
-                    />
-                  </div>
-                )}
-              </SheetDescription>
+              <SheetDescription>{/* this is a <p></p> */}</SheetDescription>
+              {entity?.url && (
+                <div className="my-2 flex items-center gap-2">
+                  <Input
+                    disabled
+                    type="text"
+                    placeholder={new URL(entity?.url).pathname.substring(1)}
+                  />
+
+                  <PinButton
+                    pinId={
+                      entity?.pins && entity?.pins.length == 1
+                        ? entity?.pins[0]?.id
+                        : null
+                    }
+                  />
+                </div>
+              )}
             </SheetHeader>
 
             <div className="gap-4 py-4">
@@ -265,17 +262,14 @@ const ActionSheet = () => {
                           )}
                         </>
                       ) : (
-                        <span>{entity?.title}</span>
+                        <div>
+                          <span>{entity?.title}</span>
+                        </div>
                       )}
                     </div>
                   </>
                 )}
               </div>
-
-              {/* <DatePickerReminderForm
-                queryClient={queryClient}
-                tabUrl={tabUrl}
-              /> */}
 
               <NoteList />
 

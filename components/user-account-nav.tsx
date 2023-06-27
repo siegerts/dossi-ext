@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { baseApiUrl } from "~lib/constants"
+import { baseUrl, baseApiUrl } from "~lib/constants"
 
 import { UserAvatar } from "@/components/user-avatar"
 
@@ -37,17 +37,17 @@ export function UserAccountNav({ user }) {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href={`${baseApiUrl}/dashboard`} target="_blank">
+          <a href={`${baseUrl}/dashboard`} target="_blank">
             Dashboard
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={`${baseApiUrl}/dashboard/billing`} target="_blank">
+          <a href={`${baseUrl}/dashboard/billing`} target="_blank">
             Billing
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={`${baseApiUrl}/dashboard/settings`} target="_blank">
+          <a href={`${baseUrl}/dashboard/settings`} target="_blank">
             Settings
           </a>
         </DropdownMenuItem>

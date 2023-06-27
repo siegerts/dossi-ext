@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import type { PlasmoCSConfig } from "plasmo"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { UserActivityProvider, useUserActivity } from "@/contexts/activity"
@@ -39,6 +40,17 @@ export const config: PlasmoCSConfig = {
 
 const queryClient = new QueryClient()
 
+type Action = {
+  id: string
+  createdAt: string
+  entity: {
+    url: string
+    title: string | null
+  }
+}
+
+type ActionsByURLAndDate = { [key: string]: Action[] }
+
 const Popup = () => {
   return (
     <div
@@ -60,6 +72,8 @@ const Popup = () => {
 const PopupPage = () => {
   const user = useAuth()
   const { activity, status } = useUserActivity()
+  const [activitySummaries, setActivitySummaries] =
+    useState<ActionsByURLAndDate>({})
 
   const handleLinkClick = (url: string) => {
     // e.preventDefault()
@@ -68,46 +82,69 @@ const PopupPage = () => {
     })
   }
 
+  useEffect(() => {
+    if (!activity) return
+    const groupedActions = activity.reduce((groups, action) => {
+      const date = new Date(action.createdAt).toISOString().split("T")[0]
+      const key = `${action.entity.url}_${date}`
+      if (!groups[key]) {
+        groups[key] = []
+      }
+      groups[key].push(action)
+      return groups
+    }, {})
+    setActivitySummaries(groupedActions)
+    console.log(groupedActions)
+  }, [activity])
+
   return (
     <>
       {user && user?.isAuthed ? (
         <div className="flex max-h-full flex-col space-y-1.5 p-6">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
-            <UserAccountNav user={user} />
+            <div className="flex items-center gap-2">
+              <UserPlan />
+              <UserAccountNav user={user} />
+            </div>
           </div>
           <Separator />
 
-          <div className="grid gap-4">
-            <div>
+          <Tabs defaultValue="recent" className="grid w-full grid-cols-2">
+            <TabsList className="">
+              <TabsTrigger value="recent">Recent</TabsTrigger>
+              <TabsTrigger value="pins">Pins</TabsTrigger>
+            </TabsList>
+            <TabsContent value="recent">recent tab</TabsContent>
+            <TabsContent value="pins">pinned items</TabsContent>
+            {/* <TabsContent value="later">for later.</TabsContent> */}
+          </Tabs>
+
+          <div className=" grid gap-4 text-sm">
+            <div className="mt-3">
               {status === "success" &&
                 activity &&
-                activity.map((notification, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    {/* {JSON.stringify(notification.entity.url)} */}
-
-                    <div className="space-y-1">
-                      <span className="flex h-2 w-2 translate-y-1 rounded-full bg-accent"></span>
-                      <p
-                        className="text-sm font-medium leading-none"
-                        onClick={() =>
-                          handleLinkClick(notification?.entity?.url)
-                        }>
-                        {notification?.entity?.title} here
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(
-                          new Date(notification?.createdAt),
-                          {
+                Object.entries(activitySummaries).map(
+                  ([key, actions], index) => (
+                    <div
+                      key={index}
+                      className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                      <div className="space-y-1">
+                        <p
+                          className="text-sm font-medium leading-none"
+                          onClick={() => handleLinkClick(key.split("_")[0])}>
+                          Added {actions.length} notes on{" "}
+                          {new URL(key.split("_")[0]).pathname.substring(1)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(key.split("_")[1]), {
                             addSuffix: true,
-                          }
-                        )}
-                      </p>
+                          })}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               {status === "loading" && (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <div className="my-5 flex items-center gap-3 space-x-4">
@@ -126,18 +163,6 @@ const PopupPage = () => {
               )}
             </div>
           </div>
-          <Tabs defaultValue="account" className="w-[400px]">
-            <TabsList>
-              <TabsTrigger value="recent">Recent</TabsTrigger>
-              <TabsTrigger value="pins">Pins</TabsTrigger>
-              <TabsTrigger value="later">Later</TabsTrigger>
-            </TabsList>
-            <TabsContent value="recent">
-              Make changes to your account here.
-            </TabsContent>
-            <TabsContent value="pins">Change your password here.</TabsContent>
-            <TabsContent value="later">for later.</TabsContent>
-          </Tabs>
         </div>
       ) : (
         <Card className="height-max-full">

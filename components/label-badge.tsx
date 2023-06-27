@@ -34,7 +34,11 @@ export const LabelBadge = ({ label }) => {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <button className={cn(badgeVariants({ variant: "secondary" }))}>
+            <button
+              className={cn(
+                badgeVariants({ variant: "secondary" }),
+                "rounded-md"
+              )}>
               {label?.label?.name}
               <Icons.close
                 className="ml-1 h-3 w-3"

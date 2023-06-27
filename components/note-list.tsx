@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
-import Note from "@/components/Note"
+import Note from "@/components/note-item"
 import { useEntity } from "@/contexts/entity"
 import { useUserLabels } from "@/contexts/labels"
-import LabelAdd from "@/components/LabelAdd"
-import LabelList from "@/components/LabelList"
+import LabelAdd from "~components/label-add"
+import LabelList from "~components/label-list"
 import { Skeleton } from "@/components/ui/skeleton"
 import { type INote, type INotesArray } from "@/types/noteTypes"
 

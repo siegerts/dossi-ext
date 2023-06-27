@@ -1,4 +1,4 @@
-import { LabelBadge } from "./LabelBadge"
+import { LabelBadge } from "./label-badge"
 
 const LabelList = ({ labels }) => {
   // add the delete label function here

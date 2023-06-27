@@ -115,8 +115,8 @@ const LabelAdd = ({ labels }) => {
         <PopoverTrigger asChild>
           <button
             className={cn(
-              "border-dashed",
-              badgeVariants({ variant: "outline" })
+              badgeVariants({ variant: "outline" }),
+              "rounded-md border-dashed"
             )}>
             <Icons.add className="mr-1 h-3 w-3" />
             Add label

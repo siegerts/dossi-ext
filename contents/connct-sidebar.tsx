@@ -27,12 +27,12 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Toaster } from "@/components/ui/toaster"
 
-import NoteList from "@/components/NoteList"
+import NoteList from "~components/note-list"
 import PinButton from "@/components/PinButton"
 import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
-import { UserLabelsProvider, useUserLabels } from "~contexts/labels"
+import { UserLabelsProvider } from "~contexts/labels"
 import { baseApiUrl } from "~lib/constants"
 
 import "~/contents/base.css"

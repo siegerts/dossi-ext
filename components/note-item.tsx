@@ -114,7 +114,9 @@ const Note = ({ note }: { note: INote }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Remark>{note.content}</Remark>
+          <div className="overflow-x-auto">
+            <Remark>{note.content}</Remark>
+          </div>
         </div>
       ) : (
         <>

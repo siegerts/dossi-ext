@@ -27,13 +27,13 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Toaster } from "@/components/ui/toaster"
 
-import NoteList from "~components/note-list"
+import NoteList from "@/components/note-list"
 import PinButton from "@/components/PinButton"
 import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
-import { UserLabelsProvider } from "~contexts/labels"
-import { baseApiUrl } from "~lib/constants"
+import { UserLabelsProvider } from "@/contexts/labels"
+import { baseApiUrl } from "@/lib/constants"
 
 import "~/contents/base.css"
 import cssText from "data-text:~/contents/global.css"
@@ -174,7 +174,7 @@ const ActionSheet = () => {
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
               {entity?.id && entity?.notes && (
-                <span className="ml-2 rounded-full bg-gray-200 px-1 text-xs text-gray-500">
+                <span className="ml-2 rounded-lg bg-gray-200 px-2 text-xs text-gray-500">
                   {entity?.notes?.length}
                 </span>
               )}

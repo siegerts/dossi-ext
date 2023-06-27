@@ -37,13 +37,19 @@ export function UserAccountNav({ user }) {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/dashboard">Dashboard</a>
+          <a href={`${baseApiUrl}/dashboard`} target="_blank">
+            Dashboard
+          </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/dashboard/billing">Billing</a>
+          <a href={`${baseApiUrl}/dashboard/billing`} target="_blank">
+            Billing
+          </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/dashboard/settings">Settings</a>
+          <a href={`${baseApiUrl}/dashboard/settings`} target="_blank">
+            Settings
+          </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">

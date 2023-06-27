@@ -59,10 +59,6 @@ const LabelAdd = ({ labels }) => {
     setAvailableLabels(labelsInclude())
   }, [labels, entity?.labels])
 
-  const labelExists = (name) => {
-    return labels.find((label) => label.name === name)
-  }
-
   const addLabeltoEntity = async (labelId) => {
     try {
       let { status } = await sendToBackground({

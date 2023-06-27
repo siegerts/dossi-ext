@@ -4,6 +4,7 @@ import { useEntity } from "@/contexts/entity"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Remark } from "react-remark"
+import { useAuth } from "@/contexts/user"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -30,6 +31,7 @@ const Note = ({ note }: { note: INote }) => {
   const [isNoteSaving, setIsNoteSaving] = useState<boolean>(false)
   const client = useQueryClient()
   const entity = useEntity()
+  const user = useAuth()
 
   const saveNote = async () => {
     await sendToBackground({

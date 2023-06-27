@@ -4,9 +4,7 @@ import { UserActivityProvider, useUserActivity } from "@/contexts/activity"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Skeleton } from "@/components/ui/skeleton"
-
-import UserPlan from "~components/UserPlan"
-
+import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -20,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseApiUrl } from "~lib/constants"
+import UserPlan from "@/components/user-plan"
 
 import "~/contents/base.css"
 // import "~/contents/global.css"
@@ -77,6 +76,7 @@ const PopupPage = () => {
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
             <UserAccountNav user={user} />
           </div>
+          <Separator />
 
           <div className="grid gap-4">
             <div>

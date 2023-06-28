@@ -35,8 +35,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     case "POST": {
       try {
         // validate
-        const { content, url } = noteCreateSchema.parse({
+        const { content, title, url } = noteCreateSchema.parse({
           url: req.sender.tab.url,
+          title: req.body.title,
           content: req.body.content,
         })
 
@@ -48,6 +49,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           },
           body: JSON.stringify({
             url,
+            title,
             content,
           }),
         })
@@ -67,6 +69,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
+          console.log(error)
           return res.send({
             status: { ok: false, error: "schema not valid" },
           })

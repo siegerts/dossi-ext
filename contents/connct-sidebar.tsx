@@ -142,6 +142,7 @@ const ActionSheet = () => {
       name: "notes",
       body: {
         type: "POST",
+        ...(!entity?.exists && { title: entity?.title }),
         content: noteContent,
       },
     })

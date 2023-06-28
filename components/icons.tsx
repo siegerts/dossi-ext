@@ -7,6 +7,7 @@ import {
   ChevronRight,
   File,
   FileText,
+  Frown,
   HelpCircle,
   Image,
   Laptop,
@@ -33,6 +34,7 @@ export type Icon = LucideIcon
 export const Icons = {
   logo: Library,
   close: X,
+  frown: Frown,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,

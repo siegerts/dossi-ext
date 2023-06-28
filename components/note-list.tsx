@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { type INote, type INotesArray } from "@/types/noteTypes"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
 import {
   Select,
   SelectContent,
@@ -92,8 +94,6 @@ const NoteList = () => {
         </>
       )}
 
-      {entity?.status === "error" && <p>Error loading</p>}
-
       {entity?.status === "success" && entity?.exists && (
         <>
           <div className="flex flex-wrap items-center gap-2 py-4">
@@ -144,6 +144,15 @@ const NoteList = () => {
             </div>
           )}
         </>
+      )}
+
+      {entity?.status === "error" && (
+        <Alert className="mt-5">
+          <AlertTitle>Oh no!</AlertTitle>
+          <AlertDescription>
+            There's an issue loading these notes. Please try again later.
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   )

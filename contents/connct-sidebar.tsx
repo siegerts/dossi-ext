@@ -231,6 +231,7 @@ const ActionSheet = () => {
                           {!isEditingEntityTitle ? (
                             <Button
                               variant="ghost"
+                              size="icon"
                               className="flex h-8 w-8 p-0"
                               onClick={() => setIsEditingEntityTitle(true)}>
                               <Icons.pen className="h-4 w-4" />
@@ -240,6 +241,7 @@ const ActionSheet = () => {
                             <>
                               <Button
                                 variant="ghost"
+                                size="icon"
                                 className="flex h-8 w-8 p-0"
                                 onClick={() => {
                                   setIsEditingEntityTitle(false)

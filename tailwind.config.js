@@ -9,6 +9,7 @@ module.exports = {
     "./contents/*.{ts,tsx}",
     "./popup/*.{ts,tsx}",
     "./options/*.{ts,tsx}",
+    "./*.tsx",
   ],
   theme: {
     container: {

@@ -98,6 +98,8 @@ const ActionSheet = () => {
   const [isEntityUrlSaving, setIsEntityUrlSaving] = useState<boolean>(false)
 
   const updateEntityTitle = async () => {
+    if (!entityTitle || entityTitle == entity?.title) return
+
     setIsEntityTitleSaving(true)
     await sendToBackground({
       name: "entities",
@@ -118,6 +120,7 @@ const ActionSheet = () => {
 
     // so, if there is data for the old url ...need to show that somehow
     // the use case of showing on redirect already works
+    if (!newUrl || newUrl == entity?.url) return
     setIsEntityUrlSaving(true)
 
     await sendToBackground({
@@ -138,6 +141,8 @@ const ActionSheet = () => {
   }
 
   const saveNote = async () => {
+    if (!noteContent) return
+
     await sendToBackground({
       name: "notes",
       body: {

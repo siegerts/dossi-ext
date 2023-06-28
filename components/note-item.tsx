@@ -34,6 +34,8 @@ const Note = ({ note }: { note: INote }) => {
   const entity = useEntity()
 
   const saveNote = async () => {
+    if (!noteContent || noteContent === note.content) return
+
     await sendToBackground({
       name: "notes",
       body: {

@@ -16,7 +16,6 @@ type Note = {
 type Label = {
   id: string
   name: string
-  color: string
   description: string
 }
 

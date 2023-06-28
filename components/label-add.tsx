@@ -80,6 +80,7 @@ const LabelAdd = ({ labels }) => {
   }
 
   const createLabel = async () => {
+    if (!newLabelName) return
     try {
       let { status } = await sendToBackground({
         name: "labels",
@@ -87,7 +88,6 @@ const LabelAdd = ({ labels }) => {
           type: "POST",
           name: newLabelName,
           description: newLabelDescription,
-          color: "red-600",
         },
       })
       if (status.ok) {

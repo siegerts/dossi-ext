@@ -8,7 +8,6 @@ type Label = {
   id: string
   name: string
   description: string
-  color: string
 }
 
 type Status = {

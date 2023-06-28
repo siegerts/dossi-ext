@@ -14,7 +14,6 @@ const storage = new Storage()
 const labelCreateSchema = z.object({
   name: z.string().trim().min(1).max(50),
   description: z.string().trim().optional(),
-  color: z.string().trim().optional(),
 })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
@@ -46,15 +45,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
     case "POST": {
       try {
-        const { name, description, color } = labelCreateSchema.parse({
+        const { name, description } = labelCreateSchema.parse({
           name: req?.body?.name,
           description: req?.body?.description,
-          color: req?.body?.color,
         })
 
         const resp = await fetchWithCredentials(`${baseApiUrl}/labels`, {
           method: "POST",
-          body: JSON.stringify({ name, description, color }),
+          body: JSON.stringify({ name, description }),
         })
 
         const ok = resp.ok
@@ -81,10 +79,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       }
     }
     case "PATCH": {
-      const { name, description, color } = labelCreateSchema.parse({
+      const { name, description } = labelCreateSchema.parse({
         name: req?.body?.name,
         description: req?.body?.description,
-        color: req?.body?.color,
       })
 
       try {
@@ -95,7 +92,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             body: JSON.stringify({
               name,
               description,
-              color,
             }),
           }
         )

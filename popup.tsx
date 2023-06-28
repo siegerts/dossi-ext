@@ -13,6 +13,7 @@ import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseUrl, baseApiUrl } from "~lib/constants"
 import UserPlan from "@/components/user-plan"
+import UserRole from "@/components/user-role"
 
 import "~/contents/base.css"
 // import "~/contents/global.css"
@@ -98,6 +99,7 @@ const PopupPage = () => {
         <div
           className="flex max-h-full flex-col space-y-1.5 p-6"
           style={{ height: "600px", width: "350px" }}>
+          <UserRole />
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
             <div className="flex items-center gap-2">
@@ -170,7 +172,13 @@ const PopupPage = () => {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="pins">pinned items</TabsContent>
+            <TabsContent value="pins">
+              <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
+                <span>
+                  No pinned items yet. <br />
+                </span>
+              </div>
+            </TabsContent>
             {/* <TabsContent value="later">for later.</TabsContent> */}
           </Tabs>
         </div>

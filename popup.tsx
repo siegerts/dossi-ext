@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import type { PlasmoCSConfig } from "plasmo"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { UserActivityProvider, useUserActivity } from "@/contexts/activity"
+import { UserPinsProvider, useUserPins } from "@/contexts/pins"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -54,7 +55,9 @@ const Popup = () => {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <UserActivityProvider>
-            <PopupPage />
+            <UserPinsProvider>
+              <PopupPage />
+            </UserPinsProvider>
           </UserActivityProvider>
         </AuthProvider>
       </QueryClientProvider>
@@ -65,11 +68,11 @@ const Popup = () => {
 const PopupPage = () => {
   const user = useAuth()
   const { activity, status } = useUserActivity()
+  const { pins, status: pinsStatus } = useUserPins()
   const [activitySummaries, setActivitySummaries] =
     useState<ActionsByURLAndDate>({})
 
   const handleLinkClick = (url: string) => {
-    // e.preventDefault()
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.update(tabs[0].id, { url: url })
     })
@@ -77,6 +80,7 @@ const PopupPage = () => {
 
   useEffect(() => {
     if (!activity) return
+
     const groupedActions = activity.reduce((groups, action) => {
       const date = new Date(action.createdAt).toISOString().split("T")[0]
 
@@ -90,7 +94,7 @@ const PopupPage = () => {
       return groups
     }, {})
     setActivitySummaries(groupedActions)
-    console.log(groupedActions)
+    // console.log("groupedActions", groupedActions)
   }, [activity])
 
   return (
@@ -115,7 +119,7 @@ const PopupPage = () => {
               <TabsTrigger value="pins">Pins</TabsTrigger>
             </TabsList>
             <TabsContent value="recent">
-              <div className=" grid gap-4 text-sm">
+              <div className="grid gap-4 text-sm">
                 <div className="mt-4">
                   {status === "success" && activity && activity.length > 0 ? (
                     Object.entries(activitySummaries).map(
@@ -173,10 +177,41 @@ const PopupPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="pins">
-              <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
-                <span>
-                  No pinned items yet. <br />
-                </span>
+              <div className="mt-4">
+                {pinsStatus === "success" && pins && pins.length > 0 ? (
+                  <>
+                    {pins.map((pin, index) => (
+                      <div
+                        key={index}
+                        className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-amber-500" />
+                        <div className="space-y-1">
+                          <p className="cursor-pointer text-sm leading-none">
+                            {pin.url}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      No pinned items yet. <br />
+                    </span>
+                  </>
+                )}
+                {pinsStatus === "loading" && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <div className="my-5 flex items-center gap-3 space-x-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[220px]" />
+                        <Skeleton className="h-4 w-[100px]" />
+                        <Skeleton className="h-4 w-[241px]" />
+                        <Skeleton className="h-4 w-[110px]" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </TabsContent>
             {/* <TabsContent value="later">for later.</TabsContent> */}

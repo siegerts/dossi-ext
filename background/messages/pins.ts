@@ -6,6 +6,7 @@ import {
   fetchWithCredentials,
   handleResponse,
 } from "~lib/background"
+
 import { baseApiUrl } from "~lib/constants"
 
 const pinCreateSchema = z.object({
@@ -17,6 +18,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     case "GET": {
       const url = `${baseApiUrl}/pins`
       const resp = await fetchWithCredentials(url, { method: "GET" })
+
       return handleResponse(resp, res, "GET")
     }
 

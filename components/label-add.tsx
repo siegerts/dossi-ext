@@ -101,8 +101,10 @@ const LabelAdd = ({ labels }) => {
     }
   }
 
-  const selectLabel = (value) => {
-    const label = labels.find((label) => label.name === value)
+  const selectLabel = (value: string) => {
+    const label = labels.find(
+      (label: { id: string; name: string }) => label.name === value
+    )
     addLabeltoEntity(label.id)
     setOpen(false)
   }

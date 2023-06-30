@@ -33,7 +33,10 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
   }
 
   return (
-    <Button variant="ghost" onClick={() => (pinId ? unpin(pinId) : pin())}>
+    <Button
+      size="sm"
+      variant="ghost"
+      onClick={() => (pinId ? unpin(pinId) : pin())}>
       <Icons.pin className="mr-2 h-4 w-4" />
       {pinId ? "Unpin" : "Pin"}
     </Button>

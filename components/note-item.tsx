@@ -64,7 +64,7 @@ const Note = ({ note }: { note: INote }) => {
   return (
     <>
       {!isEditing ? (
-        <div className="my-2 w-full rounded-lg border border-muted-foreground/20 px-3 py-2">
+        <div className="my-2 w-full rounded-lg border border-slate-100 px-3 py-2 shadow-sm">
           <div className="mb-2 flex items-center justify-between gap-2">
             <TooltipProvider>
               <Tooltip>

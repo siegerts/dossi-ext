@@ -192,12 +192,10 @@ const ActionSheet = () => {
               </SheetTitle>
               <SheetDescription>{/* this is a <p></p> */}</SheetDescription>
               {entity?.url && (
-                <div className="my-2 flex items-center gap-2">
-                  <Input
-                    disabled
-                    type="text"
-                    placeholder={new URL(entity?.url).pathname.substring(1)}
-                  />
+                <div className="my-2 flex items-center justify-between gap-2">
+                  <div>
+                    <span>{new URL(entity?.url).pathname.substring(1)}</span>
+                  </div>
 
                   <PinButton
                     pinId={
@@ -218,9 +216,9 @@ const ActionSheet = () => {
                     <div className="flex items-center gap-2">
                       {entity?.exists ? (
                         <>
+                          {isEditingEntityTitle ? (
                           <Input
                             id="title"
-                            disabled={!isEditingEntityTitle}
                             type="text"
                             placeholder={entity?.title}
                             onChange={(e) => {
@@ -228,6 +226,11 @@ const ActionSheet = () => {
                             }}
                             value={entityTitle}
                           />
+                          ) : (
+                            <div>
+                              <span>{entity?.title}</span>
+                            </div>
+                          )}
                           {!isEditingEntityTitle ? (
                             <Button
                               variant="ghost"

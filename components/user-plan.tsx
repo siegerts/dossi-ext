@@ -12,7 +12,7 @@ const UserPlan = () => {
             data-orientation="vertical"
             role="none"
             className="mx-2 h-4 w-[1px] shrink-0 bg-border"></div>
-          Pro plan
+          {user?.attrs?.plan} plan
         </div>
       ) : (
         <a

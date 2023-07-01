@@ -29,7 +29,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Toaster } from "@/components/ui/toaster"
 
 import NoteList from "@/components/note-list"
-import PinButton from "@/components/PinButton"
+import PinButton from "@/components/pin-button"
 import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"

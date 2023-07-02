@@ -2,7 +2,7 @@
   "name": "dossi",
   "displayName": "dossi",
   "version": "0.0.1",
-  "description": "Enhance your open-source workflow with private note-taking, labeling, and the ability to view your notes alongside issues, pull requests, and repos.  Keep track, stay organized, and boost collaboration and productivity with your team and other developers.",
+  "description": "Enhance your open-source GitHub workflow with private note-taking, labeling, and the ability to view your notes alongside issues, pull requests, and repos.  Keep track, stay organized, and boost collaboration and productivity with your team and other developers.",
   "author": "siegerts",
   "scripts": {
     "dev": "plasmo dev",

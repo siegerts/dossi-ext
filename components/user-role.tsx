@@ -6,7 +6,7 @@ const UserPlan = () => {
   return (
     <>
       {user?.attrs?.role && (
-        <div className="mr-2 inline-flex items-center rounded-lg bg-muted px-3 py-1 text-sm font-medium no-underline">
+        <div className="inline-flex items-center rounded-lg bg-muted bg-primary bg-secondary px-3 py-1 text-sm font-medium text-primary no-underline">
           🔧
           <div
             data-orientation="vertical"

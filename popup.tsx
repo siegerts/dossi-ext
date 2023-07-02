@@ -219,7 +219,7 @@ const PopupPage = () => {
         </div>
       ) : (
         <div style={{ width: "350px", height: "200px" }}>
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 p-3 sm:w-[225px]">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 p-4 sm:w-[225px]">
             <div className="flex flex-col space-y-2 text-center">
               <Icons.logo className="mx-auto h-6 w-6" />
 

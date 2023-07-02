@@ -55,7 +55,7 @@ export const getStyle = () => {
 }
 
 export const getShadowHostId = () =>
-  `${process.env.PLASMO_PUBLIC_SHIP_NAME}-cc-sidebar`
+  `${process.env.PLASMO_PUBLIC_SHIP_NAME}-dev-sb`
 
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({
@@ -72,8 +72,10 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <UserLabelsProvider>
           <EntityProvider>
+            {/* <ThemeProvider attribute="class" defaultTheme="light" enableSystem> */}
             <ActionSheet />
             <ReactQueryDevtools initialIsOpen={false} />
+            {/* </ThemeProvider> */}
           </EntityProvider>
         </UserLabelsProvider>
       </QueryClientProvider>
@@ -94,6 +96,8 @@ const ActionSheet = () => {
   const [isEntityTitleSaving, setIsEntityTitleSaving] = useState<boolean>(false)
 
   const updateEntityTitle = async () => {
+    console.log("entityTitle", entityTitle)
+    console.log("entity?.title", entity?.title)
     if (!entityTitle || entityTitle == entity?.title) return
 
     setIsEntityTitleSaving(true)
@@ -181,11 +185,11 @@ const ActionSheet = () => {
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent size="lg">
+          <SheetContent size="lg" className="!bg-white !text-black">
             <SheetHeader className="text-left">
               <SheetTitle>
                 <div className="flex items-center justify-between">
-                  <div>dossi</div>
+                  <h2>dossi</h2>
                   <UserRole />
                   <UserPlan />
                 </div>
@@ -217,15 +221,14 @@ const ActionSheet = () => {
                       {entity?.exists ? (
                         <>
                           {isEditingEntityTitle ? (
-                          <Input
-                            id="title"
-                            type="text"
-                            placeholder={entity?.title}
-                            onChange={(e) => {
-                              setEntityTitle(e.target.value)
-                            }}
-                            value={entityTitle}
-                          />
+                            <Input
+                              id="title"
+                              type="text"
+                              placeholder={entity?.title}
+                              onChange={(e) => {
+                                setEntityTitle(e.target.value)
+                              }}
+                            />
                           ) : (
                             <div>
                               <span>{entity?.title}</span>
@@ -281,6 +284,7 @@ const ActionSheet = () => {
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="note">Add note</Label>
                 <Textarea
+                  autoFocus={true}
                   id="note"
                   placeholder="Add your thoughts here..."
                   value={noteContent}

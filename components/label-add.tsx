@@ -117,7 +117,7 @@ const LabelAdd = ({ labels }) => {
         <PopoverTrigger asChild>
           <button
             className={cn(
-              badgeVariants({ variant: "outline" }),
+              badgeVariants({ variant: "secondary" }),
               "rounded-md border-dashed"
             )}>
             <Icons.add className="mr-1 h-3 w-3" />
@@ -162,7 +162,7 @@ const LabelAdd = ({ labels }) => {
           </Command>
         </PopoverContent>
       </Popover>
-      <DialogContent className="rounded-lg sm:max-w-[425px]">
+      <DialogContent className="rounded-lg !text-black sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create label</DialogTitle>
           <DialogDescription>

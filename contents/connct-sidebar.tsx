@@ -175,7 +175,7 @@ const ActionSheet = () => {
             </Alert>
           )}
           <SheetTrigger asChild className="justify-end">
-            <Button>
+            <Button variant="default" className="border-primary-text border">
               <Icons.logo className="mr-2 h-4 w-4" />
               {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
               {entity?.id && entity?.notes && (

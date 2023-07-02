@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Icons } from "@/components/icons"
@@ -121,42 +122,47 @@ const PopupPage = () => {
             <TabsContent value="recent">
               <div className="grid gap-4 text-sm">
                 <div className="mt-4">
-                  {status === "success" && activity && activity.length > 0 ? (
-                    Object.entries(activitySummaries).map(
-                      ([key, actions], index) => (
-                        <div
-                          key={index}
-                          className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                          <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                          <div className="space-y-1">
-                            <p
-                              className="cursor-pointer text-sm leading-none"
-                              onClick={() =>
-                                handleLinkClick(key.split("_")[0])
-                              }>
-                              Added {actions.length} note
-                              {actions.length > 1 ? "s" : null} on{" "}
-                              {new URL(key.split("_")[0]).pathname.substring(1)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(
-                                new Date(key.split("_")[1]),
-                                {
-                                  addSuffix: true,
-                                }
-                              )}
-                            </p>
+                  <ScrollArea className="h-[410px]">
+                    {status === "success" && activity && activity.length > 0 ? (
+                      Object.entries(activitySummaries).map(
+                        ([key, actions], index) => (
+                          <div
+                            key={index}
+                            className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                            <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                            <div className="space-y-1">
+                              <p
+                                className="cursor-pointer text-sm leading-none"
+                                onClick={() =>
+                                  handleLinkClick(key.split("_")[0])
+                                }>
+                                Added {actions.length} note
+                                {actions.length > 1 ? "s" : null} on{" "}
+                                {new URL(key.split("_")[0]).pathname.substring(
+                                  1
+                                )}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(
+                                  new Date(key.split("_")[1]),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </p>
+                            </div>
                           </div>
-                        </div>
+                        )
                       )
-                    )
-                  ) : (
-                    <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
-                      <span>
-                        No recent activity. <br />
-                      </span>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
+                        <span>
+                          No recent activity. <br />
+                        </span>
+                      </div>
+                    )}
+                  </ScrollArea>
+
                   {status === "loading" && (
                     <div className="mt-4 flex flex-wrap items-center gap-2">
                       <div className="my-5 flex items-center gap-3 space-x-4">
@@ -179,7 +185,7 @@ const PopupPage = () => {
             <TabsContent value="pins">
               <div className="mt-4">
                 {pinsStatus === "success" && pins && pins.length > 0 ? (
-                  <>
+                  <ScrollArea className="h-[410px] ">
                     {pins.map((pin, index) => (
                       <div
                         key={index}
@@ -192,7 +198,7 @@ const PopupPage = () => {
                         </div>
                       </div>
                     ))}
-                  </>
+                  </ScrollArea>
                 ) : (
                   <>
                     <span>

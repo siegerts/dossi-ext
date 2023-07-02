@@ -41,16 +41,13 @@ export function UserAccountNav({ user }) {
             Dashboard
           </a>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={`${baseUrl}/dashboard/billing`} target="_blank">
-            Billing
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={`${baseUrl}/dashboard/settings`} target="_blank">
-            Settings
-          </a>
-        </DropdownMenuItem>
+        {user?.attrs?.plan !== "Pro" && (
+          <DropdownMenuItem asChild>
+            <a href={`${baseUrl}/dashboard/billing`} target="_blank">
+              Upgrade to PRO
+            </a>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
           <a href={`${baseApiUrl}/auth/signout`} target="_blank">

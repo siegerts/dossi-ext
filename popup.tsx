@@ -200,11 +200,11 @@ const PopupPage = () => {
                     ))}
                   </ScrollArea>
                 ) : (
-                  <>
+                  <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
                     <span>
                       No pinned items yet. <br />
                     </span>
-                  </>
+                  </div>
                 )}
                 {pinsStatus === "loading" && (
                   <div className="mt-4 flex flex-wrap items-center gap-2">

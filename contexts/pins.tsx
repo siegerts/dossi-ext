@@ -57,8 +57,6 @@ export function UserPinsProvider({ children }) {
     queryFn: getUserPins,
   })
 
-  console.log("in provider", data)
-
   return (
     <UserPinsContext.Provider value={{ pins: data, status }}>
       {children}

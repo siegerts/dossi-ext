@@ -183,18 +183,28 @@ const PopupPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="pins">
-              <div className="mt-4">
+              <div className="mt-4 ">
                 {pinsStatus === "success" && pins && pins.length > 0 ? (
                   <ScrollArea className="h-[410px] ">
                     {pins.map((pin, index) => (
                       <div
                         key={index}
-                        className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                        className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0">
                         <span className="flex h-2 w-2 translate-y-1 rounded-full bg-amber-500" />
-                        <div className="space-y-1">
-                          <p className="cursor-pointer text-sm leading-none">
-                            {pin.url}
-                          </p>
+                        <div
+                          className="cursor-pointer space-y-1"
+                          onClick={() => handleLinkClick(pin.url)}>
+                          <div className="pl-0 text-left text-sm leading-none">
+                            {new URL(pin.url).pathname
+                              .split("/")
+                              .slice(2)
+                              .join("/")}
+                          </div>
+                          {pin.entity?.title && (
+                            <p className="text-left text-xs text-muted-foreground">
+                              {pin.entity.title}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}

@@ -7,6 +7,9 @@ import { useAuth } from "./user"
 type PinItem = {
   id: string
   url: string
+  entity: {
+    title: string
+  }
   createdAt: string
 }
 

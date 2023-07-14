@@ -1,17 +1,17 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+
 import type {
   PlasmoCSConfig,
   PlasmoCreateShadowRoot,
   PlasmoGetInlineAnchor,
 } from "plasmo"
+
 import { sendToBackground } from "@plasmohq/messaging"
 import { useStorage } from "@plasmohq/storage/hook"
 import { EntityProvider, useEntity } from "@/contexts/entity"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -72,10 +72,8 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <UserLabelsProvider>
           <EntityProvider>
-            {/* <ThemeProvider attribute="class" defaultTheme="light" enableSystem> */}
             <ActionSheet />
             <ReactQueryDevtools initialIsOpen={false} />
-            {/* </ThemeProvider> */}
           </EntityProvider>
         </UserLabelsProvider>
       </QueryClientProvider>
@@ -89,15 +87,33 @@ const ActionSheet = () => {
 
   const [redirect] = useStorage("redirect", { to: null, from: null })
 
-  const [noteContent, setNoteContent] = useState("")
+  const [noteContent, setNoteContent] = useState<string>("")
 
-  const [entityTitle, setEntityTitle] = useState(entity?.title)
-  const [isEditingEntityTitle, setIsEditingEntityTitle] = useState(false)
+  const [entityTitle, setEntityTitle] = useState<string>(entity?.title)
+  const [isEditingEntityTitle, setIsEditingEntityTitle] =
+    useState<boolean>(false)
   const [isEntityTitleSaving, setIsEntityTitleSaving] = useState<boolean>(false)
+  const [redirectedEntity, setRedirectedEntity] = useState<any>(null)
+
+  useEffect(() => {
+    const checkRedirectNotes = async () => {
+      if (!redirect?.to || !redirect?.from) return
+
+      const res = await sendToBackground({
+        name: "entities",
+        body: {
+          type: "GET_ENTITY_BY_URL",
+          url: redirect?.from,
+        },
+      })
+
+      console.log("redirect info", res)
+      setRedirectedEntity(res?.data)
+    }
+    checkRedirectNotes()
+  }, [redirect?.to, redirect?.from])
 
   const updateEntityTitle = async () => {
-    console.log("entityTitle", entityTitle)
-    console.log("entity?.title", entity?.title)
     if (!entityTitle || entityTitle == entity?.title) return
 
     setIsEntityTitleSaving(true)
@@ -158,22 +174,6 @@ const ActionSheet = () => {
     <div>
       {user?.isAuthed ? (
         <Sheet modal={false}>
-          {redirect?.to && redirect?.from && (
-            <Alert>
-              {JSON.stringify(redirect)}
-              {/* <Terminal className="h-4 w-4" /> */}
-              <AlertTitle>Heads up!</AlertTitle>
-              <AlertDescription>
-                It looks like this page was renamed or transferred. Would you
-                like to update your notes?
-                {/* did an entity exist for the old url? */}
-                {/* but i dont want to query twice */}
-                <Button onClick={() => updateEntityUrl(redirect?.to)}>
-                  Yes, update my notes
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
           <SheetTrigger asChild className="justify-end">
             <Button variant="default" className="border-primary-text border">
               <Icons.logo className="mr-2 h-4 w-4" />

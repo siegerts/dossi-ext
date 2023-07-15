@@ -279,6 +279,22 @@ const ActionSheet = () => {
                 )}
               </div>
 
+              {redirectedEntity && (
+                <div className="my-2 flex flex-col gap-y-2 rounded-md border p-3">
+                  <h3 className="text-sm font-semibold">Redirected</h3>
+                  <p>
+                    This page may have been redirected from{" "}
+                    {redirectedEntity?.url}.{" "}
+                    {redirectedEntity?.notes?.length > 0 && (
+                      <span>
+                        You have {redirectedEntity?.notes?.length} notes for
+                        that page.
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
+
               <NoteList />
 
               <div className="grid w-full items-center gap-1.5">

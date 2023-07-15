@@ -29,6 +29,7 @@ type Pin = {
 
 type Entity = {
   id: string
+  url: string
   exists: boolean
   createdAt: string
   updatedAt: string

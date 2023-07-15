@@ -104,7 +104,7 @@ const PopupPage = () => {
         <div
           className="flex max-h-full flex-col space-y-1.5 p-6"
           style={{ height: "600px", width: "350px" }}>
-          <UserRole />
+          {/* <UserRole /> */}
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
             <div className="flex items-center gap-2">

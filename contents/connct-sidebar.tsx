@@ -155,14 +155,14 @@ const ActionSheet = () => {
   }
 
   const saveNote = async () => {
-    if (!noteContent) return
+    if (!noteContent.trim()) return
 
     await sendToBackground({
       name: "notes",
       body: {
         type: "POST",
         ...(!entity?.exists && { title: entity?.title }),
-        content: noteContent,
+        content: noteContent.trim(),
       },
     })
     setNoteContent("")
@@ -190,7 +190,7 @@ const ActionSheet = () => {
               <SheetTitle>
                 <div className="flex items-center justify-between">
                   <h2>dossi</h2>
-                  <UserRole />
+                  {/* <UserRole /> */}
                   <UserPlan />
                 </div>
               </SheetTitle>

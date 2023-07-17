@@ -4,6 +4,7 @@ import { useEntity } from "@/contexts/entity"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Remark } from "react-remark"
+import remarkBreaks from "remark-breaks"
 import remarkGfm from "remark-gfm"
 // import rehypeHighlight from "rehype-highlight"
 
@@ -34,14 +35,18 @@ const Note = ({ note }: { note: INote }) => {
   const entity = useEntity()
 
   const saveNote = async () => {
-    if (!noteContent || noteContent === note.content) return
+    if (!noteContent || noteContent === note.content) {
+      setIsEditing(false)
+      setIsNoteSaving(false)
+      return
+    }
 
     await sendToBackground({
       name: "notes",
       body: {
         type: "PATCH",
         noteId: note.id,
-        content: noteContent,
+        content: noteContent.trim(),
       },
     })
 
@@ -119,7 +124,7 @@ const Note = ({ note }: { note: INote }) => {
 
           <div className="overflow-x-auto">
             <Remark
-              remarkPlugins={[remarkGfm]}
+              remarkPlugins={[remarkGfm, remarkBreaks]}
               // rehypePlugins={[rehypeHighlight]}
             >
               {note?.content}

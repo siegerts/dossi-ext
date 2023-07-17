@@ -279,7 +279,7 @@ const ActionSheet = () => {
                 )}
               </div>
 
-              {redirectedEntity && (
+              {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
                 <div className="my-2 flex flex-col gap-y-2 rounded-md border p-3">
                   <h3 className="text-sm font-semibold">Redirected</h3>
                   <p>

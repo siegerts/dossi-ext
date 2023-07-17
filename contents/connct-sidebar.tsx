@@ -41,10 +41,8 @@ import cssText from "data-text:~/contents/global.css"
 
 const queryClient = new QueryClient()
 
-const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
-
 export const config: PlasmoCSConfig = {
-  matches,
+  matches: ["https://github.com/*"],
 }
 
 // Inject into the ShadowDOM

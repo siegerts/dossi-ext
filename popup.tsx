@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import type { PlasmoCSConfig } from "plasmo"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { UserActivityProvider, useUserActivity } from "@/contexts/activity"
 import { UserPinsProvider, useUserPins } from "@/contexts/pins"
@@ -16,7 +15,7 @@ import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseUrl, baseApiUrl } from "~lib/constants"
 import UserPlan from "@/components/user-plan"
-import UserRole from "@/components/user-role"
+// import UserRole from "@/components/user-role"
 
 import "~/contents/base.css"
 // import "~/contents/global.css"
@@ -227,7 +226,6 @@ const PopupPage = () => {
                 )}
               </div>
             </TabsContent>
-            {/* <TabsContent value="later">for later.</TabsContent> */}
           </Tabs>
         </div>
       ) : (

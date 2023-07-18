@@ -115,12 +115,30 @@ const PopupPage = () => {
               <TabsTrigger value="recent">Recent</TabsTrigger>
               <TabsTrigger value="pins">Pins</TabsTrigger>
             </TabsList>
+
             <TabsContent value="recent">
               <div className="grid gap-4 text-sm">
                 <div className="mt-4">
-                  <ScrollArea className="h-[410px]">
-                    {status === "success" && activity && activity.length > 0 ? (
-                      Object.entries(activitySummaries).map(
+                  {status === "loading" && (
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <div className="my-5 flex items-center gap-3 space-x-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[220px]" />
+                          <Skeleton className="h-4 w-[100px]" />
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[241px]" />
+                          <Skeleton className="h-4 w-[110px]" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {status === "success" && activity && activity.length > 0 && (
+                    <ScrollArea className="h-[410px]">
+                      {Object.entries(activitySummaries).map(
                         ([key, actions], index) => (
                           <div
                             key={index}
@@ -149,38 +167,25 @@ const PopupPage = () => {
                             </div>
                           </div>
                         )
-                      )
-                    ) : (
+                      )}
+                    </ScrollArea>
+                  )}
+
+                  {status === "success" &&
+                    activity &&
+                    activity.length === 0 && (
                       <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
                         <span>
                           No recent activity. <br />
                         </span>
                       </div>
                     )}
-                  </ScrollArea>
-
-                  {status === "loading" && (
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      <div className="my-5 flex items-center gap-3 space-x-4">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[220px]" />
-                          <Skeleton className="h-4 w-[100px]" />
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[241px]" />
-                          <Skeleton className="h-4 w-[110px]" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </TabsContent>
             <TabsContent value="pins">
               <div className="mt-4 ">
-                {pinsStatus === "success" && pins && pins.length > 0 ? (
+                {pinsStatus === "success" && pins && pins.length > 0 && (
                   <ScrollArea className="h-[410px] ">
                     {pins.map((pin, index) => (
                       <div
@@ -205,13 +210,16 @@ const PopupPage = () => {
                       </div>
                     ))}
                   </ScrollArea>
-                ) : (
+                )}
+
+                {pinsStatus === "success" && pins && pins.length === 0 && (
                   <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
                     <span>
                       No pinned items yet. <br />
                     </span>
                   </div>
                 )}
+
                 {pinsStatus === "loading" && (
                   <div className="mt-4 flex flex-wrap items-center gap-2">
                     <div className="my-5 flex items-center gap-3 space-x-4">

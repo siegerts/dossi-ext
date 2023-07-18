@@ -9,8 +9,10 @@ import {
 import { baseUrl, baseApiUrl } from "~lib/constants"
 
 import { UserAvatar } from "@/components/user-avatar"
+import { usePlanData } from "@/contexts/plan"
 
 export function UserAccountNav({ user }) {
+  const { plan } = usePlanData()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -41,7 +43,7 @@ export function UserAccountNav({ user }) {
             Dashboard
           </a>
         </DropdownMenuItem>
-        {user?.attrs?.plan !== "Pro" && (
+        {plan && plan !== "PRO" && (
           <DropdownMenuItem asChild>
             <a href={`${baseUrl}/dashboard/billing`} target="_blank">
               Upgrade to PRO

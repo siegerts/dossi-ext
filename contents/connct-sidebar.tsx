@@ -34,6 +34,7 @@ import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
 import { UserLabelsProvider } from "@/contexts/labels"
+import { PlanDataProvider } from "@/contexts/plan"
 import { baseApiUrl } from "@/lib/constants"
 
 import "~/contents/base.css"
@@ -68,12 +69,14 @@ const App = () => {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <UserLabelsProvider>
-          <EntityProvider>
-            <ActionSheet />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </EntityProvider>
-        </UserLabelsProvider>
+        <PlanDataProvider>
+          <UserLabelsProvider>
+            <EntityProvider>
+              <ActionSheet />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </EntityProvider>
+          </UserLabelsProvider>
+        </PlanDataProvider>
       </QueryClientProvider>
     </AuthProvider>
   )
@@ -125,31 +128,6 @@ const ActionSheet = () => {
     })
     queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
     setIsEntityTitleSaving(false)
-  }
-
-  const updateEntityUrl = async (newUrl) => {
-    // TODO: update URL but merge notes
-
-    // also, there wont be an entity id if the entity is new
-
-    // so, if there is data for the old url ...need to show that somehow
-    // the use case of showing on redirect already works
-    if (!newUrl || newUrl == entity?.url) return
-
-    await sendToBackground({
-      name: "entities",
-      body: {
-        type: "PATCH",
-        entityId: entity?.id,
-        url: newUrl,
-      },
-    })
-
-    queryClient.removeQueries({
-      queryKey: ["entity", entity?.url],
-      exact: true,
-    })
-    queryClient.invalidateQueries({ queryKey: ["entity", newUrl] })
   }
 
   const saveNote = async () => {
@@ -285,7 +263,8 @@ const ActionSheet = () => {
                     {redirectedEntity?.url}.{" "}
                     {redirectedEntity?.notes?.length > 0 && (
                       <span>
-                        You have {redirectedEntity?.notes?.length} notes for
+                        You have {redirectedEntity?.notes?.length} note
+                        {redirectedEntity?.notes?.length == 1 ? "" : "s"} for
                         that page.
                       </span>
                     )}

@@ -3,6 +3,7 @@ import type { PlasmoCSConfig } from "plasmo"
 import { AuthProvider, useAuth } from "@/contexts/user"
 import { UserActivityProvider, useUserActivity } from "@/contexts/activity"
 import { UserPinsProvider, useUserPins } from "@/contexts/pins"
+import { PlanDataProvider } from "@/contexts/plan"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -28,12 +29,6 @@ export const getStyle = () => {
   return style
 }
 
-const matches = process.env.PLASMO_PUBLIC_MATCHES.split(",")
-
-export const config: PlasmoCSConfig = {
-  matches,
-}
-
 const queryClient = new QueryClient()
 
 type Action = {
@@ -55,11 +50,13 @@ const Popup = () => {
       }}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <UserActivityProvider>
-            <UserPinsProvider>
-              <PopupPage />
-            </UserPinsProvider>
-          </UserActivityProvider>
+          <PlanDataProvider>
+            <UserActivityProvider>
+              <UserPinsProvider>
+                <PopupPage />
+              </UserPinsProvider>
+            </UserActivityProvider>
+          </PlanDataProvider>
         </AuthProvider>
       </QueryClientProvider>
     </div>

@@ -10,9 +10,16 @@ interface Counts {
   pins: number
 }
 
+interface Limits {
+  notes: number
+  labels: number
+  pins: number
+}
+
 interface PlanData {
   plan: string
   counts: Counts
+  limits?: Limits
   status: "loading" | "error" | "success"
 }
 
@@ -59,8 +66,6 @@ export function PlanDataProvider({ children }) {
     queryKey: ["plan"],
     queryFn: getUserPlanData,
   })
-
-  console.log({ ...data, status })
 
   return (
     <PlanDataContext.Provider value={{ ...data, status }}>

@@ -34,8 +34,9 @@ import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
 import { UserLabelsProvider } from "@/contexts/labels"
-import { PlanDataProvider } from "@/contexts/plan"
+import { PlanDataProvider, usePlanData } from "@/contexts/plan"
 import { baseApiUrl } from "@/lib/constants"
+import { limitReached } from "@/lib/utils"
 
 import "~/contents/base.css"
 import cssText from "data-text:~/contents/global.css"
@@ -85,6 +86,7 @@ const App = () => {
 const ActionSheet = () => {
   const user = useAuth()
   const entity = useEntity()
+  const { counts, limits } = usePlanData()
 
   const [redirect] = useStorage("redirect", { to: null, from: null })
 
@@ -108,7 +110,6 @@ const ActionSheet = () => {
         },
       })
 
-      console.log("redirect info", res)
       setRedirectedEntity(res?.data)
     }
     checkRedirectNotes()
@@ -132,6 +133,7 @@ const ActionSheet = () => {
 
   const saveNote = async () => {
     if (!noteContent.trim()) return
+    if (limitReached(counts, limits, "notes")) return
 
     await sendToBackground({
       name: "notes",
@@ -277,7 +279,9 @@ const ActionSheet = () => {
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="note">Add note</Label>
                 <Textarea
+                  className="mt-1"
                   autoFocus={true}
+                  disabled={limitReached(counts, limits, "notes")}
                   id="note"
                   placeholder="Add your thoughts here..."
                   value={noteContent}
@@ -285,8 +289,13 @@ const ActionSheet = () => {
                 />
               </div>
               <div className="mt-4 flex justify-end">
-                <Button type="submit" onClick={saveNote}>
-                  Save note
+                <Button
+                  type="submit"
+                  onClick={saveNote}
+                  disabled={limitReached(counts, limits, "notes")}>
+                  {limitReached(counts, limits, "notes")
+                    ? "Upgrade to save"
+                    : "Save note"}
                 </Button>
               </div>
             </div>

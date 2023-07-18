@@ -1,6 +1,8 @@
 import { sendToBackground } from "@plasmohq/messaging"
 import { useEntity } from "@/contexts/entity"
 import { useQueryClient } from "@tanstack/react-query"
+import { limitReached } from "@/lib/utils"
+import { usePlanData } from "@/contexts/plan"
 
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
@@ -8,8 +10,11 @@ import { Icons } from "@/components/icons"
 const PinButton = ({ pinId }: { pinId: string | null }) => {
   const client = useQueryClient()
   const entity = useEntity()
+  const { counts, limits } = usePlanData()
 
   const pin = async () => {
+    if (limitReached(counts, limits, "pins")) return
+
     await sendToBackground({
       name: "pins",
       body: {
@@ -34,6 +39,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
 
   return (
     <Button
+      disabled={limitReached(counts, limits, "pins")}
       size="sm"
       variant="ghost"
       onClick={() => (pinId ? unpin(pinId) : pin())}>

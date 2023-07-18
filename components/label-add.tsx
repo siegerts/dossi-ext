@@ -33,6 +33,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Icons } from "@/components/icons"
+import { limitReached } from "@/lib/utils"
+import { usePlanData } from "@/contexts/plan"
 
 const LabelAdd = ({ labels }) => {
   // create
@@ -43,6 +45,7 @@ const LabelAdd = ({ labels }) => {
   const [showCreateLabelDialog, setShowCreateLabelDialog] = useState(false)
   const client = useQueryClient()
   const entity = useEntity()
+  const { counts, limits } = usePlanData()
 
   useEffect(() => {
     const labelsInclude = () => {
@@ -81,6 +84,9 @@ const LabelAdd = ({ labels }) => {
 
   const createLabel = async () => {
     if (!newLabelName) return
+
+    if (limitReached(counts, limits, "labels")) return
+
     try {
       let { status } = await sendToBackground({
         name: "labels",
@@ -149,6 +155,7 @@ const LabelAdd = ({ labels }) => {
               <CommandGroup>
                 <DialogTrigger asChild>
                   <CommandItem
+                    disabled={limitReached(counts, limits, "labels")}
                     onSelect={() => {
                       setOpen(false)
                       setShowCreateLabelDialog(true)

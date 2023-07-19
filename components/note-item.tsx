@@ -108,16 +108,11 @@ const Note = ({ note }: { note: INote }) => {
                   Edit
                 </DropdownMenuItem>
 
-                {/* <DropdownMenuItem>
-                  <Star className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-                  Favorite
-                </DropdownMenuItem> */}
-
-                <DropdownMenuItem
-                  onClick={() => deleteNote()}
-                  className="text-red-600">
+                <DropdownMenuItem onClick={() => deleteNote()}>
                   <Icons.trash className="mr-2 h-3.5 w-3.5 text-muted-foreground/70 text-red-600" />
-                  Delete
+                  <span className="!hover:text-red-600 text-red-600">
+                    Delete
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -125,9 +120,8 @@ const Note = ({ note }: { note: INote }) => {
 
           <div className="overflow-x-auto">
             <Remark
-              // @ts-ignore
-              remarkPlugins={[remarkGfm, remarkBreaks]}
-              // rehypePlugins={[rehypeHighlight]}
+            // remarkPlugins={[remarkGfm]}
+            // rehypePlugins={[rehypeHighlight]}
             >
               {note?.content}
             </Remark>

@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 
 import { Remark } from "react-remark"
-import remarkBreaks from "remark-breaks"
-import remarkGfm from "remark-gfm"
+// import remarkBreaks from "remark-breaks"
+// import remarkGfm from "remark-gfm"
 
 const RedirectedNotes = ({ entity, redirectedEntity }) => {
   const [showTransferNotesDialog, setShowTransferNotesDialog] = useState(false)
@@ -90,7 +90,9 @@ const RedirectedNotes = ({ entity, redirectedEntity }) => {
 
               <div className="overflow-x-auto">
                 {/* @ts-ignore */}
-                <Remark remarkPlugins={[remarkGfm, remarkBreaks]}>
+                <Remark
+                //  remarkPlugins={[remarkGfm, remarkBreaks]}
+                >
                   {note?.content}
                 </Remark>
               </div>

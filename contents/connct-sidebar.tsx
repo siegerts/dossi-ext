@@ -149,6 +149,7 @@ const ActionSheet = () => {
     })
     setNoteContent("")
     queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
+    queryClient.invalidateQueries({ queryKey: ["plan"] })
   }
 
   return (

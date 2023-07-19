@@ -65,6 +65,7 @@ const Note = ({ note }: { note: INote }) => {
     })
 
     await client.invalidateQueries({ queryKey: ["entity", entity.url] })
+    await client.invalidateQueries({ queryKey: ["plan"] })
   }
   return (
     <>

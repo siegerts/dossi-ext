@@ -131,7 +131,7 @@ const ActionSheet = () => {
     setIsEntityTitleSaving(false)
   }
 
-  const saveNote = async () => {
+  const createNote = async () => {
     if (!noteContent.trim()) return
     if (limitReached(counts, limits, "notes")) return
 
@@ -291,7 +291,7 @@ const ActionSheet = () => {
               <div className="mt-4 flex justify-end">
                 <Button
                   type="submit"
-                  onClick={saveNote}
+                  onClick={createNote}
                   disabled={limitReached(counts, limits, "notes")}>
                   {limitReached(counts, limits, "notes")
                     ? "Upgrade to save"

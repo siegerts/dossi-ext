@@ -150,7 +150,7 @@ const NoteList = () => {
         <Alert className="mt-5">
           <AlertTitle>Oh no!</AlertTitle>
           <AlertDescription>
-            There's an issue loading these notes. Please try again later.
+            There's an issue loading these notes. Please try again.
           </AlertDescription>
         </Alert>
       )}

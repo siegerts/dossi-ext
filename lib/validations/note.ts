@@ -3,8 +3,8 @@ import * as z from "zod"
 import { entityUrlSchema } from "./entity"
 
 export const noteCreateSchema = z.object({
-  content: z.string(),
-  title: z.string().optional(),
+  content: z.string().trim(),
+  title: z.string().trim().optional(),
   url: entityUrlSchema,
 })
 

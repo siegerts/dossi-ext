@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "@/components/ui/button"
+import { Icons } from "@/components/icons"
 
 import { Remark } from "react-remark"
 import remarkBreaks from "remark-breaks"
@@ -43,7 +44,10 @@ const RedirectedNotes = ({ entity, redirectedEntity }) => {
 
   return (
     <div className="my-2 flex flex-col gap-y-2 rounded-md border p-3">
-      <h3 className="text-sm font-semibold">Redirected</h3>
+      <div className="flex items-center gap-2">
+        <Icons.alertTriangle className="h-5 w-5 text-red-500" />
+        <h3 className="text-sm font-semibold">Redirected</h3>
+      </div>
       <p>
         This page may have been redirected from {redirectedEntity?.url}.{" "}
         {redirectedEntity?.notes?.length > 0 && (

@@ -32,6 +32,7 @@ import {
 export type Icon = LucideIcon
 
 export const Icons = {
+  alertTriangle: AlertTriangle,
   logo: Library,
   close: X,
   frown: Frown,

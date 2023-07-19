@@ -125,6 +125,7 @@ const Note = ({ note }: { note: INote }) => {
 
           <div className="overflow-x-auto">
             <Remark
+              // @ts-ignore
               remarkPlugins={[remarkGfm, remarkBreaks]}
               // rehypePlugins={[rehypeHighlight]}
             >

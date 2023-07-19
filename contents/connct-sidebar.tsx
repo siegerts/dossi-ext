@@ -26,7 +26,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet-maintainer"
 import { Textarea } from "@/components/ui/textarea"
-import { Toaster } from "@/components/ui/toaster"
 
 import NoteList from "@/components/note-list"
 import PinButton from "@/components/pin-button"
@@ -165,6 +164,9 @@ const ActionSheet = () => {
                   {entity?.notes?.length}
                 </span>
               )}
+              {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
+                <Icons.alertTriangle className="ml-2 h-4 w-4" />
+              )}
             </Button>
           </SheetTrigger>
           <SheetContent size="lg" className="!bg-white !text-black">
@@ -177,6 +179,7 @@ const ActionSheet = () => {
                 </div>
               </SheetTitle>
               <SheetDescription>{/* this is a <p></p> */}</SheetDescription>
+
               {entity?.url && (
                 <div className="my-2 flex items-center justify-between gap-2">
                   <div>
@@ -191,6 +194,13 @@ const ActionSheet = () => {
                     }
                   />
                 </div>
+              )}
+
+              {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
+                <RedirectedNotes
+                  entity={entity}
+                  redirectedEntity={redirectedEntity}
+                />
               )}
             </SheetHeader>
 
@@ -261,13 +271,6 @@ const ActionSheet = () => {
                 )}
               </div>
 
-              {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
-                <RedirectedNotes
-                  entity={entity}
-                  redirectedEntity={redirectedEntity}
-                />
-              )}
-
               <NoteList />
 
               <div className="grid w-full items-center gap-1.5">
@@ -305,8 +308,6 @@ const ActionSheet = () => {
           </a>
         </Button>
       )}
-
-      <Toaster />
     </div>
   )
 }

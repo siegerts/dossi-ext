@@ -2,7 +2,11 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import * as z from "zod"
 
 import { baseApiUrl } from "~lib/constants"
-import { noteCreateSchema, notePatchSchema } from "~lib/validations/note"
+import {
+  noteCreateSchema,
+  notePatchSchema,
+  notesTransferSchema,
+} from "~lib/validations/note"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
@@ -132,6 +136,51 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else {
           console.log("error ")
           return res.send({ status: { ok, error: "note not deleted" } })
+        }
+      }
+    }
+
+    case "TRANSFER": {
+      try {
+        const { url, title, from, to } = notesTransferSchema.parse({
+          url: req.sender.tab.url,
+          title: req.body.title,
+          from: req.body.from,
+          to: req.body.to,
+        })
+
+        let resp = await fetch(`${baseApiUrl}/notes/transfer`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url,
+            title,
+            from,
+            to,
+          }),
+        })
+
+        const ok = resp.ok
+
+        if (resp.ok) {
+          return res.send({ status: { ok } })
+        } else {
+          if (resp.status === 403) {
+            return res.send({ status: { ok, error: "user not logged in" } })
+          } else {
+            console.log("error ")
+            return res.send({ status: { ok, error: "notes not transferred" } })
+          }
+        }
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.log(error)
+          return res.send({
+            status: { ok: false, error: "schema not valid" },
+          })
         }
       }
     }

@@ -30,6 +30,7 @@ import { Toaster } from "@/components/ui/toaster"
 
 import NoteList from "@/components/note-list"
 import PinButton from "@/components/pin-button"
+import RedirectedNotes from "@/components/redirected-notes"
 import UserPlan from "@/components/user-plan"
 import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
@@ -100,7 +101,10 @@ const ActionSheet = () => {
 
   useEffect(() => {
     const checkRedirectNotes = async () => {
-      if (!redirect?.to || !redirect?.from) return
+      if (!redirect?.to || !redirect?.from) {
+        setRedirectedEntity({ to: null, from: null })
+        return
+      }
 
       const res = await sendToBackground({
         name: "entities",
@@ -144,7 +148,6 @@ const ActionSheet = () => {
       },
     })
     setNoteContent("")
-    queryClient.invalidateQueries({ queryKey: ["notes", entity?.url] })
     queryClient.invalidateQueries({ queryKey: ["entity", entity?.url] })
   }
 
@@ -258,20 +261,10 @@ const ActionSheet = () => {
               </div>
 
               {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
-                <div className="my-2 flex flex-col gap-y-2 rounded-md border p-3">
-                  <h3 className="text-sm font-semibold">Redirected</h3>
-                  <p>
-                    This page may have been redirected from{" "}
-                    {redirectedEntity?.url}.{" "}
-                    {redirectedEntity?.notes?.length > 0 && (
-                      <span>
-                        You have {redirectedEntity?.notes?.length} note
-                        {redirectedEntity?.notes?.length == 1 ? "" : "s"} for
-                        that page.
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <RedirectedNotes
+                  entity={entity}
+                  redirectedEntity={redirectedEntity}
+                />
               )}
 
               <NoteList />

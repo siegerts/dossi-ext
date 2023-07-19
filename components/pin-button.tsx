@@ -15,10 +15,13 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
   const pin = async () => {
     if (limitReached(counts, limits, "pins")) return
 
+    // if the entity doesn't exist,
+    // we need to send the title
     await sendToBackground({
       name: "pins",
       body: {
         type: "POST",
+        ...(!entity?.exists && { title: entity?.title }),
       },
     })
 

@@ -9,8 +9,12 @@ import {
 
 import { baseApiUrl } from "~lib/constants"
 
+// title should be passed here but is kept
+// optional just in case it's not available
+// it won't fail the validation
 const pinCreateSchema = z.object({
-  url: z.string().url({ message: "Invalid url" }),
+  url: z.string().trim().url({ message: "Invalid url" }),
+  title: z.string().trim().optional(),
 })
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
@@ -24,13 +28,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     case "POST": {
       try {
-        const { url } = pinCreateSchema.parse({
+        const { url, title } = pinCreateSchema.parse({
           url: req.sender.tab.url,
+          title: req.body.title,
         })
 
         const resp = await fetchWithCredentials(`${baseApiUrl}/pins`, {
           method: "POST",
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, title }),
         })
 
         return handleResponse(resp, res, "POST")

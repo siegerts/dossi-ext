@@ -14,6 +14,8 @@ const labelsOnEntitiesSchema = z.object({
 })
 
 // TODO: what if there isnt an entity yet
+// current state - label picker is disabled
+// until an entity is created
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   switch (req?.body?.type) {
     case "ADD_LABEL_TO_ENTITY": {

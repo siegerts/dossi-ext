@@ -31,7 +31,7 @@ import NoteList from "@/components/note-list"
 import PinButton from "@/components/pin-button"
 import RedirectedNotes from "@/components/redirected-notes"
 import UserPlan from "@/components/user-plan"
-import UserRole from "@/components/user-role"
+// import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
 import { UserLabelsProvider } from "@/contexts/labels"
 import { PlanDataProvider, usePlanData } from "@/contexts/plan"
@@ -63,7 +63,6 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   })
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
-  // document.querySelector(process.env.PLASMO_PUBLIC_INLINE_ANCHOR_SELECTOR)
   document.querySelector("#repository-details-container, .gh-header-show")
 
 const App = () => {

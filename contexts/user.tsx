@@ -37,12 +37,17 @@ export function AuthProvider({ children }) {
         name: "user" as never,
       })
 
-      setCurrentUser(user)
-      setCurrentUserStatus(status.ok ? "success" : "error")
+      if (status.ok && user.isAuthed) {
+        setCurrentUser(user)
+        setCurrentUserStatus("success")
+      } else {
+        setCurrentUser(null)
+        setCurrentUserStatus("error")
+      }
     }
 
     const visibilityChangeHandler = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" || document.hasFocus()) {
         checkUser()
       }
     }

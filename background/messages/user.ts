@@ -12,7 +12,6 @@ type User = {
     email: string
     image: string
     id: string
-    plan?: string
   }
 }
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {

@@ -1,4 +1,5 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
+
 import * as z from "zod"
 
 import { fetchWithCredentials, handleResponse } from "~lib/background"
@@ -64,7 +65,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           if (resp.status === 403) {
             return res.send({ status: { ok, error: "user not logged in" } })
           } else {
-            console.log("error ")
+            console.log("error")
             return res.send({ status: { ok, error: "entity not updated" } })
           }
         }

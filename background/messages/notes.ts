@@ -28,7 +28,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         if (resp.status === 403) {
           return res.send({ status: { ok, error: "user not logged in" } })
         } else {
-          console.log("error ")
+          console.log("error")
           return res.send({
             status: { ok, error: "notes not available" },
           })
@@ -67,7 +67,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           if (resp.status === 403) {
             return res.send({ status: { ok, error: "user not logged in" } })
           } else {
-            console.log("error ")
+            console.log("error")
             return res.send({ status: { ok, error: "note not created" } })
           }
         }
@@ -104,7 +104,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           if (resp.status === 403) {
             return res.send({ status: { ok, error: "user not logged in" } })
           } else {
-            console.log("error ")
+            console.log("error")
             return res.send({ status: { ok, error: "note not updated" } })
           }
         }
@@ -134,7 +134,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         if (resp.status === 403) {
           return res.send({ status: { ok, error: "user not logged in" } })
         } else {
-          console.log("error ")
+          console.log("error")
           return res.send({ status: { ok, error: "note not deleted" } })
         }
       }
@@ -171,7 +171,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
           if (resp.status === 403) {
             return res.send({ status: { ok, error: "user not logged in" } })
           } else {
-            console.log("error ")
+            console.log("error")
             return res.send({ status: { ok, error: "notes not transferred" } })
           }
         }

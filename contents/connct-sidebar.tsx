@@ -54,8 +54,7 @@ export const getStyle = () => {
   return style
 }
 
-export const getShadowHostId = () =>
-  `${process.env.PLASMO_PUBLIC_SHIP_NAME}-dev-sb`
+export const getShadowHostId = () => `${process.env.PLASMO_PUBLIC_SHIP_NAME}-sb`
 
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({

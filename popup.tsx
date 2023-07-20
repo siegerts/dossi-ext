@@ -15,7 +15,6 @@ import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseUrl, baseApiUrl } from "~lib/constants"
 import UserPlan from "@/components/user-plan"
-// import UserRole from "@/components/user-role"
 
 import "~/contents/base.css"
 // import "~/contents/global.css"
@@ -39,7 +38,12 @@ type Action = {
   }
 }
 
-type ActionsByURLAndDate = { [key: string]: Action[] }
+type ActionsByURLAndDate = {
+  [key: string]: {
+    actions: Action[]
+    mostRecent: string
+  }
+}
 
 const Popup = () => {
   return (
@@ -80,18 +84,31 @@ const PopupPage = () => {
 
     const groupedActions = activity.reduce((groups, action) => {
       const date = new Date(action.createdAt).toISOString().split("T")[0]
+      const dateTime = new Date(action.createdAt).toISOString()
 
       const key = `${action.entity.url}_${date}`
 
       if (!groups[key]) {
-        groups[key] = []
+        groups[key] = {
+          actions: [],
+          mostRecent: dateTime,
+        }
       }
 
-      groups[key].push(action)
+      const actionWithTime = {
+        ...action,
+        dateTime,
+      }
+
+      groups[key].actions.push(actionWithTime)
+
+      if (dateTime > groups[key].mostRecent) {
+        groups[key].mostRecent = dateTime
+      }
+
       return groups
     }, {})
     setActivitySummaries(groupedActions)
-    // console.log("groupedActions", groupedActions)
   }, [activity])
 
   return (
@@ -100,7 +117,6 @@ const PopupPage = () => {
         <div
           className="flex max-h-full flex-col space-y-1.5 p-6"
           style={{ height: "600px", width: "350px" }}>
-          {/* <UserRole /> */}
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
             <div className="flex items-center gap-2">
@@ -117,74 +133,65 @@ const PopupPage = () => {
             </TabsList>
 
             <TabsContent value="recent">
-              <div className="grid gap-4 text-sm">
-                <div className="mt-4">
-                  {status === "loading" && (
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      <div className="my-5 flex items-center gap-3 space-x-4">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[220px]" />
-                          <Skeleton className="h-4 w-[100px]" />
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-[241px]" />
-                          <Skeleton className="h-4 w-[110px]" />
-                        </div>
+              <div className="mt-5">
+                {status === "loading" && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <div className="my-5 flex items-center gap-3 space-x-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[220px]" />
+                        <Skeleton className="h-4 w-[100px]" />
                       </div>
                     </div>
-                  )}
-
-                  {status === "success" && activity && activity.length > 0 && (
-                    <ScrollArea className="h-[410px]">
-                      {Object.entries(activitySummaries).map(
-                        ([key, actions], index) => (
-                          <div
-                            key={index}
-                            className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                            <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                            <div className="space-y-1">
-                              <p
-                                className="cursor-pointer text-sm leading-none"
-                                onClick={() =>
-                                  handleLinkClick(key.split("_")[0])
-                                }>
-                                Added {actions.length} note
-                                {actions.length > 1 ? "s" : null} on{" "}
-                                {new URL(key.split("_")[0]).pathname.substring(
-                                  1
-                                )}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(
-                                  new Date(key.split("_")[1]),
-                                  {
-                                    addSuffix: true,
-                                  }
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </ScrollArea>
-                  )}
-
-                  {status === "success" &&
-                    activity &&
-                    activity.length === 0 && (
-                      <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
-                        <span>
-                          No recent activity. <br />
-                        </span>
+                    <div className="flex items-center space-x-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-[241px]" />
+                        <Skeleton className="h-4 w-[110px]" />
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {status === "success" && activity && activity.length > 0 && (
+                  <ScrollArea className="h-[410px]">
+                    {Object.entries(activitySummaries).map(
+                      ([key, item], index) => (
+                        <div
+                          key={index}
+                          className="mb-3 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                          <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                          <div className="space-y-1">
+                            <p
+                              className="cursor-pointer text-sm leading-none"
+                              onClick={() =>
+                                handleLinkClick(key.split("_")[0])
+                              }>
+                              Added {item.actions.length} note
+                              {item.actions.length > 1 ? "s" : null} on{" "}
+                              {new URL(key.split("_")[0]).pathname.substring(1)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(item?.mostRecent), {
+                                addSuffix: true,
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      )
                     )}
-                </div>
+                  </ScrollArea>
+                )}
+
+                {status === "success" && activity && activity.length === 0 && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2 pl-2">
+                    <span>
+                      No recent activity. <br />
+                    </span>
+                  </div>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="pins">
-              <div className="mt-4 ">
+              <div className="mt-5">
                 {pinsStatus === "success" && pins && pins.length > 0 && (
                   <ScrollArea className="h-[410px] ">
                     {pins.map((pin, index) => (

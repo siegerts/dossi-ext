@@ -61,7 +61,7 @@ export function PlanDataProvider({ children }) {
   // if the user logs out
   // if caches the labels
   const { data, status } = useQuery({
-    staleTime: 3 * 1000,
+    staleTime: 5 * 1000,
     enabled: !!user?.isAuthed,
     queryKey: ["plan"],
     queryFn: getUserPlanData,

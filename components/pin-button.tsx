@@ -42,7 +42,7 @@ const PinButton = ({ pinId }: { pinId: string | null }) => {
 
   return (
     <Button
-      disabled={limitReached(counts, limits, "pins")}
+      disabled={limitReached(counts, limits, "pins") && !pinId}
       size="sm"
       variant="ghost"
       onClick={() => (pinId ? unpin(pinId) : pin())}>

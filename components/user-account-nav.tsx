@@ -43,11 +43,15 @@ export function UserAccountNav({ user }) {
             Dashboard
           </a>
         </DropdownMenuItem>
-        {plan && plan !== "PRO" && (
-          <DropdownMenuItem asChild>
+        {plan && plan !== "PRO" ? (
+          <DropdownMenuItem asChild className="font-medium text-blue-500">
             <a href={`${baseUrl}/dashboard/billing`} target="_blank">
               Upgrade to PRO
             </a>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem asChild className="font-medium text-blue-500">
+            <div>Subscribed to {plan} plan 🎉</div>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />

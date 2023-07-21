@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseUrl, baseApiUrl } from "~lib/constants"
-import UserPlan from "@/components/user-plan"
+import UserPlanPopup from "@/components/user-plan-popup"
 
 import "~/contents/base.css"
 // import "~/contents/global.css"
@@ -120,10 +120,10 @@ const PopupPage = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold text-foreground">dossi</h1>
             <div className="flex items-center gap-2">
-              <UserPlan />
               <UserAccountNav user={user} />
             </div>
           </div>
+          <UserPlanPopup />
           <Separator />
 
           <Tabs defaultValue="recent" className="w-[300]">

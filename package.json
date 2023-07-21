@@ -1,7 +1,7 @@
 {
   "name": "dossi",
   "displayName": "dossi",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Boost your GitHub workflow with private notes and labeling. Keep track of Issues, PRs, repos, and Discussions.",
   "author": "dossi",
   "scripts": {

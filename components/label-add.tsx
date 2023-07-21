@@ -161,7 +161,9 @@ const LabelAdd = ({ labels }) => {
                       setShowCreateLabelDialog(true)
                     }}>
                     <PlusCircle className="mr-2 h-5 w-5" />
-                    Create Label
+                    {limitReached(counts, limits, "labels")
+                      ? "Upgrade to Create"
+                      : "Create Label"}
                   </CommandItem>
                 </DialogTrigger>
               </CommandGroup>

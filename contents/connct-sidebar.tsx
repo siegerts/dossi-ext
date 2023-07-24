@@ -31,7 +31,6 @@ import NoteList from "@/components/note-list"
 import PinButton from "@/components/pin-button"
 import RedirectedNotes from "@/components/redirected-notes"
 import UserPlan from "@/components/user-plan"
-// import UserRole from "@/components/user-role"
 import { Icons } from "@/components/icons"
 import { UserLabelsProvider } from "@/contexts/labels"
 import { PlanDataProvider, usePlanData } from "@/contexts/plan"
@@ -156,7 +155,7 @@ const ActionSheet = () => {
           <SheetTrigger asChild className="justify-end">
             <Button variant="default" className="border-primary-text border">
               <Icons.logo className="mr-2 h-4 w-4" />
-              {process.env.PLASMO_PUBLIC_SHIP_NAME}-{user?.attrs?.name}
+              {process.env.PLASMO_PUBLIC_SHIP_NAME}
               {entity?.id && entity?.notes && (
                 <span className="ml-2 rounded-full bg-gray-200 px-2 text-xs text-gray-500">
                   {entity?.notes?.length}
@@ -172,11 +171,11 @@ const ActionSheet = () => {
               <SheetTitle>
                 <div className="flex items-center justify-between">
                   <h2>dossi</h2>
-                  {/* <UserRole /> */}
+
                   <UserPlan />
                 </div>
               </SheetTitle>
-              <SheetDescription>{/* this is a <p></p> */}</SheetDescription>
+              <SheetDescription></SheetDescription>
 
               {entity?.url && (
                 <div className="my-2 flex items-center justify-between gap-2">

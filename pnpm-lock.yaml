@@ -78,8 +78,8 @@ dependencies:
     specifier: ^0.252.0
     version: 0.252.0(react@18.2.0)
   plasmo:
-    specifier: 0.81.0
-    version: 0.81.0(postcss@8.4.24)(react-dom@18.2.0)(react@18.2.0)
+    specifier: 0.82.0
+    version: 0.82.0(postcss@8.4.24)(react-dom@18.2.0)(react@18.2.0)
   postcss:
     specifier: ^8.4.24
     version: 8.4.24
@@ -6569,8 +6569,8 @@ packages:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
 
-  /plasmo@0.81.0(postcss@8.4.24)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-VL/kpxF+Vl/y3SqGr/T9w3fyvWcWcWIYuVccVO2VKU6yoxDmS8WA10CUxp/lGYfCTa6Fe9XABbrh70BILS+kaQ==}
+  /plasmo@0.82.0(postcss@8.4.24)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-LorWjQx6uaQVqkibSidRHrVlcbSWosPAH+BWbKM2KvqMetDcBiApA4D4c4v3Y8a0KdKwNJxBc5La7AhTyaFotw==}
     hasBin: true
     dependencies:
       '@expo/spawn-async': 1.7.2

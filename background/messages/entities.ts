@@ -13,7 +13,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   // from triggering unauthed requests after logout
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
-    name: "__Secure-next-auth.session-token",
+    name: process.env.PLASMO_PUBLIC_HOST_COOKIE,
   })
   if (!cookie) {
     return

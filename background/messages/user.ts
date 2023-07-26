@@ -19,7 +19,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
   const cookie = await chrome.cookies.get({
     url: process.env.PLASMO_PUBLIC_HOST,
-    name: "__Secure-next-auth.session-token",
+    name: process.env.PLASMO_PUBLIC_HOST_COOKIE,
   })
 
   const user = await storage.get<User>("user")

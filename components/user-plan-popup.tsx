@@ -9,7 +9,7 @@ const UserPlanPopup = () => {
     <>
       {status === "loading" && <Skeleton className="h-7 w-[120px]" />}
 
-      {!(status === "success" && plan !== "PRO") && (
+      {status === "success" && plan !== "PRO" && (
         <>
           {(limitReached(counts, limits, "notes") ||
             limitReached(counts, limits, "labels") ||

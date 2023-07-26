@@ -5,6 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function limitReached(counts: any, limits: any, key: string) {
-  return counts?.[key] && limits?.[key] && counts?.[key] >= limits?.[key]
+export function limitReached(counts: any, limits: any, key: string): boolean {
+  return !!(counts?.[key] && limits?.[key] && counts?.[key] >= limits?.[key])
 }

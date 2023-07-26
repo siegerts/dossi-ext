@@ -8,18 +8,8 @@ const UserPlanPopup = () => {
   return (
     <>
       {status === "loading" && <Skeleton className="h-7 w-[120px]" />}
-      {/* {status === "success" && plan === "PRO" && (
-        <div className="inline-flex items-center rounded-lg bg-muted bg-primary bg-secondary px-3 py-1 text-sm font-medium text-primary no-underline">
-          🎉
-          <div
-            data-orientation="vertical"
-            role="none"
-            className="mx-2 h-4 w-[1px] shrink-0 bg-border text-primary-foreground"></div>
-          {plan} plan
-        </div>
-      )} */}
 
-      {status === "success" && plan !== "PRO" && (
+      {!(status === "success" && plan !== "PRO") && (
         <>
           {(limitReached(counts, limits, "notes") ||
             limitReached(counts, limits, "labels") ||

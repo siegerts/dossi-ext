@@ -1,38 +1,49 @@
-# extension-base
+<a href="https://dossi.dev">
+  <img alt="Your own private GitHub notes on every page" src="https://github.com/siegerts/dossi-app/blob/main/dossi-1280x800.png">
+</a>
 
-## Getting Started
+  <h3 align="center">dossi</h3>
 
-First, run the development server:
+  <p align="center">
+    Your own private GitHub notes on every page
+    <br />
+    <a href="https://dossi.dev"><strong>Learn more »</strong></a>
+    <br />
+    <br />
+    <a href="https://dossi.dev">Website</a>
+    |
+    <a href="https://github.com/siegerts/dossi-app">Web app and API</a>
+    |
+     <a href="https://github.com/siegerts/dossi-ext/issues">Feedback</a>
+  </p>
 
-```bash
-pnpm dev
-# or
-npm run dev
-```
+## Introduction
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+This is the **browser extension** for dossi, a note-taking app that allows you to [add notes on GitHub issues, pull requests, and more](https://www.dossi.dev/docs).
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+## Functionality
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+- [Sidepanel overlay](https://github.com/siegerts/dossi-ext/blob/main/contents/connct-sidebar.tsx) on GitHub pages to add, edit, and delete notes
+  - Label creation
+  - Pin pages to view later
+  - Note management (create, read, update, delete, sort) with "light" markdown support
+- [Popup window](https://github.com/siegerts/dossi-ext/blob/main/popup.tsx) to view recent activity and pins
+- Content script button to open the sidepanel overlay and display the number of notes for the current page
+- [Transferred page detection](https://github.com/siegerts/dossi-ext/blob/main/background.ts#L54) to prompt the user to transfer notes to the new page entity
+- Auth integration with dossi web app
 
-## Making production build
 
-Run the following:
+## Tech Stack
 
-```bash
-pnpm build
-# or
-npm run build
-```
+- [Plasmo](https://github.com/PlasmoHQ/plasmo) – browser extension framework
+- [TypeScript](https://www.typescriptlang.org/) – language
+- [shadcn/ui](https://ui.shadcn.com/) – UI components
+- [Tailwind](https://tailwindcss.com/) – CSS
+- [TanStack/react-query](https://react-query.tanstack.com/) – data fetching
+- [zod](https://github.com/colinhacks/zod) – schema validation
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
 
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
-
-## API Compatibility
+## Brower API Compatibility
 
 | API             | Chrome       | Firefox      |
 | --------------- | ------------ | ------------ |
@@ -105,3 +116,55 @@ graph TD
     C --> F[Updates Cache]
     F --> C
 ```
+
+## Getting Started
+
+### Install the dependencies
+
+```
+pnpm install
+```
+
+### Development
+
+**Environment variables**
+
+Create a `.env` file in the root of the project with the following content:
+
+```
+
+PLASMO_PUBLIC_SHIP_NAME=
+PLASMO_PUBLIC_HOST=
+PLASMO_PUBLIC_HOST_API=
+PLASMO_PUBLIC_HOST_COOKIE=
+PLASMO_PUBLIC_MATCHES=
+PLASMO_PUBLIC_MANIFEST_HOST_PERMISSIONS=
+
+```
+
+#### Development build
+
+```bash
+pnpm dev
+# or
+npm run dev
+```
+
+Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+
+Load the unpacked extension in your browser.
+
+#### Production build
+
+Run the following:
+
+```bash
+pnpm build
+# or
+npm run build
+```
+
+
+## License
+
+dossi is open source and available under the [GNU General Public License v3.0(AGPLv3)](LICENSE.md).

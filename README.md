@@ -75,7 +75,7 @@ graph TB
         D --> F[User can create, read, update, delete pins]
         F --> Y["API call to site"]
         Y --> P
-        D --> G["User can create, read, update, delete reminders"]
+        D --> G["User can create, read, update, delete labels"]
         G --> X["API call to Main .com site"]
         X --> P
         D --> H{"API call returns a 403?"}

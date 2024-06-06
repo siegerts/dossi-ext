@@ -21,7 +21,7 @@
 
 This is the **browser extension** for dossi, a note-taking app that allows you to [add notes on GitHub issues, pull requests, and more](https://www.dossi.dev/docs).
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/wgGGjAqa3L8?si=EgHXHua_RprZss-L" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+YouTube demo: [https://www.youtube.com/watch?v=wgGGjAqa3L8](https://www.youtube.com/watch?v=wgGGjAqa3L8)
 
 ## Functionality
 

@@ -34,7 +34,6 @@ This is the **browser extension** for dossi, a note-taking app that allows you t
 - [Transferred page detection](https://github.com/siegerts/dossi-ext/blob/main/background.ts#L54) to prompt the user to transfer notes to the new page entity
 - Auth integration with dossi web app
 
-
 ## Tech Stack
 
 - [Plasmo](https://github.com/PlasmoHQ/plasmo) – browser extension framework
@@ -43,7 +42,6 @@ This is the **browser extension** for dossi, a note-taking app that allows you t
 - [Tailwind](https://tailwindcss.com/) – CSS
 - [TanStack/react-query](https://react-query.tanstack.com/) – data fetching
 - [zod](https://github.com/colinhacks/zod) – schema validation
-
 
 ## Brower API Compatibility
 
@@ -61,13 +59,21 @@ This is the **browser extension** for dossi, a note-taking app that allows you t
 
 ```mermaid
 graph TB
-    subgraph "Main .com Site"
-        A[User logs in] --> B[User accesses Chrome extension]
-        L[User logs out] --> M[Show unauthenticated UI]
+    subgraph ".dev Site"
+        A[User logs in]
+        L[User logs out]
         P[API]
     end
 
+
+    A[User logs in] --> DB[(Neon Postgres Database)]
+    L[User logs out] --> DB[(Neon Postgres Database)]
+    P[API] --> DB[(Neon Postgres Database)]
+
+
     B --> C{User logged in?}
+    A --> B[User accesses Chrome extension]
+    L --> M[Show unauthenticated UI]
 
     subgraph "Content Script"
         C -->|Yes| D["Show authenticated UI"]
@@ -93,6 +99,8 @@ graph TB
     style Z fill:#f9a8d4,stroke:#333,stroke-width:2px
     style Y fill:#f9a8d4,stroke:#333,stroke-width:2px
     style X fill:#f9a8d4,stroke:#333,stroke-width:2px
+    style DB fill:#e6ffed, stroke:#333, stroke-width:2px
+
 ```
 
 ## Data flow
@@ -165,7 +173,6 @@ pnpm build
 # or
 npm run build
 ```
-
 
 ## License
 

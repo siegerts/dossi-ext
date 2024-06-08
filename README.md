@@ -19,7 +19,7 @@
 
 ## Introduction
 
-This is the **browser extension** for dossi, a note-taking app that allows you to [add notes on GitHub issues, pull requests, and more](https://www.dossi.dev/docs).
+This is the **browser extension** for dossi, a note-taking app that allows you to [add notes on GitHub issues, pull requests, and more](https://www.dossi.dev/docs).The web app and API are available at [siegerts/dossi-app](https://github.com/siegerts/dossi-app).
 
 YouTube demo: [https://www.youtube.com/watch?v=wgGGjAqa3L8](https://www.youtube.com/watch?v=wgGGjAqa3L8)
 

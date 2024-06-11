@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
+/* Custom CSS */
 #plasmo-inline {
   display: flex;
   justify-content: end;

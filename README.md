@@ -10,9 +10,11 @@
     <a href="https://dossi.dev"><strong>Learn more »</strong></a>
     <br />
     <br />
+     <a href="https://chromewebstore.google.com/detail/dossi-private-github-note/ogpcmecajeghflaaaennkmknfpeghffm">Chrome Extension</a>
+    |
     <a href="https://dossi.dev">Website</a>
     |
-    <a href="https://github.com/siegerts/dossi-app">Web app and API</a>
+    <a href="https://github.com/siegerts/dossi-app">Web app and API repo</a>
     |
      <a href="https://github.com/siegerts/dossi-ext/issues">Feedback</a>
   </p>

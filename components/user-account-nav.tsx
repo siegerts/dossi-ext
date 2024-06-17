@@ -10,6 +10,7 @@ import { baseUrl, baseApiUrl } from "~lib/constants"
 
 import { UserAvatar } from "@/components/user-avatar"
 import { usePlanData } from "@/contexts/plan"
+import { Icons } from "@/components/icons"
 
 export function UserAccountNav({ user }) {
   const { plan } = usePlanData()
@@ -38,25 +39,38 @@ export function UserAccountNav({ user }) {
           </div>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => chrome.runtime.openOptionsPage()}>
+          <Icons.settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={`${baseUrl}/dashboard`} target="_blank">
-            Dashboard
+          <a
+            href={`${baseUrl}/dashboard`}
+            target="_blank"
+            className="!text-primary !no-underline">
+            <Icons.cloud className="mr-2 h-4 w-4" />
+            Go to dashboard
           </a>
         </DropdownMenuItem>
         {plan && plan !== "PRO" ? (
-          <DropdownMenuItem asChild className="font-medium text-blue-500">
+          <DropdownMenuItem asChild className="!text-primary !no-underline">
             <a href={`${baseUrl}/dashboard/billing`} target="_blank">
+              <Icons.creditCard className="mr-2 h-4 w-4" />
               Upgrade to PRO
             </a>
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem asChild className="font-medium text-blue-500">
+          <DropdownMenuItem asChild className="text-blue-500">
+            <Icons.creditCard className="mr-2 h-4 w-4" />
             <div>Subscribed to {plan} plan 🎉</div>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="cursor-pointer">
+        <DropdownMenuItem
+          asChild
+          className="cursor-pointer !text-primary !no-underline">
           <a href={`${baseApiUrl}/auth/signout`} target="_blank">
+            <Icons.logout className="mr-2 h-4 w-4" />
             Sign out
           </a>
         </DropdownMenuItem>

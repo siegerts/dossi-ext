@@ -27,6 +27,9 @@ import {
   Trash,
   User,
   X,
+  LogOut,
+  CreditCard,
+  Cloud,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -35,6 +38,8 @@ export const Icons = {
   alertTriangle: AlertTriangle,
   logo: Library,
   close: X,
+  cloud: Cloud,
+  creditCard: CreditCard,
   frown: Frown,
   spinner: Loader2,
   chevronLeft: ChevronLeft,
@@ -45,6 +50,7 @@ export const Icons = {
   post: FileText,
   page: File,
   media: Image,
+  logout: LogOut,
   settings: Settings,
   ellipsis: MoreVertical,
   add: Plus,

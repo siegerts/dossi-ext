@@ -9,7 +9,9 @@ import {
 } from "~lib/background"
 import { baseApiUrl } from "~lib/constants"
 
-const storage = new Storage()
+const storage = new Storage({
+  area: "local",
+})
 
 const labelCreateSchema = z.object({
   name: z.string().trim().min(1).max(50),

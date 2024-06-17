@@ -1,4 +1,4 @@
-import type { INote } from "./noteTypes"
+import type { INote } from "~types/note"
 
 export type Label = {
   id: string

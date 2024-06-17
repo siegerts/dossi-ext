@@ -6,7 +6,7 @@ import LabelAdd from "~components/label-add"
 import LabelList from "~components/label-list"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { type INote } from "@/types/noteTypes"
+import type { INote } from "~types/note"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 

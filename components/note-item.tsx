@@ -4,9 +4,7 @@ import { useEntity } from "@/contexts/entity"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { Remark } from "react-remark"
-import remarkBreaks from "remark-breaks"
-import remarkGfm from "remark-gfm"
-// import rehypeHighlight from "rehype-highlight"
+import type { INote } from "~types/note"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,8 +21,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Icons } from "@/components/icons"
-
-import { type INote } from "@/types/noteTypes"
 
 const Note = ({ note }: { note: INote }) => {
   const [noteContent, setNoteContent] = useState(note.content)
@@ -119,12 +115,7 @@ const Note = ({ note }: { note: INote }) => {
           </div>
 
           <div className="overflow-x-auto">
-            <Remark
-            // remarkPlugins={[remarkGfm]}
-            // rehypePlugins={[rehypeHighlight]}
-            >
-              {note?.content}
-            </Remark>
+            <Remark>{note?.content}</Remark>
           </div>
         </div>
       ) : (

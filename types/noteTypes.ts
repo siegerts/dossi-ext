@@ -4,5 +4,3 @@ export type INote = {
   createdAt: string
   updatedAt: string
 }
-
-export type INotesArray = INote[]

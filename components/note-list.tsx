@@ -6,7 +6,7 @@ import LabelAdd from "~components/label-add"
 import LabelList from "~components/label-list"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { type INote, type INotesArray } from "@/types/noteTypes"
+import { type INote } from "@/types/noteTypes"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -23,7 +23,7 @@ const NoteList = () => {
   const { labels } = useUserLabels()
 
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
-  const [notes, setNotes] = useState<INotesArray>(entity?.notes ?? [])
+  const [notes, setNotes] = useState<INote[]>(entity?.notes ?? [])
   const [selectedSort, setSelectedSort] = useState({
     label: "Oldest",
     value: "asc",
@@ -50,7 +50,7 @@ const NoteList = () => {
     }
   }, [entity?.notes])
 
-  const sortNotesByDate = (notes: INotesArray): INotesArray => {
+  const sortNotesByDate = (notes: INote[]): INote[] => {
     return [...notes].sort(
       (a: INote, b: INote) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()

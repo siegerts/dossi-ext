@@ -1,19 +1,11 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
+import type { User } from "~types/user"
 
 import { baseApiUrl } from "~lib/constants"
 
 const storage = new Storage()
 
-type User = {
-  isAuthed: boolean
-  attrs: {
-    name: string
-    email: string
-    image: string
-    id: string
-  }
-}
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   // console.log("get user request received")
 

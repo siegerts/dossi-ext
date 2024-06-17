@@ -15,9 +15,10 @@ import { Icons } from "@/components/icons"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { baseUrl, baseApiUrl } from "~lib/constants"
 import UserPlanPopup from "@/components/user-plan-popup"
+import type { ActionsByURLAndDate } from "~types"
 
 import "~/contents/base.css"
-// import "~/contents/global.css"
+
 import cssText from "data-text:~/styles/globals.css"
 
 // Inject into the ShadowDOM
@@ -28,22 +29,6 @@ export const getStyle = () => {
 }
 
 const queryClient = new QueryClient()
-
-type Action = {
-  id: string
-  createdAt: string
-  entity: {
-    url: string
-    title: string | null
-  }
-}
-
-type ActionsByURLAndDate = {
-  [key: string]: {
-    actions: Action[]
-    mostRecent: string
-  }
-}
 
 const Popup = () => {
   return (

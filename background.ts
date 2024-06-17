@@ -1,4 +1,5 @@
 import { Storage } from "@plasmohq/storage"
+import type { UrlMatch, Redirect } from "~types"
 
 import Logger from "~lib/logger"
 
@@ -40,16 +41,6 @@ const patterns = [
   },
   { originAndPathMatches: `^https://github\.com/[a-zA-Z0-9\-_]+$` },
 ]
-
-type UrlMatch = {
-  url: string
-  pos: number
-} | null
-
-type Redirect = {
-  to: string
-  from: string
-}
 
 patterns.forEach((pattern, pos) => {
   chrome.webNavigation.onBeforeNavigate.addListener(

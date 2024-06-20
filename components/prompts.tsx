@@ -280,7 +280,7 @@ function Prompts({ entity }: { entity: IEntity }) {
 
       {promptResponseContent && (
         <Card className="shadow-sm">
-          <h4 className="px-3 py-2">Summary</h4>
+          <h4 className="px-3 py-2">Prompt response</h4>
 
           <div className="px-3 ">
             <Textarea

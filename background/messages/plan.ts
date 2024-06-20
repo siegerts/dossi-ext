@@ -24,6 +24,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else {
           console.log("error ")
           return res.send({
+            data: {},
             status: { ok, error: "data not available" },
           })
         }

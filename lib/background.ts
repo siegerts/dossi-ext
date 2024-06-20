@@ -20,7 +20,7 @@ const handleResponse = async (
       return res.send({ data, status: { ok } })
     } catch (error) {
       // no data returned
-      return res.send({ status: { ok } })
+      return res.send({ status: { ok }, data: {} })
     }
   } else {
     const error =

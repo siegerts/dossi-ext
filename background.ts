@@ -10,6 +10,12 @@ const logger = new Logger("dossi")
 
 logger.info(`👋 Initializing ${extensionName}.`)
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "openOptionsPage") {
+    chrome.runtime.openOptionsPage()
+  }
+})
+
 chrome.tabs.query({ url: process.env.PLASMO_PUBLIC_MATCHES }, function (tabs) {
   for (let tab of tabs) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, updatedTab) => {

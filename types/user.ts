@@ -15,7 +15,7 @@ export type UserSettings = {
   userId: string
   settings: {
     useUserApiKey: boolean
-    apiKey: ApiKey
+    apiKeys: ApiKey[]
     prompts: Prompt[]
   }
 }

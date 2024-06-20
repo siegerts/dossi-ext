@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
-// import type { Prompt, ApiKey } from "~types/prompt"
+
 import { v4 as uuidv4 } from "uuid"
 import type { User, UserSettings } from "~types/user"
 
@@ -37,8 +37,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       id: uuidv4(),
       userId: user.attrs.id,
       settings: {
-        useUserApiKey: true,
-        apiKey: null,
+        useUserApiKey: false,
+        apiKeys: [],
         prompts: [],
       },
     }
@@ -73,12 +73,23 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     // API KEY
     case "SET_API_KEY": {
-      const { apiKey } = req.body
+      const { apiKey, provider } = req.body
 
-      currentUserSettings.settings.apiKey = {
-        id: uuidv4(),
-        key: apiKey,
-        updatedAt: new Date().getTime(),
+      // only allow one api key per provider for now
+      const existingApiKey = currentUserSettings.settings.apiKeys.find(
+        (key) => key.provider === provider
+      )
+
+      if (existingApiKey) {
+        existingApiKey.key = apiKey
+        existingApiKey.updatedAt = new Date().getTime()
+      } else {
+        currentUserSettings.settings.apiKeys.push({
+          id: uuidv4(),
+          key: apiKey,
+          provider,
+          updatedAt: new Date().getTime(),
+        })
       }
 
       userSettings = userSettings.map((settings) => {
@@ -95,7 +106,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     }
 
     case "DELETE_API_KEY": {
-      currentUserSettings.settings.apiKey = null
+      const { id } = req.body
+
+      currentUserSettings.settings.apiKeys =
+        currentUserSettings.settings.apiKeys.filter(
+          (apiKey) => apiKey.id !== id
+        )
 
       userSettings = userSettings.map((settings) => {
         if (settings.userId === user.attrs.id) {
@@ -205,8 +221,8 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
     case "RESET_SETTINGS": {
       currentUserSettings.settings = {
-        useUserApiKey: true,
-        apiKey: null,
+        useUserApiKey: false,
+        apiKeys: [],
         prompts: [],
       }
 

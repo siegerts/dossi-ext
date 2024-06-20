@@ -12,5 +12,6 @@ export type Prompt = {
 export type ApiKey = {
   id: string
   key: string
+  provider: "openai"
   updatedAt: number
 }

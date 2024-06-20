@@ -71,6 +71,7 @@ markdown.addRule("removeImages", {
 })
 
 function Prompts({ entity }: { entity: IEntity }) {
+  const [isIssueOrDiscussion, setIsIssueOrDiscussion] = useState(false)
   const [loadingPromptResponse, setLoadingPromptResponse] = useState(false)
   const [loadingNote, setLoadingNote] = useState(false)
   const [promptResponseContent, setPromptResponseContent] = useState("")
@@ -108,17 +109,21 @@ function Prompts({ entity }: { entity: IEntity }) {
   }
 
   async function runPrompt(id: string) {
-    const apiKey = userSettings?.settings?.apiKey?.key
     const prompt = userSettings?.settings?.prompts?.find(
       (prompt) => prompt.id === id
     )
 
-    const input = await documentToMarkdown()
+    // find the user's api key for model provider
+    const apiKey = userSettings?.settings?.apiKeys?.find(
+      (apiKey) => apiKey.provider === prompt?.provider
+    )?.key
 
     if (!apiKey) {
       console.error("No user OpenAI key configured.")
       return
     }
+
+    const input = await documentToMarkdown()
 
     const openai = new OpenAI({
       apiKey: apiKey,
@@ -183,6 +188,10 @@ function Prompts({ entity }: { entity: IEntity }) {
       return
     }
 
+    const modelRef = `_Model: ${prompt?.model} | Provider: ${prompt?.provider} | Max Tokens: ${prompt?.maxTokens}_`
+
+    response = `${response}\n\n${modelRef}
+    `
     setPromptResponseContent(response)
     setLoadingPromptResponse(false)
   }
@@ -194,7 +203,7 @@ function Prompts({ entity }: { entity: IEntity }) {
     setLoadingNote(true)
 
     await sendToBackground({
-      name: "notes",
+      name: "notes" as never,
       body: {
         type: "POST",
         ...(!entity?.exists && { title: entity?.title }),
@@ -207,6 +216,16 @@ function Prompts({ entity }: { entity: IEntity }) {
     client.invalidateQueries({ queryKey: ["entity", entity?.url] })
     client.invalidateQueries({ queryKey: ["plan"] })
   }
+
+  useEffect(() => {
+    // if the url is for issue or discussion
+    if (
+      entity?.url.includes("/issues/") ||
+      entity?.url.includes("/discussions/")
+    ) {
+      setIsIssueOrDiscussion(true)
+    }
+  }, [entity])
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -225,8 +244,9 @@ function Prompts({ entity }: { entity: IEntity }) {
 
   return (
     <>
-      {userSettings?.settings?.useUserApiKey &&
-        userSettings?.settings?.apiKey?.key &&
+      {isIssueOrDiscussion &&
+        userSettings?.settings?.useUserApiKey &&
+        userSettings?.settings?.apiKeys?.length > 0 &&
         userSettings?.settings?.prompts?.length > 0 && (
           <div className="ml-auto">
             <DropdownMenu>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { AuthProvider, useAuth } from "@/contexts/user"
-
+import type { ApiKey } from "~types/prompt"
 import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 import { sendToBackground } from "@plasmohq/messaging"
@@ -46,7 +46,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { formatDistanceToNow } from "date-fns"
+import { formatDistanceToNow, set } from "date-fns"
 import type { UserSettings } from "~types/user"
 
 import "~/contents/base.css"
@@ -59,12 +59,9 @@ export const getStyle = () => {
   return style
 }
 
-const models = [
-  "gpt-4o",
-  "gpt-4",
-  "gpt-4-turbo-preview",
-  "gpt-3.5-turbo",
-] as const
+const availableProviders: string[] = ["openai"]
+
+const models = ["gpt-4o"] as string[]
 
 const promptSchema = z.object({
   title: z
@@ -75,7 +72,12 @@ const promptSchema = z.object({
     .string()
     .min(25, { message: "Content must be at least 50 chars" })
     .max(1000, { message: "Content must be less than 1000 chars" }),
-  model: z.enum(models),
+  model: z
+    .string()
+    .nonempty()
+    .refine((m) => models.includes(m), {
+      message: "Invalid model",
+    }),
   maxTokens: z.coerce
     .number()
     .min(50, { message: "Max tokens must be between 50 and 1000" })
@@ -95,8 +97,7 @@ const Options = () => {
 
 function OptionsIndex() {
   const user = useAuth()
-  const [key, setKey] = useState("")
-  const [useUserApiKey, setUseUserApiKey] = useState(true)
+  const [useUserApiKey, setUseUserApiKey] = useState(false)
 
   const [settings, setSettings] = useStorage<any[]>({
     key: "settings",
@@ -104,7 +105,11 @@ function OptionsIndex() {
       area: "local",
     }),
   })
+
   const [userSettings, setUserSettings] = useState<UserSettings>()
+
+  const [openAIKey, setOpenAIKey] = useState<ApiKey>(null)
+  const [openAIKeyValue, setOpenAIKeyValue] = useState("")
 
   const promptForm = useForm<z.infer<typeof promptSchema>>({
     resolver: zodResolver(promptSchema),
@@ -131,6 +136,7 @@ function OptionsIndex() {
     })
 
     if (res.status.ok) {
+      promptForm.reset()
       toast({
         title: "Prompt added",
         description: "The prompt has been added successfully",
@@ -155,8 +161,12 @@ function OptionsIndex() {
     })
   }
 
-  async function updateApiKey() {
+  async function updateApiKey(key: string, provider: string) {
     if (!key || key.trim().length === 0) {
+      return
+    }
+
+    if (!provider || !availableProviders.includes(provider)) {
       return
     }
 
@@ -165,15 +175,22 @@ function OptionsIndex() {
       body: {
         type: "SET_API_KEY",
         apiKey: key,
+        provider: provider,
       },
+    })
+
+    toast({
+      title: "API key updated",
+      description: `The ${provider} key has been updated`,
     })
   }
 
-  async function removeApiKey() {
+  async function removeApiKey(id: string) {
     await sendToBackground({
       name: "settings" as never,
       body: {
         type: "DELETE_API_KEY",
+        id,
       },
     })
   }
@@ -190,12 +207,25 @@ function OptionsIndex() {
 
   useEffect(() => {
     if (settings) {
-      console.log(settings)
-      setUserSettings(
-        settings.find((setting) => setting?.userId === user?.attrs?.id)
+      const currentUserSettings = settings.find(
+        (setting) => setting?.userId === user?.attrs?.id
       )
+      setUserSettings(currentUserSettings)
     }
   }, [settings])
+
+  useEffect(() => {
+    if (userSettings) {
+      setUseUserApiKey(userSettings?.settings?.useUserApiKey)
+
+      if (userSettings?.settings?.useUserApiKey) {
+        const openAIKey = userSettings?.settings?.apiKeys?.find(
+          (key) => key.provider === "openai"
+        )
+        setOpenAIKey(openAIKey)
+      }
+    }
+  }, [userSettings])
 
   return (
     <>
@@ -229,8 +259,8 @@ function OptionsIndex() {
               <CardHeader>
                 <CardTitle>OpenAI configuration</CardTitle>
                 <CardDescription>
-                  This is your OpenAI key that is used to authenticate requests
-                  to the OpenAI API.
+                  This is your API key that is used to authenticate requests to
+                  the OpenAI API.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -238,29 +268,32 @@ function OptionsIndex() {
                   <Input
                     type="password"
                     placeholder="OpenAPI key"
-                    onChange={(e) => setKey(e.target.value)}
+                    value={openAIKeyValue}
+                    onChange={(e) => setOpenAIKeyValue(e.target.value)}
                   />
-                  <Button type="submit" onClick={updateApiKey}>
+                  <Button
+                    type="submit"
+                    onClick={() => {
+                      updateApiKey(openAIKeyValue, "openai")
+                      setOpenAIKeyValue("")
+                    }}>
                     Save
                   </Button>
                   <Button
                     type="button"
-                    onClick={removeApiKey}
+                    onClick={() => removeApiKey(openAIKey?.id)}
                     variant="secondary">
                     Clear
                   </Button>
                 </div>
 
-                {userSettings?.settings?.apiKey?.key && (
+                {openAIKey?.updatedAt && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
                         <p className="mt-2 text-sm text-muted-foreground">
                           Last updated:{" "}
-                          {formatDistanceToNow(
-                            userSettings?.settings?.apiKey?.updatedAt
-                          )}{" "}
-                          ago
+                          {formatDistanceToNow(openAIKey?.updatedAt)} ago
                         </p>
                       </TooltipTrigger>
 
@@ -269,9 +302,7 @@ function OptionsIndex() {
                           {new Intl.DateTimeFormat(navigator.language, {
                             dateStyle: "long",
                             timeStyle: "short",
-                          }).format(
-                            new Date(userSettings?.settings?.apiKey?.updatedAt)
-                          )}
+                          }).format(new Date(openAIKey?.updatedAt))}
                         </span>
                       </TooltipContent>
                     </Tooltip>
@@ -300,7 +331,8 @@ function OptionsIndex() {
                               <Input placeholder="" {...field} />
                             </FormControl>
                             <FormDescription>
-                              A short title for the prompt
+                              A short title for the prompt. Used to identify the
+                              prompt in the extension.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -331,14 +363,15 @@ function OptionsIndex() {
                           <FormItem>
                             <FormLabel>Model</FormLabel>
                             <FormControl>
-                              <Select>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}>
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Model" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {models.map((model) => (
                                     <SelectItem key={model} value={model}>
-                                      {" "}
                                       {model}
                                     </SelectItem>
                                   ))}

@@ -231,7 +231,7 @@ function OptionsIndex() {
     <>
       {user && user?.isAuthed ? (
         <div className="m-10 w-1/2 text-base">
-          <h3 className="mb-4 text-lg font-medium">dossi local settings</h3>
+          <h2 className="mb-4 text-xl font-medium">dossi local settings</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             These settings are stored locally on your device and are not synced
             to any server or any other device.

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/contexts/user"
 import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/components/icons"
 import { Card } from "@/components/ui/card"
 import OpenAI from "openai"
-import type { ChatCompletionMessageParam } from "openai/resources/chat"
+import type {
+  ChatCompletion,
+  ChatCompletionMessageParam,
+} from "openai/resources/chat"
 import turnDownService from "turndown"
 import { sendToBackground } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
@@ -75,6 +79,7 @@ function Prompts({ entity }: { entity: IEntity }) {
   const [loadingPromptResponse, setLoadingPromptResponse] = useState(false)
   const [loadingNote, setLoadingNote] = useState(false)
   const [promptResponseContent, setPromptResponseContent] = useState("")
+  const [promptError, setPromptError] = useState<string | null>(null)
   const [settings, setSettings] = useStorage<any[]>({
     key: "settings",
     instance: new Storage({
@@ -158,10 +163,11 @@ function Prompts({ entity }: { entity: IEntity }) {
 
     // console.log(messages)
 
+    setPromptError(null)
     setLoadingPromptResponse(true)
 
     // TODO: try catch with toast
-    let chatCompletion
+    let chatCompletion: ChatCompletion
 
     try {
       chatCompletion = await openai.chat.completions.create({
@@ -174,6 +180,12 @@ function Prompts({ entity }: { entity: IEntity }) {
       })
     } catch (error) {
       console.error(error)
+
+      setPromptError(
+        `${error?.message} (${error?.code})` ||
+          `Please try again after checking the prompt and providers settings.`
+      )
+
       setLoadingPromptResponse(false)
 
       return
@@ -269,7 +281,8 @@ function Prompts({ entity }: { entity: IEntity }) {
                 {userSettings?.settings?.prompts?.map((prompt) => (
                   <DropdownMenuItem
                     key={prompt.id}
-                    onClick={() => runPrompt(prompt?.id)}>
+                    onClick={() => runPrompt(prompt?.id)}
+                    className="text-xs">
                     {prompt.title}
                   </DropdownMenuItem>
                 ))}
@@ -277,6 +290,33 @@ function Prompts({ entity }: { entity: IEntity }) {
             </DropdownMenu>
           </div>
         )}
+
+      {promptError && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertTitle>Error generating prompt response</AlertTitle>
+          <AlertDescription>{promptError}</AlertDescription>
+          <div className="flex justify-end">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setPromptError(null)
+                chrome.runtime.sendMessage({ action: "openOptionsPage" })
+              }}
+              className="mr-2 mt-2 text-xs text-primary"
+              size="sm">
+              Open settings
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setPromptError(null)}
+              className="mt-2 text-xs text-primary"
+              size="sm">
+              Dismiss
+            </Button>
+          </div>
+        </Alert>
+      )}
 
       {promptResponseContent && (
         <Card className="shadow-sm">

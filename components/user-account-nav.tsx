@@ -39,7 +39,10 @@ export function UserAccountNav({ user }) {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => chrome.runtime.openOptionsPage()}>
+        <DropdownMenuItem
+          onClick={() =>
+            chrome.runtime.sendMessage({ action: "openOptionsPage" })
+          }>
           <Icons.settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>

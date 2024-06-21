@@ -25,10 +25,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet-maintainer"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import { Textarea } from "@/components/ui/textarea"
 
 import NoteList from "@/components/note-list"
 import PinButton from "@/components/pin-button"
+import Prompts from "@/components/prompts"
 import RedirectedNotes from "@/components/redirected-notes"
 import { UserAccountNav } from "@/components/user-account-nav"
 import { Icons } from "@/components/icons"
@@ -53,7 +61,7 @@ export const getStyle = () => {
   return style
 }
 
-export const getShadowHostId = () => `${process.env.PLASMO_PUBLIC_SHIP_NAME}-sb`
+export const getShadowHostId = () => "dossi-sb"
 
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({
@@ -103,7 +111,7 @@ const ActionSheet = () => {
       }
 
       const res = await sendToBackground({
-        name: "entities",
+        name: "entities" as never,
         body: {
           type: "GET_ENTITY_BY_URL",
           url: redirect?.from,
@@ -120,7 +128,7 @@ const ActionSheet = () => {
 
     setIsEntityTitleSaving(true)
     await sendToBackground({
-      name: "entities",
+      name: "entities" as never,
       body: {
         type: "PATCH",
         entityId: entity?.id,
@@ -136,7 +144,7 @@ const ActionSheet = () => {
     if (limitReached(counts, limits, "notes")) return
 
     await sendToBackground({
-      name: "notes",
+      name: "notes" as never,
       body: {
         type: "POST",
         ...(!entity?.exists && { title: entity?.title }),
@@ -155,7 +163,7 @@ const ActionSheet = () => {
           <SheetTrigger asChild className="justify-end">
             <Button variant="default" className="border-primary-text border">
               <Icons.logo className="mr-2 h-4 w-4" />
-              {process.env.PLASMO_PUBLIC_SHIP_NAME}
+              dossi
               {entity?.id && entity?.notes && (
                 <span className="ml-2 rounded-full bg-gray-200 px-2 text-xs text-gray-500">
                   {entity?.notes?.length}
@@ -178,19 +186,22 @@ const ActionSheet = () => {
               <SheetDescription></SheetDescription>
 
               {entity?.url && (
-                <div className="my-2 flex items-center justify-between gap-2">
-                  <div>
-                    <span>{new URL(entity?.url).pathname.substring(1)}</span>
-                  </div>
+                <>
+                  <div className="my-2 flex items-center justify-between gap-2">
+                    <div>
+                      <span>{new URL(entity?.url).pathname.substring(1)}</span>
+                    </div>
 
-                  <PinButton
-                    pinId={
-                      entity?.pins && entity?.pins.length == 1
-                        ? entity?.pins[0]?.id
-                        : null
-                    }
-                  />
-                </div>
+                    <PinButton
+                      pinId={
+                        entity?.pins && entity?.pins.length == 1
+                          ? entity?.pins[0]?.id
+                          : null
+                      }
+                    />
+                  </div>
+                  <Prompts entity={entity} />
+                </>
               )}
 
               {redirectedEntity && redirectedEntity?.notes?.length > 0 && (
@@ -206,7 +217,7 @@ const ActionSheet = () => {
                 {entity?.title && (
                   <>
                     <Label htmlFor="title">Title</Label>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2">
                       {entity?.exists ? (
                         <>
                           {isEditingEntityTitle ? (
@@ -219,42 +230,72 @@ const ActionSheet = () => {
                               }}
                             />
                           ) : (
-                            <div>
+                            <div className="w-11/12">
                               <span>{entity?.title}</span>
                             </div>
                           )}
                           {!isEditingEntityTitle ? (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="flex h-8 w-8 p-0"
-                              onClick={() => setIsEditingEntityTitle(true)}>
-                              <Icons.pen className="h-4 w-4" />
-                              <span className="sr-only">edit title</span>
-                            </Button>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="flex h-8 w-8 p-0"
+                                    onClick={() =>
+                                      setIsEditingEntityTitle(true)
+                                    }>
+                                    <Icons.pen className="h-4 w-4" />
+                                    <span className="sr-only">edit title</span>
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <span className="text-xs">Edit title</span>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           ) : (
                             <>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="flex h-8 w-8 p-0"
-                                onClick={() => {
-                                  setIsEditingEntityTitle(false)
-                                  setEntityTitle(entity?.title)
-                                }}>
-                                <Icons.close className="h-4 w-4" />
-                                <span className="sr-only">cancel</span>
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                className="flex h-8 w-8 p-0"
-                                onClick={() => {
-                                  updateEntityTitle()
-                                  setIsEditingEntityTitle(false)
-                                }}>
-                                <Icons.check className="h-4 w-4" />
-                                <span className="sr-only">save</span>
-                              </Button>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="flex h-8 w-8 p-0"
+                                      onClick={() => {
+                                        setIsEditingEntityTitle(false)
+                                        setEntityTitle(entity?.title)
+                                      }}>
+                                      <Icons.close className="h-4 w-4" />
+                                      <span className="sr-only">cancel</span>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <span className="text-xs">Cancel</span>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      className="flex h-8 w-8 p-0"
+                                      onClick={() => {
+                                        updateEntityTitle()
+                                        setIsEditingEntityTitle(false)
+                                      }}>
+                                      <Icons.check className="h-4 w-4" />
+                                      <span className="sr-only">save</span>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <span className="text-xs">Save</span>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </>
                           )}
                         </>
@@ -294,14 +335,32 @@ const ActionSheet = () => {
               </div>
             </div>
 
-            <SheetFooter></SheetFooter>
+            <SheetFooter className="mt-10">
+              <div className="flex gap-2">
+                <a
+                  href="https://chromewebstore.google.com/detail/dossi-private-github-note/ogpcmecajeghflaaaennkmknfpeghffm/reviews"
+                  target="_blank"
+                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground">
+                  Review
+                </a>
+                <span className="inline-block text-xs text-muted-foreground">
+                  -
+                </span>
+                <a
+                  href="https://github.com/siegerts/dossi-ext"
+                  target="_blank"
+                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground">
+                  Feedback?
+                </a>
+              </div>
+            </SheetFooter>
           </SheetContent>
         </Sheet>
       ) : (
         <Button asChild>
           <a href={`${baseApiUrl}/auth/signin`} target="_blank">
             <Icons.logo className="mr-2 h-4 w-4" />
-            {process.env.PLASMO_PUBLIC_SHIP_NAME}
+            dossi
           </a>
         </Button>
       )}

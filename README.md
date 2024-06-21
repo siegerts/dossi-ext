@@ -143,15 +143,12 @@ pnpm install
 
 Create a `.env` file in the root of the project with the following content:
 
-```
-
-PLASMO_PUBLIC_SHIP_NAME=
-PLASMO_PUBLIC_HOST=
-PLASMO_PUBLIC_HOST_API=
-PLASMO_PUBLIC_HOST_COOKIE=
-PLASMO_PUBLIC_MATCHES=
-PLASMO_PUBLIC_MANIFEST_HOST_PERMISSIONS=
-
+```ini
+PLASMO_PUBLIC_HOST="http://localhost:3000"
+PLASMO_PUBLIC_HOST_API="http://localhost:3000/api"
+PLASMO_PUBLIC_HOST_COOKIE="next-auth.session-token"
+PLASMO_PUBLIC_MATCHES="https://github.com/*"
+PLASMO_PUBLIC_MANIFEST_HOST_PERMISSIONS="http://localhost:3000/*"
 ```
 
 #### Development build

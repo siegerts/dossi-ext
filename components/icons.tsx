@@ -16,6 +16,7 @@ import {
   type Icon as LucideIcon,
   LucideProps,
   Moon,
+  MessageCircle,
   MoreVertical,
   Pen,
   Pin,
@@ -30,6 +31,7 @@ import {
   LogOut,
   CreditCard,
   Cloud,
+  Wand,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -50,6 +52,7 @@ export const Icons = {
   post: FileText,
   page: File,
   media: Image,
+  message: MessageCircle,
   logout: LogOut,
   settings: Settings,
   ellipsis: MoreVertical,
@@ -63,6 +66,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  wand: Wand,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

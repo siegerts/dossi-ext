@@ -212,7 +212,7 @@ function OptionsIndex() {
       )
       setUserSettings(currentUserSettings)
     }
-  }, [settings])
+  }, [settings, user])
 
   useEffect(() => {
     if (userSettings) {

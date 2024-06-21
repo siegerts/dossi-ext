@@ -333,15 +333,17 @@ function Prompts({ entity }: { entity: IEntity }) {
 
           <div className="flex items-center justify-between gap-1.5 p-3">
             <Button
+              className="text-xs"
               variant="ghost"
+              size="sm"
               onClick={() => setPromptResponseContent("")}>
               Cancel
             </Button>
-            <Button onClick={createNote}>
+            <Button className="text-xs" size="sm" onClick={createNote}>
               {loadingNote && (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Save
+              Save as note
             </Button>
           </div>
         </Card>

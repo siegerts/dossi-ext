@@ -8,6 +8,9 @@ const extensionName = "dossi"
 const storage = new Storage()
 const logger = new Logger("dossi")
 
+const uninstallUrl = "https://www.dossi.dev/uninstall"
+const installUrl = "https://www.dossi.dev/success-install"
+
 logger.info(`👋 Initializing ${extensionName}.`)
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -83,4 +86,12 @@ patterns.forEach((pattern, pos) => {
     },
     { url: [pattern] }
   )
+})
+
+chrome.runtime.onInstalled.addListener(async (details) => {
+  chrome.runtime.setUninstallURL(uninstallUrl)
+
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: installUrl })
+  }
 })

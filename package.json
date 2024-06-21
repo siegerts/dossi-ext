@@ -1,8 +1,8 @@
 {
   "name": "dossi",
   "displayName": "dossi - Private GitHub Notes & Labels",
-  "version": "1.0.8",
-  "description": "Boost your GitHub workflow with private notes and labeling. Keep track of Issues, PRs, repos, and Discussions.",
+  "version": "1.1.0",
+  "description": "Save private notes, labels, and pins for GitHub. Keep track of issues, pull requests, repos, and discussions.",
   "author": "dossi",
   "scripts": {
     "dev": "plasmo dev",

@@ -1,7 +1,7 @@
 {
   "name": "dossi",
   "displayName": "dossi - Private GitHub Notes & Labels",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Save private notes, labels, and pins for GitHub. Keep track of issues, pull requests, repos, and discussions.",
   "author": "dossi",
   "scripts": {

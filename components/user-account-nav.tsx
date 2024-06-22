@@ -64,8 +64,10 @@ export function UserAccountNav({ user }) {
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem asChild className="text-blue-500">
-            <Icons.creditCard className="mr-2 h-4 w-4" />
-            <div>Subscribed to {plan} plan 🎉</div>
+            <a href={`${baseUrl}/dashboard/billing`} target="_blank">
+              <Icons.creditCard className="mr-2 h-4 w-4" />
+              Subscribed to {plan} 🎉
+            </a>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />

@@ -102,7 +102,7 @@ const NoteList = () => {
           </div>
 
           <div className="mb-2 flex items-center justify-between">
-            <Label htmlFor="notes">Notes</Label>
+            <Label>Notes</Label>
             <Select
               value={selectedSort.value}
               onValueChange={(value) => {

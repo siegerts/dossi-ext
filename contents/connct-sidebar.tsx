@@ -45,6 +45,9 @@ import { PlanDataProvider, usePlanData } from "@/contexts/plan"
 import { baseApiUrl } from "@/lib/constants"
 import { limitReached } from "@/lib/utils"
 
+import type { Entity, Tab } from "~types/entity"
+type IEntity = Entity & Tab
+
 import "~/contents/base.css"
 import cssText from "data-text:~/contents/global.css"
 
@@ -101,24 +104,33 @@ const ActionSheet = () => {
   const [isEditingEntityTitle, setIsEditingEntityTitle] =
     useState<boolean>(false)
   const [isEntityTitleSaving, setIsEntityTitleSaving] = useState<boolean>(false)
-  const [redirectedEntity, setRedirectedEntity] = useState<any>(null)
+  const [redirectedEntity, setRedirectedEntity] = useState<IEntity>(null)
+  const [redirectDetected, setRedirectDetected] = useState<boolean>(false)
+
+  const resetRedirectDetected = () => setRedirectDetected(false)
 
   useEffect(() => {
     const checkRedirectNotes = async () => {
       if (!redirect?.to || !redirect?.from) {
-        setRedirectedEntity({ to: null, from: null })
+        if (redirectDetected) return
+        setRedirectedEntity(null)
         return
       }
 
-      const res = await sendToBackground({
-        name: "entities" as never,
-        body: {
-          type: "GET_ENTITY_BY_URL",
-          url: redirect?.from,
-        },
-      })
+      // Check if the current page is the redirected page
+      // in case mulpiple pages are being viewed when a redirect is detected
+      if ([redirect?.to, redirect?.from].includes(entity?.url)) {
+        setRedirectDetected(true)
+        const res = await sendToBackground({
+          name: "entities" as never,
+          body: {
+            type: "GET_ENTITY_BY_URL",
+            url: redirect?.from,
+          },
+        })
 
-      setRedirectedEntity(res?.data)
+        setRedirectedEntity(res?.data)
+      }
     }
     checkRedirectNotes()
   }, [redirect?.to, redirect?.from])
@@ -208,6 +220,7 @@ const ActionSheet = () => {
                 <RedirectedNotes
                   entity={entity}
                   redirectedEntity={redirectedEntity}
+                  resetRedirectDetected={resetRedirectDetected}
                 />
               )}
             </SheetHeader>
@@ -216,7 +229,7 @@ const ActionSheet = () => {
               <div className="flex flex-col gap-y-2">
                 {entity?.title && (
                   <>
-                    <Label htmlFor="title">Title</Label>
+                    <Label>Title</Label>
                     <div className="flex items-center justify-between gap-2">
                       {entity?.exists ? (
                         <>

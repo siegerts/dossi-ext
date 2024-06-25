@@ -11,13 +11,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
-
 import { Remark } from "react-remark"
+import type { Entity, Tab } from "~types/entity"
 
-const RedirectedNotes = ({ entity, redirectedEntity }) => {
+type IEntity = Entity & Tab
+
+const RedirectedNotes = ({
+  entity,
+  redirectedEntity,
+  resetRedirectDetected,
+}: {
+  entity: IEntity
+  redirectedEntity: IEntity
+  resetRedirectDetected: () => void
+}) => {
   const [showTransferNotesDialog, setShowTransferNotesDialog] = useState(false)
   const [redirect, setRedirect] = useStorage("redirect")
   const client = useQueryClient()
@@ -37,6 +46,7 @@ const RedirectedNotes = ({ entity, redirectedEntity }) => {
       client.invalidateQueries({ queryKey: ["entity", entity?.url] })
       setRedirect({ to: null, from: null })
       setShowTransferNotesDialog(false)
+      resetRedirectDetected()
     }
   }
 

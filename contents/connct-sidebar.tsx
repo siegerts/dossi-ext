@@ -118,7 +118,8 @@ const ActionSheet = () => {
       }
 
       // Check if the current page is the redirected page
-      // in case mulpiple pages are being viewed when a redirect is detected
+      // in case multiple pages are being viewed when a redirect is detected
+      // in global storage state
       if ([redirect?.to, redirect?.from].includes(entity?.url)) {
         setRedirectDetected(true)
         const res = await sendToBackground({

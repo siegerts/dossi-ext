@@ -34,7 +34,15 @@ YouTube demo: [https://www.youtube.com/watch?v=wgGGjAqa3L8](https://www.youtube.
 - [Popup window](https://github.com/siegerts/dossi-ext/blob/main/popup.tsx) to view recent activity and pins
 - Content script button to open the sidepanel overlay and display the number of notes for the current page
 - [Transferred page detection](https://github.com/siegerts/dossi-ext/blob/main/background.ts#L54) to prompt the user to transfer notes to the new page entity
+- [Bring your own OpenAI API key and prompts](https://www.xiegerts.com/post/browser-extension-genai-key-prompts/) to use with GitHub issue and discussion content
 - Auth integration with dossi web app
+
+## Use Cases
+
+- **Developers**: Keep notes for GitHub issues, pull requests, and discussions
+- **Open Source Contributors**: Keep track of issues and PRs across multiple repositories
+- **Maintainers**: Speed up issue triage, reproduction steps, and PR reviews. Keep track of discussions and decisions
+- **Product Managers**: Track feature requests and user feedback
 
 ## Tech Stack
 

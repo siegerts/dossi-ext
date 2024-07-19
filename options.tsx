@@ -61,7 +61,7 @@ export const getStyle = () => {
 
 const availableProviders: string[] = ["openai"]
 
-const models = ["gpt-4o"] as string[]
+const models = ["gpt-4o", "gpt-4o-mini"] as string[]
 
 const promptSchema = z.object({
   title: z
@@ -117,7 +117,7 @@ function OptionsIndex() {
     defaultValues: {
       title: "",
       content: "",
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       maxTokens: 100,
     },
   })
@@ -208,7 +208,7 @@ function OptionsIndex() {
   useEffect(() => {
     if (settings) {
       const currentUserSettings = settings.find(
-        (setting) => setting?.userId === user?.attrs?.id
+        (setting) => setting?.userId === user?.attrs?.id,
       )
       setUserSettings(currentUserSettings)
     }
@@ -220,7 +220,7 @@ function OptionsIndex() {
 
       if (userSettings?.settings?.useUserApiKey) {
         const openAIKey = userSettings?.settings?.apiKeys?.find(
-          (key) => key.provider === "openai"
+          (key) => key.provider === "openai",
         )
         setOpenAIKey(openAIKey)
       }
@@ -276,13 +276,15 @@ function OptionsIndex() {
                     onClick={() => {
                       updateApiKey(openAIKeyValue, "openai")
                       setOpenAIKeyValue("")
-                    }}>
+                    }}
+                  >
                     Save
                   </Button>
                   <Button
                     type="button"
                     onClick={() => removeApiKey(openAIKey?.id)}
-                    variant="secondary">
+                    variant="secondary"
+                  >
                     Clear
                   </Button>
                 </div>
@@ -320,7 +322,8 @@ function OptionsIndex() {
                   <Form {...promptForm}>
                     <form
                       onSubmit={promptForm.handleSubmit(onSubmit)}
-                      className="space-y-8">
+                      className="space-y-8"
+                    >
                       <FormField
                         control={promptForm.control}
                         name="title"
@@ -365,7 +368,8 @@ function OptionsIndex() {
                             <FormControl>
                               <Select
                                 onValueChange={field.onChange}
-                                defaultValue={field.value}>
+                                defaultValue={field.value}
+                              >
                                 <SelectTrigger className="w-[180px]">
                                   <SelectValue placeholder="Model" />
                                 </SelectTrigger>
@@ -428,7 +432,8 @@ function OptionsIndex() {
                       {userSettings?.settings?.prompts?.map((prompt) => (
                         <div
                           className="mb-3 rounded-lg border p-3"
-                          key={prompt.id}>
+                          key={prompt.id}
+                        >
                           <div className="flex w-full flex-col gap-1">
                             <div className="flex items-center">
                               <div className="flex items-center gap-2">
@@ -444,7 +449,7 @@ function OptionsIndex() {
                                       new Date(prompt.createdAt),
                                       {
                                         addSuffix: true,
-                                      }
+                                      },
                                     )}
                                   </TooltipTrigger>
 
@@ -455,7 +460,7 @@ function OptionsIndex() {
                                         {
                                           dateStyle: "long",
                                           timeStyle: "short",
-                                        }
+                                        },
                                       ).format(new Date(prompt.createdAt))}
                                     </span>
                                   </TooltipContent>
@@ -476,7 +481,8 @@ function OptionsIndex() {
                             <div className="mt-3">
                               <Button
                                 onClick={() => deletePrompt(prompt.id)}
-                                variant="secondary">
+                                variant="secondary"
+                              >
                                 Delete
                               </Button>
                             </div>
@@ -506,7 +512,8 @@ function OptionsIndex() {
                     type: "RESET_SETTINGS",
                   },
                 })
-              }>
+              }
+            >
               Reset settings
             </Button>
           </div>

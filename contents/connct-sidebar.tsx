@@ -68,7 +68,7 @@ export const getShadowHostId = () => "dossi-sb"
 
 export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) =>
   shadowHost.attachShadow({
-    mode: process.env.NODE_ENV == "production" ? "closed" : "open",
+    mode: process.env.NODE_ENV === "production" ? "closed" : "open",
   })
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
@@ -258,7 +258,8 @@ const ActionSheet = () => {
                                     className="flex h-8 w-8 p-0"
                                     onClick={() =>
                                       setIsEditingEntityTitle(true)
-                                    }>
+                                    }
+                                  >
                                     <Icons.pen className="h-4 w-4" />
                                     <span className="sr-only">edit title</span>
                                   </Button>
@@ -280,7 +281,8 @@ const ActionSheet = () => {
                                       onClick={() => {
                                         setIsEditingEntityTitle(false)
                                         setEntityTitle(entity?.title)
-                                      }}>
+                                      }}
+                                    >
                                       <Icons.close className="h-4 w-4" />
                                       <span className="sr-only">cancel</span>
                                     </Button>
@@ -300,7 +302,8 @@ const ActionSheet = () => {
                                       onClick={() => {
                                         updateEntityTitle()
                                         setIsEditingEntityTitle(false)
-                                      }}>
+                                      }}
+                                    >
                                       <Icons.check className="h-4 w-4" />
                                       <span className="sr-only">save</span>
                                     </Button>
@@ -341,7 +344,8 @@ const ActionSheet = () => {
                 <Button
                   type="submit"
                   onClick={createNote}
-                  disabled={limitReached(counts, limits, "notes")}>
+                  disabled={limitReached(counts, limits, "notes")}
+                >
                   {limitReached(counts, limits, "notes")
                     ? "Upgrade to save"
                     : "Save note"}
@@ -354,7 +358,8 @@ const ActionSheet = () => {
                 <a
                   href="https://chromewebstore.google.com/detail/dossi-private-github-note/ogpcmecajeghflaaaennkmknfpeghffm/reviews"
                   target="_blank"
-                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground">
+                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground"
+                >
                   Review
                 </a>
                 <span className="inline-block text-xs text-muted-foreground">
@@ -363,7 +368,8 @@ const ActionSheet = () => {
                 <a
                   href="https://github.com/siegerts/dossi-ext"
                   target="_blank"
-                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground">
+                  className="inline-block text-xs text-muted-foreground no-underline transition-colors hover:text-foreground"
+                >
                   Feedback?
                 </a>
               </div>

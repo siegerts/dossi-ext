@@ -1,0 +1,29 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space"
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"json": {
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"semicolons": "asNeeded"
+		}
+	},
+	"files": {
+		"ignore": ["**/node_modules"]
+	}
+}
